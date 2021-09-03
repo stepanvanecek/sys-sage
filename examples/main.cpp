@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "hwloc.hpp"
-#include "Topology.hpp"
+//#include "Topology.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -17,4 +17,6 @@ int main(int argc, char *argv[])
     Node* n = (Node*)topo->GetChild(0);
     ((Component*)n)->PrintSubtree(9);
     return 0;
+
+
 }
