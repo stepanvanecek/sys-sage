@@ -74,6 +74,7 @@ Component* createChildC(string type, xmlNode* node)
     {
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
+        cout << "adding thread " << id << endl;
         c = (Component*)new Thread(id);
     }
     else
@@ -96,16 +97,16 @@ int xmlProcessChildren(Component* c, xmlNode* parent, int level)
             {
                 string type = xmlGetPropStr(child, "type");
 
-                for (int i = 0; i < level; ++i)
-                    cout << " " ;
-                cout << name <<  " - " << type << endl;
+                // for (int i = 0; i < level; ++i)
+                //     cout << " " ;
+                // cout << name <<  " - " << type << endl;
 
                 //if relevant object, it will be inserted in the topology
                 if(find(xmlRelevantObjectTypes.begin(), xmlRelevantObjectTypes.end(), type) != xmlRelevantObjectTypes.end())
                 {
                     Component * childC = createChildC(type, child);
                     c->InsertChild(childC);
-                    cout << "inserting " << type << " to " << c->GetName() << endl;
+                    //cout << "inserting " << type << " to " << c->GetName() << endl;
                     xmlProcessChildren(childC, child, level+1);
                 }
                 else

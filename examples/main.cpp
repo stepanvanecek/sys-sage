@@ -15,7 +15,10 @@ int main(int argc, char *argv[])
 
     topo->PrintSubtree(0);
     Node* n = (Node*)topo->GetChild(0);
-    ((Component*)n)->PrintSubtree(9);
+    n->PrintSubtree(9);
+
+    cout << topo->GetNumThreads() << endl;
+    cout << n->GetChild(0)->GetChild(0)->GetNumThreads() << endl;
     return 0;
 
 

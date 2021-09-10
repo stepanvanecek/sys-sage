@@ -3,91 +3,99 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
+#define SYS_TOPO_COMPONENT_NONE 1
+#define SYS_TOPO_COMPONENT_THREAD 2
+#define SYS_TOPO_COMPONENT_CORE 4
+#define SYS_TOPO_COMPONENT_CACHE 8
+#define SYS_TOPO_COMPONENT_NUMA 16
+#define SYS_TOPO_COMPONENT_CHIP 32
+#define SYS_TOPO_COMPONENT_NODE 64
+#define SYS_TOPO_COMPONENT_TOPOLOGY 128
 
 using namespace std;
-
-class Node;
-
-//carries the information about the whole system
 
 class Component {
 public:
     Component();
-    Component(int,string);
+    Component(int,string,int);
     void InsertChild(Component * child);
     void PrintSubtree(int level);
 
     string GetName();
+    int GetComponentType();
+    int GetId();
+
     vector<Component*>* GetChildren();
+
+    Component* GetParent();
     Component* GetChild(int _id);
+    int GetNumThreads();
+    int GetTopoTreeDepth();//0=empty, 1=1element,...
+    void GetComponentsNLevelsDeeper(vector<Component*>* outArray, int depth);
+    void GetSubtreeNodeList(vector<Component*>* outArray);
 
     void SetParent(Component* parent);
 
+    map<string,void*> metadata;
 protected:
     int id;
+    int depth;
     string name;
+    const int componentType;
     vector<Component*> children;
     Component* parent;
-    vector<string> metadata;
+
+
 private:
 };
 
 class Topology : public Component {
 public:
     Topology();
-    ~Topology();
-
-//    vector<Node*> GetNodes();
-    // Node* GetNodeById(int id);
-    // Node* GetNodeByIndex(int index);
-
-    void DestroyTopo();
-
-    //string name;
-    //vector<string> metadata;
 private:
-    // int id;
-    // vector<Node*> nodes;
 };
 
-class Node : Component {
+class Node : public Component {
 public:
     Node();
 private:
 };
 
-class Chip : Component {
+class Chip : public Component {
 public:
     Chip();
     Chip(int _id);
 private:
 };
 
-class Cache : Component {
+class Cache : public Component {
 public:
     Cache();
     Cache(int _id, int  _cache_level, int _cache_size);
+    int GetCacheLevel();
+    int GetCacheSize();
 private:
     int cache_level;
     int cache_size;
 };
 
-class Numa : Component {
+class Numa : public Component {
 public:
     Numa();
     Numa(int _id);
 private:
 };
 
-class Core : Component {
+class Core : public Component {
 public:
     Core();
     Core(int _id);
 private:
 };
 
-class Thread : Component {
+class Thread : public Component {
 public:
     Thread();
     Thread(int _id);
