@@ -1,8 +1,5 @@
  #include "Topology.hpp"
 
-Topology::~Topology(){DestroyTopo();}
-void Topology::DestroyTopo(){}//TODO
-
 void Component::PrintSubtree(int level)
 {
     //cout << "---PrintSubtree---" << endl;
@@ -92,6 +89,7 @@ int Component::GetId(){return id;}
 
 void Component::SetParent(Component* _parent){parent = _parent;}
 
+int Numa::GetSize(){return size;}
 int Cache::GetCacheLevel(){return cache_level;}
 int Cache::GetCacheSize(){return cache_size;}
 
@@ -102,13 +100,14 @@ Topology::Topology():Component(0, "topology", SYS_TOPO_COMPONENT_TOPOLOGY){}
 
 Node::Node():Component(0, "node", SYS_TOPO_COMPONENT_NODE){}
 
-Chip::Chip(int _id):Component(_id, "chip", SYS_TOPO_COMPONENT_CHIP){}
+Chip::Chip(int _id):Component(_id, "Chip", SYS_TOPO_COMPONENT_CHIP){}
 Chip::Chip():Chip(0){}
 
 Cache::Cache(int _id, int  _cache_level, int _cache_size): Component(_id, "cache", SYS_TOPO_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size){}
 Cache::Cache():Cache(0,0,0){}
 
-Numa::Numa(int _id):Component(_id, "Numa", SYS_TOPO_COMPONENT_NUMA){}
+Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_TOPO_COMPONENT_NUMA), size(_size){}
+Numa::Numa(int _id):Numa(_id, 0){}
 Numa::Numa():Numa(0){}
 
 Core::Core(int _id):Component(_id, "Core", SYS_TOPO_COMPONENT_CORE){}

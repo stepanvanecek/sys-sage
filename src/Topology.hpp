@@ -85,7 +85,10 @@ class Numa : public Component {
 public:
     Numa();
     Numa(int _id);
+    Numa(int _id, int _size);
+    int GetSize();
 private:
+    int size;
 };
 
 class Core : public Component {

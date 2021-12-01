@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <algorithm>
 
 #include "hwloc.hpp"
 
@@ -62,7 +63,10 @@ Component* createChildC(string type, xmlNode* node)
     {
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
-        c = (Component*)new Numa(id);
+        s = xmlGetPropStr(node, "local_memory");
+        int size = stoi(s.empty()?"0":s);
+
+        c = (Component*)new Numa(id, size);
     }
     else if(!type.compare("Core"))
     {
