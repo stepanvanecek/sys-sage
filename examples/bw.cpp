@@ -1,15 +1,42 @@
 
-
 #include <iostream>
 #include <chrono>
 #include <ctime>
 #include <unistd.h>
 #include <numaif.h>
 #include <numa.h>
-
+#include <sched.h>
+#include <thread>
+#include <sys/wait.h>
 
 using namespace std;
 using namespace std::chrono;
+
+////////////////////////////////////////////////////////////////////////
+//PARAMS TO SET
+#define REPEATS 2
+#define MAIN_MEM_FRACTION 8             //allocate 1/x of main memory
+#define CACHE_LINE_SZ 64
+#define TIMER_WARMUP 64
+#define TIMER_REPEATS 1024
+
+#define MEASURE_EACH_CPU
+////////////////////////////////////////////////////////////////////////
+
+#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE);} while (0)
+
+struct numa_region
+{
+    long long numa_mem_sz;
+    long long arrsz;
+    int step;
+    int num_elems;
+
+    uint64_t timer_overhead;
+
+    uint64_t latency_time;
+    uint64_t bw_time;
+} ;
 
 void fill_arr(uint64_t * arr, int num_elems)
 {
@@ -44,100 +71,133 @@ uint64_t get_timer_overhead(int repeats, int warmup)
     return time;
 }
 
-int main(int argc, char *argv[])
+
+int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
 {
-    uint64_t time, timer_overhead;
     uint64_t *arr, *mock_arr;
     high_resolution_clock::time_point t_start, t_end;
+    struct numa_region *numa = new numa_region[numa_nodes];
 
-    int arrsz;
-    int step=1;
+    for(int n=0; n<numa_nodes; n++)
+    {
+        numa[n].numa_mem_sz = numa_node_size(n, NULL);
+        //cout << "node " << n << "; numa_mem_sz: " << numa[n].numa_mem_sz << "; arrszsz: " << numa[n].arrsz << "; step: "<< numa[n].step << "; mmfww: " << numa[n].numa_mem_sz/MAIN_MEM_FRACTION << "; mmf: " << MAIN_MEM_FRACTION <<endl;
+        numa[n].arrsz = numa[n].numa_mem_sz/MAIN_MEM_FRACTION;   //fraction of main memory to use (*2 arrays)
+        numa[n].step = CACHE_LINE_SZ/sizeof(uint64_t);      //one elem per cache line
+        numa[n].num_elems = numa[n].arrsz/sizeof(uint64_t);
+        numa[n].timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
+        numa[n].latency_time = 0;
+        numa[n].bw_time = 0;
+    }
 
+    for(int round = 0; round<REPEATS; round++)
+    {
+        for(int n=0; n<numa_nodes; n++)
+        {
+            mock_arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
+            arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
+
+            fill_arr(arr, numa[n].num_elems);
+            fill_arr(mock_arr, numa[n].num_elems);
+
+            numa[n].timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
+
+            t_start = high_resolution_clock::now();
+            int sum = mock_arr[0];
+            t_end = high_resolution_clock::now();
+
+            numa[n].latency_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
+
+            t_start = high_resolution_clock::now();
+            for(int i = 0; i<numa[n].num_elems; i+=numa[n].step)
+            {
+                // if (i==0 || i==num_elems/8 || i==num_elems/2 || i==num_elems*7/8|| i==num_elems-1)
+                // {
+                //     /*here you should align ptr_to_check to page boundary */
+                //     //t_start = high_resolution_clock::now();
+                //     void* ptr_to_check = (void*)&(arr[i]);
+                //     int status = -1;
+                //     int ret_code;
+                //     ret_code=move_pages(0 /*self memory */, 1, &ptr_to_check, NULL, &status, 0);
+                //     //t_end = high_resolution_clock::now();
+                //     //cout << /*arrsz << " ; " <<*/ t_end.time_since_epoch().count()-t_start.time_since_epoch().count() << "; ";//endl;
+                //     //printf("    %d       Memory at %p is at %d node (retcode %d)\n", status, ptr_to_check, status, ret_code);
+                // }
+                sum+=arr[i];
+            }
+            t_end = high_resolution_clock::now();
+
+            numa[n].bw_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
+
+            numa_free(mock_arr, numa[n].arrsz);
+            numa_free(arr, numa[n].arrsz);
+        }
+        //cerr << round+1 << "/" << REPEATS << " done" << endl;
+    } //cerr << endl << endl;
+
+    for(int n=0; n<numa_nodes; n++)
+    {
+        cout << src_cpu << "; " << src_numa << "; " << n << "; " << numa[n].numa_mem_sz << "; " << numa[n].arrsz << "; " << numa[n].timer_overhead << "; " << numa[n].latency_time/REPEATS << "; " << numa[n].arrsz/((numa[n].bw_time/REPEATS)/1000) << endl;
+    }
+    delete[] numa;
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    cpu_set_t set;
+    unsigned int this_cpu, this_numa;
 
     if(numa_available() == -1)
         return 1;
 
-    cout << "numa_available(void) " << numa_available() << "  int numa_max_possible_node(void); " << numa_max_possible_node() << "  numa_num_possible_nodes() " << numa_num_possible_nodes() << "  numa_max_node(void) " << numa_max_node() << "  numa_num_configured_nodes() " << numa_num_configured_nodes() << endl;
+    int measure_numa_only = 1;
+    #ifdef MEASURE_EACH_CPU
+        measure_numa_only = 0;
+    #endif
 
     int numa_nodes = numa_num_configured_nodes();
-    for(int n=0; n<numa_nodes; n++)
+    const auto cpu_count = std::thread::hardware_concurrency();
+    cerr << "# hw threads: " << cpu_count << ", numa nodes: " << numa_nodes << endl;
+    cerr << "################################" << endl;
+    cout << "src_cpu; src_numa; target_numa; mem_size; arrsz; timer_ovh; ldlat(ns); bw(MB/s); " << endl;
+
+    unsigned long long mask_checked_component = 0; //each bit is one numa region/one HW thread
+    for(unsigned int current_cpu = 0; current_cpu < cpu_count; current_cpu ++)
     {
-        long long nodesz = numa_node_size(n, NULL);
 
-
-        //arrsz = nodesz/4;
-        arrsz = nodesz/4;
-        step = 64/sizeof(uint64_t); //one elem per cache line
-        int num_elems = arrsz/sizeof(uint64_t);
-        mock_arr = (uint64_t*)numa_alloc_onnode(arrsz, n);
-        arr = (uint64_t*)numa_alloc_onnode(arrsz, n);
-
-        fill_arr(arr, num_elems);
-        fill_arr(mock_arr, num_elems);
-
-        timer_overhead = get_timer_overhead(1024, 64);
-
-        t_start = high_resolution_clock::now();
-        int sum = arr[0];
-        t_end = high_resolution_clock::now();
-        time = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
-
-        cout << "node; " << n << "; size; " << nodesz << "; arrsz; " << arrsz << "; timer_ovh; " << timer_overhead << "; ldlat(ns); " << time;
-
-        t_start = high_resolution_clock::now();
-        for(int i = 0; i<num_elems; i+=step)
+        switch (fork())
         {
-            // if (i==0 || i==num_elems/8 || i==num_elems/2 || i==num_elems*7/8|| i==num_elems-1)
-            // {
-            //     /*here you should align ptr_to_check to page boundary */
-            //     //t_start = high_resolution_clock::now();
-            //     void* ptr_to_check = (void*)&(arr[i]);
-            //     int status = -1;
-            //     int ret_code;
-            //     ret_code=move_pages(0 /*self memory */, 1, &ptr_to_check, NULL, &status, 0);
-            //     //t_end = high_resolution_clock::now();
-            //     //cout << /*arrsz << " ; " <<*/ t_end.time_since_epoch().count()-t_start.time_since_epoch().count() << "; ";//endl;
-            //     //printf("    %d       Memory at %p is at %d node (retcode %d)\n", status, ptr_to_check, status, ret_code);
-            // }
-            sum+=arr[i];
-        }
-        t_end = high_resolution_clock::now();
-        time = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
-        cout << "; time; " << time << "; bw(MB/s); " << arrsz/(time/1000) << endl;
+            case -1:            /* Error */
+                errExit("fork");
+            case 0:             /* Child */
+                CPU_ZERO(&set);
+                CPU_SET(current_cpu, &set);
+                if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
+                    errExit("sched_setaffinity");
+                getcpu(&this_cpu, &this_numa);
 
-        numa_free(mock_arr, arrsz);
-        numa_free(arr, arrsz);
+                int mask_bit;
+                if(measure_numa_only)
+                    mask_bit = this_numa;
+                else
+                    mask_bit = this_cpu;
+
+                cout << mask_checked_component << ";  " << mask_bit << endl;
+                if((mask_checked_component & (1 << mask_bit)) == 0)
+                {
+                    mask_checked_component += (1 << mask_bit); //je jen v child process
+                    run_measurement(this_cpu, this_numa, numa_nodes);
+                }
+                cout << mask_checked_component << ";  " << mask_bit << endl;
+
+
+                exit(EXIT_SUCCESS);
+            default:            /* Parent */
+                wait(NULL);     /* Wait for child to terminate */
+                break;
+        }
     }
 
-    //
-    //
-    // int max_arrsz=10000000;
-    // int mocksz =  10000000;
-    // mock_arr = (uint64_t*)malloc(sizeof(uint64_t)*mocksz);
-    // for(;arrsz<=max_arrsz; arrsz*=2)
-    // {
-    //     arr = (uint64_t*)malloc(sizeof(uint64_t)*arrsz);
-    //
-    //     fill_arr(arr, arrsz);
-    //     //fill_arr(mock_arr, mocksz);
-    //     int sum = 0;
-    //
-    //     t_start = high_resolution_clock::now();
-    //     for(int i = 0; i<arrsz; i+=step)
-    //     {
-    //         if (i==0 || i==arrsz/2 || i==arrsz-1)
-    //         {
-    //             int numa_node = -1;
-    //             get_mempolicy(&numa_node, NULL, 0, (void*)&(arr[i]), MPOL_F_NODE | MPOL_F_ADDR);
-    //             return numa_node;
-    //         }
-    //         sum+=arr[i];
-    //     }
-    //     t_end = high_resolution_clock::now();
-    //     cout << /*arrsz << " ; " <<*/ t_end.time_since_epoch().count()-t_start.time_since_epoch().count() << "; ";//endl;
-    //     free(arr);
-    // }
-    // cout << endl;
-    // free(mock_arr);
     return 0;
 }
