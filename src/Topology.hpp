@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 
+#include "DataPath.hpp"
+
 #define SYS_TOPO_COMPONENT_NONE 1
 #define SYS_TOPO_COMPONENT_THREAD 2
 #define SYS_TOPO_COMPONENT_CORE 4
@@ -15,6 +17,7 @@
 #define SYS_TOPO_COMPONENT_TOPOLOGY 128
 
 using namespace std;
+class DataPath;
 
 class Component {
 public:
