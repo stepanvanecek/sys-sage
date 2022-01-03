@@ -55,7 +55,7 @@ Component* createChildC(string type, xmlNode* node)
         s = xmlGetPropStr(node, "cache_size");
         int size = stoi(s.empty()?"0":s);
         s = xmlGetPropStr(node, "depth");
-        int cache_level = stoi(s.empty()?"0":s);
+        long long cache_level = stol(s.empty()?"0":s);
 
         c = (Component*)new Cache(0, cache_level, size);
     }
@@ -64,7 +64,7 @@ Component* createChildC(string type, xmlNode* node)
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
         s = xmlGetPropStr(node, "local_memory");
-        int size = stoi(s.empty()?"0":s);
+        long long size = stol(s.empty()?"0":s);
 
         c = (Component*)new Numa(id, size);
     }
@@ -78,7 +78,7 @@ Component* createChildC(string type, xmlNode* node)
     {
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
-        cout << "adding thread " << id << endl;
+        //cout << "adding thread " << id << endl;
         c = (Component*)new Thread(id);
     }
     else
@@ -108,13 +108,23 @@ int xmlProcessChildren(Component* c, xmlNode* parent, int level)
                 //if relevant object, it will be inserted in the topology
                 if(find(xmlRelevantObjectTypes.begin(), xmlRelevantObjectTypes.end(), type) != xmlRelevantObjectTypes.end())
                 {
-                    Component * childC = createChildC(type, child);
-                    c->InsertChild(childC);
-                    //cout << "inserting " << type << " to " << c->GetName() << endl;
+                    Component * childC;
+                    if(!type.compare("Machine")) //node is already existing param
+                    {
+                        childC = c;
+                        //cout << "already inserted " << type << endl;
+                    }
+                    else
+                    {
+                        //cout << "inserting " << type << " to " << c->GetName() << endl;
+                        childC = createChildC(type, child);
+                        c->InsertChild(childC);
+                    }
                     xmlProcessChildren(childC, child, level+1);
                 }
                 else
                 {
+                    //cout << "not inserting " << type << " to " << c->GetName() << endl;
                     xmlProcessChildren(c, child, level+1);
                 }
             }
@@ -124,7 +134,7 @@ int xmlProcessChildren(Component* c, xmlNode* parent, int level)
 }
 
 //parses a hwloc output and adds it to topology
-int addParsedHwlocTopo(Topology* t, string topoPath, int nodeId)
+int parseHwlocOutput(Node* n, string topoPath)
 {
     xmlDoc *document = xmlReadFile(topoPath.c_str(), NULL, 0);
     if (document == NULL) {
@@ -135,7 +145,7 @@ int addParsedHwlocTopo(Topology* t, string topoPath, int nodeId)
 
     xmlNode *root= xmlDocGetRootElement(document);
 
-    int err = xmlProcessChildren((Component*)t, root, 0);
+    int err = xmlProcessChildren((Component*)n, root, 0);
 
     xmlFreeDoc(document);
     return err;

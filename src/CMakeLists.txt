@@ -2,17 +2,22 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 set(SOURCES
-    hwloc.cpp
-    Topology.cpp)
+    Topology.cpp
+    DataPath.cpp
+    parsers/hwloc.cpp
+    parsers/caps-numa-benchmark.cpp)
 
 set(HEADERS
-    hwloc.hpp
-    Topology.hpp)
+    sys-topo.hpp
+    Topology.hpp
+    DataPath.hpp
+    parsers/hwloc.hpp
+    parsers/caps-numa-benchmark.hpp)
 
 add_library(sys-topo STATIC ${SOURCES} ${HEADERS})
 
 set_target_properties(sys-topo PROPERTIES
-    PUBLIC_HEADER "hwloc.hpp;Topology.hpp"
+    PUBLIC_HEADER "sys-topo.hpp;parsers/hwloc.hpp;Topology.hpp"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
 )

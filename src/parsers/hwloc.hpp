@@ -9,7 +9,7 @@
 
 #include "Topology.hpp"
 
-int addParsedHwlocTopo(Topology* t, std::string topoPath, int nodeId);
+int parseHwlocOutput(Node* n, std::string topoPath);
 int xmlProcessChildren(Component* c, xmlNode* parent, int level);
 Component* createChildC(std::string type, xmlNode* node);
 std::string xmlGetPropStr(xmlNode* node, std::string key);
