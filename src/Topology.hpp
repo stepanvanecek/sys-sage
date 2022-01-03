@@ -28,18 +28,23 @@ public:
 
     string GetName();
     int GetComponentType();
+    string GetComponentTypeStr();
     int GetId();
 
     vector<Component*>* GetChildren();
 
     Component* GetParent();
     Component* GetChild(int _id);
+    Component* FindSubcomponentById(int id, int componentType);
     int GetNumThreads();
     int GetTopoTreeDepth();//0=empty, 1=1element,...
     void GetComponentsNLevelsDeeper(vector<Component*>* outArray, int depth);
     void GetSubtreeNodeList(vector<Component*>* outArray);
+    vector<DataPath*>* GetDataPaths(int orientation);
 
     void SetParent(Component* parent);
+
+    void AddDataPath(DataPath* p, int orientation);
 
     map<string,void*> metadata;
 protected:
@@ -49,7 +54,8 @@ protected:
     const int componentType;
     vector<Component*> children;
     Component* parent;
-
+    vector<DataPath*> dp_incoming;
+    vector<DataPath*> dp_outgoing;
 
 private:
 };
@@ -63,6 +69,7 @@ private:
 class Node : public Component {
 public:
     Node();
+    Node(int _id);
 private:
 };
 
@@ -81,7 +88,7 @@ public:
     int GetCacheSize();
 private:
     int cache_level;
-    int cache_size;
+    long long cache_size;
 };
 
 class Numa : public Component {
@@ -91,7 +98,7 @@ public:
     Numa(int _id, int _size);
     int GetSize();
 private:
-    int size;
+    long long size;
 };
 
 class Core : public Component {

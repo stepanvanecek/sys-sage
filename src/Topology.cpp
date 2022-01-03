@@ -1,11 +1,11 @@
- #include "Topology.hpp"
+#include "Topology.hpp"
 
 void Component::PrintSubtree(int level)
 {
     //cout << "---PrintSubtree---" << endl;
     for (int i = 0; i < level; ++i)
-        cout << " " ;
-    cout << componentType << " (" << name << ") " << id << " - children: " << children.size() <<  endl;
+        cout << "  " ;
+    cout << GetComponentTypeStr() << " (name " << name << ") id " << id << " - children: " << children.size() <<  endl;
 
     if(!children.empty())
     {
@@ -81,6 +81,71 @@ void Component::GetSubtreeNodeList(vector<Component*>* outArray)
     return;
 }
 
+Component* Component::FindSubcomponentById(int _id, int _componentType)
+{
+    if(componentType == _componentType && id == _id){
+        //cout << "   found component " << GetId() << " (" << GetComponentType() << ") found .." << _id << " " << _componentType << endl;
+        return this;
+    }
+    for(auto it = std::begin(children); it != std::end(children); ++it)
+    {
+        Component* ret = (*it)->FindSubcomponentById(_id, _componentType);
+        if(ret != NULL)
+        {
+            return ret;
+        }
+    }
+    return NULL;
+}
+
+void Component::AddDataPath(DataPath* p, int orientation)
+{
+    if(orientation == SYS_TOPO_DATAPATH_OUTGOING)
+        dp_outgoing.push_back(p);
+    else if(orientation == SYS_TOPO_DATAPATH_INCOMING)
+        dp_incoming.push_back(p);
+    else if(orientation == SYS_TOPO_DATAPATH_BIDIRECTIONAL)
+    {
+        dp_outgoing.push_back(p);
+        dp_incoming.push_back(p);
+    }
+}
+
+vector<DataPath*>* Component::GetDataPaths(int orientation)
+{
+    if(orientation == SYS_TOPO_DATAPATH_INCOMING)
+        return &dp_incoming;
+    else if(orientation == SYS_TOPO_DATAPATH_OUTGOING)
+        return &dp_outgoing;
+    else //TODO
+        return NULL;
+}
+
+string Component::GetComponentTypeStr()
+{
+    switch(componentType)
+    {
+        case SYS_TOPO_COMPONENT_NONE:
+            return "None";
+        case SYS_TOPO_COMPONENT_THREAD:
+            return "HW_thread";
+        case SYS_TOPO_COMPONENT_CORE:
+            return "Core";
+        case SYS_TOPO_COMPONENT_CACHE:
+            return "Cache";
+        case SYS_TOPO_COMPONENT_NUMA:
+            return "NUMA";
+        case SYS_TOPO_COMPONENT_CHIP:
+            return "Chip";
+        case SYS_TOPO_COMPONENT_NODE:
+            return "Node";
+        case SYS_TOPO_COMPONENT_TOPOLOGY:
+            return "Topology";
+    }
+    return "";
+}
+
+
 Component* Component::GetParent(){return parent;}
 vector<Component*>* Component::GetChildren(){return &children;}
 int Component::GetComponentType(){return componentType;}
@@ -98,7 +163,8 @@ Component::Component() :Component(0,"unknown",SYS_TOPO_COMPONENT_NONE){}
 
 Topology::Topology():Component(0, "topology", SYS_TOPO_COMPONENT_TOPOLOGY){}
 
-Node::Node():Component(0, "node", SYS_TOPO_COMPONENT_NODE){}
+Node::Node(int _id):Component(id, "sys-topo node", SYS_TOPO_COMPONENT_NODE){}
+Node::Node():Node(0){}
 
 Chip::Chip(int _id):Component(_id, "Chip", SYS_TOPO_COMPONENT_CHIP){}
 Chip::Chip():Chip(0){}

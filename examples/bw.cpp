@@ -8,19 +8,21 @@
 #include <sched.h>
 #include <thread>
 #include <sys/wait.h>
+#include <bitset>
 
 using namespace std;
 using namespace std::chrono;
 
 ////////////////////////////////////////////////////////////////////////
 //PARAMS TO SET
-#define REPEATS 2
+#define REPEATS 8
+#define LATENCY_REPEATS 128
 #define MAIN_MEM_FRACTION 8             //allocate 1/x of main memory
 #define CACHE_LINE_SZ 64
-#define TIMER_WARMUP 64
-#define TIMER_REPEATS 1024
+#define TIMER_WARMUP 32
+#define TIMER_REPEATS 128
 
-#define MEASURE_EACH_CPU
+//#define MEASURE_EACH_CPU
 ////////////////////////////////////////////////////////////////////////
 
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE);} while (0)
@@ -94,19 +96,25 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
     {
         for(int n=0; n<numa_nodes; n++)
         {
+            int sum;
             mock_arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
             arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
 
             fill_arr(arr, numa[n].num_elems);
             fill_arr(mock_arr, numa[n].num_elems);
 
-            numa[n].timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
+            srand (time(NULL));//initialize rand generator
 
-            t_start = high_resolution_clock::now();
-            int sum = mock_arr[0];
-            t_end = high_resolution_clock::now();
-
-            numa[n].latency_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
+            for(int i = 0; i<LATENCY_REPEATS; i++)
+            {
+                int rand_idx= rand()%numa[n].num_elems;
+                numa[n].timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
+                t_start = high_resolution_clock::now();
+                sum = mock_arr[rand_idx];
+                t_end = high_resolution_clock::now();
+                numa[n].latency_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
+            }
+            fill_arr(mock_arr, numa[n].num_elems);
 
             t_start = high_resolution_clock::now();
             for(int i = 0; i<numa[n].num_elems; i+=numa[n].step)
@@ -137,7 +145,12 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
 
     for(int n=0; n<numa_nodes; n++)
     {
-        cout << src_cpu << "; " << src_numa << "; " << n << "; " << numa[n].numa_mem_sz << "; " << numa[n].arrsz << "; " << numa[n].timer_overhead << "; " << numa[n].latency_time/REPEATS << "; " << numa[n].arrsz/((numa[n].bw_time/REPEATS)/1000) << endl;
+        #ifdef MEASURE_EACH_CPU
+            cout << src_cpu;
+        #else
+            cout << src_numa;
+        #endif
+        cout << "; " << n << "; " << numa[n].numa_mem_sz << "; " << numa[n].arrsz << "; " << numa[n].timer_overhead << "; " << numa[n].latency_time/(REPEATS*LATENCY_REPEATS) << "; " << numa[n].arrsz/((numa[n].bw_time/REPEATS)/1000) << endl;
     }
     delete[] numa;
     return 0;
@@ -160,43 +173,45 @@ int main(int argc, char *argv[])
     const auto cpu_count = std::thread::hardware_concurrency();
     cerr << "# hw threads: " << cpu_count << ", numa nodes: " << numa_nodes << endl;
     cerr << "################################" << endl;
-    cout << "src_cpu; src_numa; target_numa; mem_size; arrsz; timer_ovh; ldlat(ns); bw(MB/s); " << endl;
+    #ifdef MEASURE_EACH_CPU
+        cout << "src_cpu;";
+    #else
+        cout << "src_numa;";
+    #endif
+    cout << "target_numa;mem_size;arrsz;timer_ovh;ldlat(ns);bw(MB/s);" << endl;
 
     unsigned long long mask_checked_component = 0; //each bit is one numa region/one HW thread
     for(unsigned int current_cpu = 0; current_cpu < cpu_count; current_cpu ++)
     {
+        // switch (fork())
+        // {
+        //     case -1:            /* Error */
+        //         errExit("fork");
+        //     case 0:             /* Child */
+        CPU_ZERO(&set);
+        CPU_SET(current_cpu, &set);
+        if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
+            errExit("sched_setaffinity");
+        getcpu(&this_cpu, &this_numa);
 
-        switch (fork())
+        int mask_bit;
+        if(measure_numa_only)
+            mask_bit = this_numa;
+        else
+            mask_bit = this_cpu;
+
+        cerr << std::bitset<24>(mask_checked_component) << "; bit " << mask_bit << endl;
+        if((mask_checked_component & (1 << mask_bit)) == 0)
         {
-            case -1:            /* Error */
-                errExit("fork");
-            case 0:             /* Child */
-                CPU_ZERO(&set);
-                CPU_SET(current_cpu, &set);
-                if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
-                    errExit("sched_setaffinity");
-                getcpu(&this_cpu, &this_numa);
-
-                int mask_bit;
-                if(measure_numa_only)
-                    mask_bit = this_numa;
-                else
-                    mask_bit = this_cpu;
-
-                cout << mask_checked_component << ";  " << mask_bit << endl;
-                if((mask_checked_component & (1 << mask_bit)) == 0)
-                {
-                    mask_checked_component += (1 << mask_bit); //je jen v child process
-                    run_measurement(this_cpu, this_numa, numa_nodes);
-                }
-                cout << mask_checked_component << ";  " << mask_bit << endl;
-
-
-                exit(EXIT_SUCCESS);
-            default:            /* Parent */
-                wait(NULL);     /* Wait for child to terminate */
-                break;
+            mask_checked_component += (1 << mask_bit); //je jen v child process
+            run_measurement(this_cpu, this_numa, numa_nodes);
         }
+
+            //     exit(EXIT_SUCCESS);
+            // default:            /* Parent */
+            //     wait(NULL);     /* Wait for child to terminate */
+            //     break;
+            // }
     }
 
     return 0;
