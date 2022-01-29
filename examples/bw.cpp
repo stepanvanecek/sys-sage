@@ -15,9 +15,9 @@ using namespace std::chrono;
 
 ////////////////////////////////////////////////////////////////////////
 //PARAMS TO SET
-#define REPEATS 8
+#define REPEATS 1
 #define LATENCY_REPEATS 128
-#define MAIN_MEM_FRACTION 8             //allocate 1/x of main memory
+#define MAIN_MEM_FRACTION 32//8             //allocate 1/x of main memory
 #define CACHE_LINE_SZ 64
 #define TIMER_WARMUP 32
 #define TIMER_REPEATS 128
@@ -96,6 +96,9 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
     {
         for(int n=0; n<numa_nodes; n++)
         {
+if(round == 0) cerr << "    numa" << n << ": mem_sz[mb] "<< numa[n].numa_mem_sz/(1<<20) << ", elems[k] " << numa[n].num_elems/(1<<10) << endl;
+            if(numa[n].numa_mem_sz == 0)
+                continue;
             int sum;
             mock_arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
             arr = (uint64_t*)numa_alloc_onnode(numa[n].arrsz, n);
@@ -115,13 +118,11 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
                 numa[n].latency_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
             }
             fill_arr(mock_arr, numa[n].num_elems);
-
             t_start = high_resolution_clock::now();
             for(int i = 0; i<numa[n].num_elems; i+=numa[n].step)
             {
                 // if (i==0 || i==num_elems/8 || i==num_elems/2 || i==num_elems*7/8|| i==num_elems-1)
                 // {
-                //     /*here you should align ptr_to_check to page boundary */
                 //     //t_start = high_resolution_clock::now();
                 //     void* ptr_to_check = (void*)&(arr[i]);
                 //     int status = -1;
@@ -134,7 +135,6 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
                 sum+=arr[i];
             }
             t_end = high_resolution_clock::now();
-
             numa[n].bw_time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-numa[n].timer_overhead;
 
             numa_free(mock_arr, numa[n].arrsz);
@@ -145,6 +145,8 @@ int run_measurement(unsigned int src_cpu, unsigned int src_numa, int numa_nodes)
 
     for(int n=0; n<numa_nodes; n++)
     {
+        if(numa[n].numa_mem_sz == 0)
+            continue;
         #ifdef MEASURE_EACH_CPU
             cout << src_cpu;
         #else
@@ -193,14 +195,16 @@ int main(int argc, char *argv[])
         if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
             errExit("sched_setaffinity");
         getcpu(&this_cpu, &this_numa);
+        if(this_cpu != current_cpu)
+            errExit("this_cpu != current_cpu");
 
-        int mask_bit;
-        if(measure_numa_only)
-            mask_bit = this_numa;
-        else
-            mask_bit = this_cpu;
+        #ifdef MEASURE_EACH_CPU
+            int mask_bit = this_cpu;
+        #else
+            int mask_bit = this_numa;
+        #endif
 
-        cerr << std::bitset<24>(mask_checked_component) << "; bit " << mask_bit << endl;
+        cerr << "    cpu " << this_cpu << " - mask-checked " << std::bitset<24>(mask_checked_component) << "; bit " << mask_bit << endl;
         if((mask_checked_component & (1 << mask_bit)) == 0)
         {
             mask_checked_component += (1 << mask_bit); //je jen v child process

@@ -17,6 +17,9 @@ vector<string> xmlRelevantObjectTypes
     "Machine",
     "Package",
     "Cache",
+    "L3Cache",
+    "L2Cache",
+    "L1Cache",
     "NUMANode",
     "Core",
     "PU"
@@ -50,14 +53,18 @@ Component* createChildC(string type, xmlNode* node)
         int id = stoi(s.empty()?"0":s);
         c = (Component*)new Chip(id);
     }
-    else if(!type.compare("Cache"))
+    else if(!type.compare("Cache") || !type.compare("L3Cache") || !type.compare("L2Cache") || !type.compare("L1Cache"))
     {
+        s = xmlGetPropStr(node, "gp_index");
+        int id = stoi(s.empty()?"0":s);
         s = xmlGetPropStr(node, "cache_size");
-        int size = stoi(s.empty()?"0":s);
+        unsigned long long size = stoul(s.empty()?"0":s);
         s = xmlGetPropStr(node, "depth");
-        long long cache_level = stol(s.empty()?"0":s);
+        int cache_level = stoi(s.empty()?"0":s);
+        s = xmlGetPropStr(node, "cache_associativity");
+        int associativity = stoi(s.empty()?"0":s);
 
-        c = (Component*)new Cache(0, cache_level, size);
+        c = (Component*)new Cache(id, cache_level, size, associativity);
     }
     else if(!type.compare("NUMANode"))
     {

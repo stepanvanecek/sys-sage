@@ -25,6 +25,7 @@ public:
     Component(int,string,int);
     void InsertChild(Component * child);
     void PrintSubtree(int level);
+    void PrintAllDataPathsInSubtree();
 
     string GetName();
     int GetComponentType();
@@ -36,9 +37,11 @@ public:
     Component* GetParent();
     Component* GetChild(int _id);
     Component* FindSubcomponentById(int id, int componentType);
+    Component* FindParentByType(int componentType);
     int GetNumThreads();
     int GetTopoTreeDepth();//0=empty, 1=1element,...
     void GetComponentsNLevelsDeeper(vector<Component*>* outArray, int depth);
+    void GetSubcomponentsByType(vector<Component*>* outArray, int componentType);
     void GetSubtreeNodeList(vector<Component*>* outArray);
     vector<DataPath*>* GetDataPaths(int orientation);
 
@@ -70,6 +73,11 @@ class Node : public Component {
 public:
     Node();
     Node(int _id);
+
+//#ifdef CAT_AWARE //defined in CAT_aware.cpp
+    int UpdateL3CATCoreCOS();
+//#endif
+
 private:
 };
 
@@ -83,12 +91,14 @@ private:
 class Cache : public Component {
 public:
     Cache();
-    Cache(int _id, int  _cache_level, int _cache_size);
+    Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
     int GetCacheLevel();
-    int GetCacheSize();
+    long long GetCacheSize();
+    int GetCacheAssociativityWays();
 private:
     int cache_level;
     long long cache_size;
+    int cache_associativity_ways;
 };
 
 class Numa : public Component {
@@ -112,6 +122,9 @@ class Thread : public Component {
 public:
     Thread();
     Thread(int _id);
+    //#ifdef CAT_AWARE //defined in CAT_aware.cpp
+        long long GetCATAwareL3Size();
+    //#endif
 private:
 };
 

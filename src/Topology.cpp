@@ -15,6 +15,30 @@ void Component::PrintSubtree(int level)
         }
     }
 }
+void Component::PrintAllDataPathsInSubtree()
+{
+    vector<Component*> subtreeList;
+    GetSubtreeNodeList(&subtreeList);
+    for(auto it = std::begin(subtreeList); it != std::end(subtreeList); ++it)
+    {
+        vector<DataPath*>* dp_in = (*it)->GetDataPaths(SYS_TOPO_DATAPATH_INCOMING);
+        vector<DataPath*>* dp_out = (*it)->GetDataPaths(SYS_TOPO_DATAPATH_OUTGOING);
+        if(dp_in->size() > 0 || dp_out->size() > 0 )
+        {
+            cout << "DataPaths regarding Component (" << (*it)->GetComponentTypeStr() << ") id " << (*it)->GetId() << endl;
+            for(auto it2 = std::begin(*dp_out); it2 != std::end(*dp_out); ++it2)
+            {
+                cout << "    ";
+                (*it2)->Print();
+            }
+            for(auto it2 = std::begin(*dp_in); it2 != std::end(*dp_in); ++it2)
+            {
+                cout << "    ";
+                (*it2)->Print();
+            }
+        }
+    }
+}
 
 void Component::InsertChild(Component * child)
 {
@@ -71,6 +95,18 @@ void Component::GetComponentsNLevelsDeeper(vector<Component*>* outArray, int dep
     return;
 }
 
+void Component::GetSubcomponentsByType(vector<Component*>* outArray, int _componentType)
+{
+    if(_componentType == componentType)
+    {
+        outArray->push_back(this);
+    }
+    for(auto it = std::begin(children); it != std::end(children); ++it)
+    {
+        (*it)->GetSubcomponentsByType(outArray, _componentType);
+    }
+}
+
 void Component::GetSubtreeNodeList(vector<Component*>* outArray)
 {
     outArray->push_back(this);
@@ -98,17 +134,25 @@ Component* Component::FindSubcomponentById(int _id, int _componentType)
     return NULL;
 }
 
+Component* Component::FindParentByType(int _componentType)
+{
+    if(componentType == _componentType){
+        return this;
+    }
+    if(parent != NULL){
+        cout << "   passing through component " << GetId() << " " << GetComponentType() << "(" << GetComponentTypeStr() << ") - searching for " << _componentType << endl;
+        return parent->FindParentByType(_componentType);
+    }
+
+    return NULL;
+}
+
 void Component::AddDataPath(DataPath* p, int orientation)
 {
     if(orientation == SYS_TOPO_DATAPATH_OUTGOING)
         dp_outgoing.push_back(p);
     else if(orientation == SYS_TOPO_DATAPATH_INCOMING)
         dp_incoming.push_back(p);
-    else if(orientation == SYS_TOPO_DATAPATH_BIDIRECTIONAL)
-    {
-        dp_outgoing.push_back(p);
-        dp_incoming.push_back(p);
-    }
 }
 
 vector<DataPath*>* Component::GetDataPaths(int orientation)
@@ -156,7 +200,8 @@ void Component::SetParent(Component* _parent){parent = _parent;}
 
 int Numa::GetSize(){return size;}
 int Cache::GetCacheLevel(){return cache_level;}
-int Cache::GetCacheSize(){return cache_size;}
+long long Cache::GetCacheSize(){return cache_size;}
+int Cache::GetCacheAssociativityWays(){return cache_associativity_ways;}
 
 Component::Component(int _id, string _name, int _componentType) : id(_id), name(_name), componentType(_componentType){}
 Component::Component() :Component(0,"unknown",SYS_TOPO_COMPONENT_NONE){}
@@ -169,8 +214,8 @@ Node::Node():Node(0){}
 Chip::Chip(int _id):Component(_id, "Chip", SYS_TOPO_COMPONENT_CHIP){}
 Chip::Chip():Chip(0){}
 
-Cache::Cache(int _id, int  _cache_level, int _cache_size): Component(_id, "cache", SYS_TOPO_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size){}
-Cache::Cache():Cache(0,0,0){}
+Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Component(_id, "cache", SYS_TOPO_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity){}
+Cache::Cache():Cache(0,0,0,0){}
 
 Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_TOPO_COMPONENT_NUMA), size(_size){}
 Numa::Numa(int _id):Numa(_id, 0){}

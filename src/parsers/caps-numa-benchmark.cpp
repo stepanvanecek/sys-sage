@@ -15,7 +15,7 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
         cerr << "error: could not parse CapsNumaBenchmark file " << benchmarkPath.c_str() << endl;
         return 1;
     }
-    
+
     //get indexes of relevant columns
     int cpu_is_source=-1;//-1 initial, 0 numa is source, 1 cpu is source
     vector<string> header = benchmarkData[0];
@@ -69,9 +69,8 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
             bw = stoul(benchmarkData[i][bw_idx]);
             ldlat = stoul(benchmarkData[i][ldlat_idx]);
 
-            DataPath* p = new DataPath(src, target, SYS_TOPO_DATAPATH_ORIENTED, (double)bw, (double)ldlat);
-            src->AddDataPath(p, SYS_TOPO_DATAPATH_OUTGOING);
-            target->AddDataPath(p, SYS_TOPO_DATAPATH_INCOMING);
+            NewDataPath(src, target, SYS_TOPO_DATAPATH_ORIENTED, SYS_TOPO_DATAPATH_TYPE_PHYSICAL, (double)bw, (double)ldlat);
+
         }
     }
     return 0;
@@ -80,7 +79,10 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
 int CSVReader::getData(vector<vector<string> >* dataList)
 {
     std::ifstream file(benchmarkPath);
-    std::string line = "";    while (getline(file, line))
+    if (!file.good())
+        return 1;
+    std::string line = "";
+    while (getline(file, line))
     {
         std::vector<std::string> vec;
         size_t pos = 0;

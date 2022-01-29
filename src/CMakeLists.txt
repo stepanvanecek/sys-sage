@@ -4,6 +4,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(SOURCES
     Topology.cpp
     DataPath.cpp
+    CAT_aware.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp)
 
@@ -13,6 +14,8 @@ set(HEADERS
     DataPath.hpp
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp)
+
+add_definitions(-DCAT_AWARE )
 
 add_library(sys-topo STATIC ${SOURCES} ${HEADERS})
 
