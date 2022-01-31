@@ -47,6 +47,7 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
         return 1;
     }
 
+    //cout << "caps-numa-benchmark parser: num entries: " << benchmarkData.size()-1 << endl;
     //parse each line as one DataPath, skip header
     for(unsigned int i=1; i<benchmarkData.size(); i++)
     {
@@ -56,20 +57,20 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
 
         if(cpu_is_source){
             src_cpu_id = stoi(benchmarkData[i][src_cpu_idx]);
-            src = rootComponent->FindSubcomponentById(src_cpu_id, SYS_TOPO_COMPONENT_THREAD);
+            src = rootComponent->FindSubcomponentById(src_cpu_id, SYS_SAGE_COMPONENT_THREAD);
         }else{
             src_numa_id = stoi(benchmarkData[i][src_numa_idx]);
-            src = rootComponent->FindSubcomponentById(src_numa_id, SYS_TOPO_COMPONENT_NUMA);
+            src = rootComponent->FindSubcomponentById(src_numa_id, SYS_SAGE_COMPONENT_NUMA);
         }
         target_numa_id = stoi(benchmarkData[i][target_numa_idx]);
-        target = rootComponent->FindSubcomponentById(target_numa_id, SYS_TOPO_COMPONENT_NUMA);
+        target = rootComponent->FindSubcomponentById(target_numa_id, SYS_SAGE_COMPONENT_NUMA);
         if(src == NULL || target == NULL)
             cerr << "error: could not find components; skipping " << endl;
         else{
             bw = stoul(benchmarkData[i][bw_idx]);
             ldlat = stoul(benchmarkData[i][ldlat_idx]);
 
-            NewDataPath(src, target, SYS_TOPO_DATAPATH_ORIENTED, SYS_TOPO_DATAPATH_TYPE_PHYSICAL, (double)bw, (double)ldlat);
+            NewDataPath(src, target, SYS_SAGE_DATAPATH_ORIENTED, SYS_SAGE_DATAPATH_TYPE_PHYSICAL, (double)bw, (double)ldlat);
 
         }
     }

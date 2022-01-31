@@ -4,17 +4,24 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "DataPath.hpp"
 
-#define SYS_TOPO_COMPONENT_NONE 1
-#define SYS_TOPO_COMPONENT_THREAD 2
-#define SYS_TOPO_COMPONENT_CORE 4
-#define SYS_TOPO_COMPONENT_CACHE 8
-#define SYS_TOPO_COMPONENT_NUMA 16
-#define SYS_TOPO_COMPONENT_CHIP 32
-#define SYS_TOPO_COMPONENT_NODE 64
-#define SYS_TOPO_COMPONENT_TOPOLOGY 128
+#define SYS_SAGE_COMPONENT_NONE 1
+#define SYS_SAGE_COMPONENT_THREAD 2
+#define SYS_SAGE_COMPONENT_CORE 4
+#define SYS_SAGE_COMPONENT_CACHE 8
+#define SYS_SAGE_COMPONENT_SUBDIVISION 16
+#define SYS_SAGE_COMPONENT_NUMA 32
+#define SYS_SAGE_COMPONENT_CHIP 64
+#define SYS_SAGE_COMPONENT_MEMORY 128
+#define SYS_SAGE_COMPONENT_STORAGE 256
+#define SYS_SAGE_COMPONENT_NODE 512
+#define SYS_SAGE_COMPONENT_TOPOLOGY 1024
+
+#define SYS_SAGE_SUBDIVISION_TYPE_NUMA 2048
+
 
 using namespace std;
 class DataPath;
@@ -44,6 +51,8 @@ public:
     void GetSubcomponentsByType(vector<Component*>* outArray, int componentType);
     void GetSubtreeNodeList(vector<Component*>* outArray);
     vector<DataPath*>* GetDataPaths(int orientation);
+    int GetTopologySize();
+    int GetTopologySize(std::set<DataPath*>* counted_dataPaths);
 
     void SetParent(Component* parent);
 
@@ -74,10 +83,22 @@ public:
     Node();
     Node(int _id);
 
-//#ifdef CAT_AWARE //defined in CAT_aware.cpp
+#ifdef CAT_AWARE //defined in CAT_aware.cpp
     int UpdateL3CATCoreCOS();
-//#endif
+#endif
 
+private:
+};
+
+class Memory : public Component {
+public:
+    Memory();
+private:
+};
+
+class Storage : public Component {
+public:
+    Storage();
 private:
 };
 
@@ -101,7 +122,16 @@ private:
     int cache_associativity_ways;
 };
 
-class Numa : public Component {
+class Subdivision : public Component {
+public:
+    Subdivision();
+    Subdivision(int _id);
+    Subdivision(int _id, string _name, int _componentType);
+protected:
+    int type;
+};
+
+class Numa : public Subdivision {
 public:
     Numa();
     Numa(int _id);

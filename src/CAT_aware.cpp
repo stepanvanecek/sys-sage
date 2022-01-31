@@ -1,6 +1,6 @@
 //code written based on https://github.com/intel/intel-cmt-cat/blob/master/examples/c/CAT_MBA/allocation_app_l3cat.c
 
-//#ifdef CAT_AWARE
+#ifdef CAT_AWARE
 
 #include "Topology.hpp"
 
@@ -114,13 +114,13 @@ int Node::UpdateL3CATCoreCOS(){
     }
 
     vector<Chip*> sockets;
-    GetSubcomponentsByType((vector<Component*>*)&sockets, SYS_TOPO_COMPONENT_CHIP);
+    GetSubcomponentsByType((vector<Component*>*)&sockets, SYS_SAGE_COMPONENT_CHIP);
     for(auto it = std::begin(sockets); it != std::end(sockets); ++it)
     {
         Chip* socket = *it;
         //std::cout << "socket " << socket->GetComponentTypeStr() << " id " << socket->GetId() << std::endl;
         vector<Thread*> threads;
-        socket->GetSubcomponentsByType((vector<Component*>*)&threads, SYS_TOPO_COMPONENT_THREAD);
+        socket->GetSubcomponentsByType((vector<Component*>*)&threads, SYS_SAGE_COMPONENT_THREAD);
         for(auto it_threads = std::begin(threads); it_threads != std::end(threads); ++it_threads)
         {
             Thread* thread = *it_threads;
@@ -143,17 +143,17 @@ int Node::UpdateL3CATCoreCOS(){
             while(c->GetParent() != NULL){
                 //go up until L3 found
                 c = c->GetParent();
-                if(c->GetComponentType() == SYS_TOPO_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
+                if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
                     break;
             };
-            if(c==NULL || c->GetComponentType() != SYS_TOPO_COMPONENT_CACHE){
+            if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
                 cerr << "L3 cache not found" << endl; continue;
             }
 
             //TODO check if exists -> overwrite
 
             //add DataPath to thread and L3
-            DataPath* d = NewDataPath(thread, c, SYS_TOPO_DATAPATH_BIDIRECTIONAL, SYS_TOPO_DATAPATH_TYPE_L3CAT);
+            DataPath* d = NewDataPath(thread, c, SYS_SAGE_DATAPATH_BIDIRECTIONAL, SYS_SAGE_DATAPATH_TYPE_L3CAT);
             d->metadata.insert({"CATcos", (void*)cos});
             d->metadata.insert({"CATL3mask", (void*)mask});
         }
@@ -188,10 +188,10 @@ long long Thread::GetCATAwareL3Size()
     while(c->GetParent() != NULL){
         //go up until L3 found
         c = c->GetParent();
-        if(c->GetComponentType() == SYS_TOPO_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
+        if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
             return ((Cache*)c)->GetCacheSize();
     };
     return -1;
 }
 
-//#endif
+#endif

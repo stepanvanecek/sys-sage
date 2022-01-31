@@ -15,27 +15,25 @@ int main(int argc, char *argv[])
     n->SetParent((Component*)topo);
     topo->InsertChild((Component*)n);
 
+    vector<Component*> nodesList;
+    n->GetSubtreeNodeList(&nodesList);
+    cout << "=====EMPTY num_elements: " << nodesList.size() << ", size[B] " << n->GetTopologySize() << endl;
+
+
     cout << "---- start parseHwlocOutput" << endl;
     string topoPath = "example_data/skylake_hwloc.xml";
     if(parseHwlocOutput(n, topoPath) != 0) //adds topo to a next node
-    {   //parsing failed -> try creating new hwloc output and parsing it
-        // hwloc_dump_xml("tmp_hwloc.xml");
-        // if(parseHwlocOutput(n, "tmp_hwloc.xml") != 0){
-        //     cout << "failed parsing hwloc output" << endl;
-        //     return 1;
-        // }
+    {
+             return 1;
     }
     cout << "---- end parseHwlocOutput" << endl;
 
-
-    cout << "Total num HW threads: " << topo->GetNumThreads() << endl;
-    cout << "---------------- Printing whole tree ----------------" << endl;
-    topo->PrintSubtree(2);
-    cout << "----------------                     ----------------" << endl;
-
+    nodesList.clear();
+    n->GetSubtreeNodeList(&nodesList);
+    cout << "=====HWLOC num_elements: " << nodesList.size() << ", size[B] " << n->GetTopologySize() << endl;
 
     cout << "---- start parseCapsNumaBenchmark" << endl;
-    string bwPath = "example_data/skylake_caps_numa_benchmark.out";
+    string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
     if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0)
     {
         cout << "failed parsing caps-numa-benchmark" << endl;
@@ -43,10 +41,10 @@ int main(int argc, char *argv[])
     }
     cout << "---- end parseCapsNumaBenchmark" << endl;
 
-    cout << "---------------- Printing all DataPaths ----------------" << endl;
-    n->PrintAllDataPathsInSubtree();
-    cout << "----------------                        ----------------" << endl;
-    remove("tmp_hwloc.xml");
+    nodesList.clear();
+    n->GetSubtreeNodeList(&nodesList);
+    cout << "=====HWLOC+DATAPATH num_elements: " << nodesList.size() << ", size[B] " << n->GetTopologySize() << endl;
+
     return 0;
 }
 

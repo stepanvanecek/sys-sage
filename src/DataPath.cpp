@@ -4,23 +4,24 @@ DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int
     return NewDataPath(_source,_target,_oriented,_type,(double)0,(double)0);
 }
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency){
-    return NewDataPath(_source,_target,_oriented,SYS_TOPO_DATAPATH_TYPE_NONE,_bw,_latency);
+    return NewDataPath(_source,_target,_oriented,SYS_SAGE_DATAPATH_TYPE_NONE,_bw,_latency);
 }
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency)
 {
+    //cout << "inserting datapath bw " << _bw << "src id " << _source->GetId() << " target id " << _target->GetId() <<  endl;
     DataPath* p = new DataPath(_source, _target, _oriented, _type, _bw, _latency);
-    if(_oriented == SYS_TOPO_DATAPATH_BIDIRECTIONAL)
+    if(_oriented == SYS_SAGE_DATAPATH_BIDIRECTIONAL)
     {
-        _source->AddDataPath(p, SYS_TOPO_DATAPATH_OUTGOING);
-        _target->AddDataPath(p, SYS_TOPO_DATAPATH_OUTGOING);
-        _source->AddDataPath(p, SYS_TOPO_DATAPATH_INCOMING);
-        _target->AddDataPath(p, SYS_TOPO_DATAPATH_INCOMING);
+        _source->AddDataPath(p, SYS_SAGE_DATAPATH_OUTGOING);
+        _target->AddDataPath(p, SYS_SAGE_DATAPATH_OUTGOING);
+        _source->AddDataPath(p, SYS_SAGE_DATAPATH_INCOMING);
+        _target->AddDataPath(p, SYS_SAGE_DATAPATH_INCOMING);
         return p;//ok
     }
-    else if(_oriented == SYS_TOPO_DATAPATH_BIDIRECTIONAL)
+    else if(_oriented == SYS_SAGE_DATAPATH_ORIENTED)
     {
-        _source->AddDataPath(p, SYS_TOPO_DATAPATH_OUTGOING);
-        _target->AddDataPath(p, SYS_TOPO_DATAPATH_INCOMING);
+        _source->AddDataPath(p, SYS_SAGE_DATAPATH_OUTGOING);
+        _target->AddDataPath(p, SYS_SAGE_DATAPATH_INCOMING);
         return p;//ok
     }
     else
@@ -34,7 +35,7 @@ Component * DataPath::GetSource() {return source;}
 Component * DataPath::GetTarget() {return target;}
 
 DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type): source(_source), target(_target), oriented(_oriented), dp_type(_type) {}
-DataPath::DataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency): source(_source), target(_target), oriented(_oriented), dp_type(SYS_TOPO_DATAPATH_TYPE_NONE), bw(_bw), latency(_latency) {}
+DataPath::DataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency): source(_source), target(_target), oriented(_oriented), dp_type(SYS_SAGE_DATAPATH_TYPE_NONE), bw(_bw), latency(_latency) {}
 DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency): source(_source), target(_target), oriented(_oriented), dp_type(_type), bw(_bw), latency(_latency) {}
 void DataPath::Print()
 {

@@ -10,11 +10,11 @@ endmacro()
 
 cmake_policy(SET CMP0048 NEW)
 
-project(sys-topo VERSION 0.0.0 LANGUAGES C CXX )
+project(sys-sage VERSION 0.0.0 LANGUAGES C CXX )
 
-cmake_minimum_required(VERSION 3.3.0)
+cmake_minimum_required(VERSION 3.12.0)
 #cmake_minimum_required(VERSION 3.10.0)
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS " -Wall -O0")
 
 
