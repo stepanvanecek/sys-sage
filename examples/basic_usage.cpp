@@ -3,7 +3,7 @@
 #include <iostream>
 #include <hwloc.h>
 
-#include "sys-topo.hpp"
+#include "sys-sage.hpp"
 
 
 int hwloc_dump_xml(const char *filename);

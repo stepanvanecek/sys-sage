@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "sys-topo.hpp"
+#include "sys-sage.hpp"
 #include <hwloc.h>
 
 //intel cat
@@ -68,39 +68,6 @@ int main(int argc, char *argv[]) {
         tile_sz_bytes = atoi(argv[4]) * 0.9 /3 ;
     else
     {
-        // Node* n = new Node(1);
-        // hwloc_dump_xml("tmp_hwloc.xml");
-        // if(parseHwlocOutput(n, "tmp_hwloc.xml") != 0){
-        //     cerr << "failed parsing hwloc output" << endl; return 1;
-        // }
-        //
-        // n->PrintSubtree(1);
-        //
-        // unsigned int myCpu, myNuma;
-        // if(getcpu(&myCpu, &myNuma) != 0){
-        //     cerr << "getcpu failed" << endl; return 1;
-        // }
-        // cout << "running on hw thread " << myCpu << ", numa " << myNuma << endl;
-        // Component * c = (Core*)n->FindSubcomponentById(myCpu, SYS_TOPO_COMPONENT_THREAD);//find used hw in sys-topo
-        // if(c==NULL){
-        //     cerr << "HW thread " << myCpu << "not found in sys-topo" << endl; return 1;
-        // }
-        // while(c->GetParent() != NULL){
-        //     //go up until L3 found
-        //     c = c->GetParent();
-        //     if(c->GetComponentType() == SYS_TOPO_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
-        //         break;
-        // };
-        //
-        // if(c==NULL || c->GetComponentType() != SYS_TOPO_COMPONENT_CACHE){
-        //     cerr << "L3 cache not found" << endl; return 1;
-        // }
-        // cout << "sys-topo: L3 found - id " << c->GetId() << " ";
-        //
-        // int cache_size = ((Cache*)c)->GetCacheSize();
-        // cout << "cache_size: " << cache_size << " ";
-
-
         Node* n = new Node(1);
         hwloc_dump_xml("tmp_hwloc.xml");
         if(parseHwlocOutput(n, "tmp_hwloc.xml") != 0){
@@ -111,9 +78,9 @@ int main(int argc, char *argv[]) {
         if(getcpu(&myCpu, &myNuma) != 0){
             cerr << "getcpu failed" << endl; return 1;
         }
-        Thread * t = (Thread*)n->FindSubcomponentById(myCpu, SYS_TOPO_COMPONENT_THREAD);//find current hw thread in sys-topo
+        Thread * t = (Thread*)n->FindSubcomponentById(myCpu, SYS_SAGE_COMPONENT_THREAD);//find current hw thread in sys-sage
         if(t==NULL){
-            cerr << "HW thread " << myCpu << "not found in sys-topo" << endl; return 1;
+            cerr << "HW thread " << myCpu << "not found in sys-sage" << endl; return 1;
         }
 
         //////////////////////////////////// whole L3 size
@@ -122,10 +89,10 @@ int main(int argc, char *argv[]) {
         // while(c->GetParent() != NULL){
         //     //go up until L3 found
         //     c = c->GetParent();
-        //     if(c->GetComponentType() == SYS_TOPO_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
+        //     if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
         //         break;
         // };
-        // if(c==NULL || c->GetComponentType() != SYS_TOPO_COMPONENT_CACHE){
+        // if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
         //     cerr << "L3 cache not found" << endl; return 1;
         // }
         // long long available_L3_size = ((Cache*)c)->GetCacheSize();

@@ -1,4 +1,4 @@
-# sys-topo
+# sys-sage
 
 Library for capturing and manipulating hadrware topology of compute systems.
 

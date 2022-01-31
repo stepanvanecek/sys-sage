@@ -21,8 +21,8 @@ void Component::PrintAllDataPathsInSubtree()
     GetSubtreeNodeList(&subtreeList);
     for(auto it = std::begin(subtreeList); it != std::end(subtreeList); ++it)
     {
-        vector<DataPath*>* dp_in = (*it)->GetDataPaths(SYS_TOPO_DATAPATH_INCOMING);
-        vector<DataPath*>* dp_out = (*it)->GetDataPaths(SYS_TOPO_DATAPATH_OUTGOING);
+        vector<DataPath*>* dp_in = (*it)->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING);
+        vector<DataPath*>* dp_out = (*it)->GetDataPaths(SYS_SAGE_DATAPATH_OUTGOING);
         if(dp_in->size() > 0 || dp_out->size() > 0 )
         {
             cout << "DataPaths regarding Component (" << (*it)->GetComponentTypeStr() << ") id " << (*it)->GetId() << endl;
@@ -57,7 +57,7 @@ Component* Component::GetChild(int _id)
 
 int Component::GetNumThreads()
 {
-    if(componentType == SYS_TOPO_COMPONENT_THREAD)
+    if(componentType == SYS_SAGE_COMPONENT_THREAD)
         return 1;
     int numPu = 0;
     for(auto it = std::begin(children); it != std::end(children); ++it)
@@ -149,17 +149,17 @@ Component* Component::FindParentByType(int _componentType)
 
 void Component::AddDataPath(DataPath* p, int orientation)
 {
-    if(orientation == SYS_TOPO_DATAPATH_OUTGOING)
+    if(orientation == SYS_SAGE_DATAPATH_OUTGOING)
         dp_outgoing.push_back(p);
-    else if(orientation == SYS_TOPO_DATAPATH_INCOMING)
+    else if(orientation == SYS_SAGE_DATAPATH_INCOMING)
         dp_incoming.push_back(p);
 }
 
 vector<DataPath*>* Component::GetDataPaths(int orientation)
 {
-    if(orientation == SYS_TOPO_DATAPATH_INCOMING)
+    if(orientation == SYS_SAGE_DATAPATH_INCOMING)
         return &dp_incoming;
-    else if(orientation == SYS_TOPO_DATAPATH_OUTGOING)
+    else if(orientation == SYS_SAGE_DATAPATH_OUTGOING)
         return &dp_outgoing;
     else //TODO
         return NULL;
@@ -169,21 +169,21 @@ string Component::GetComponentTypeStr()
 {
     switch(componentType)
     {
-        case SYS_TOPO_COMPONENT_NONE:
+        case SYS_SAGE_COMPONENT_NONE:
             return "None";
-        case SYS_TOPO_COMPONENT_THREAD:
+        case SYS_SAGE_COMPONENT_THREAD:
             return "HW_thread";
-        case SYS_TOPO_COMPONENT_CORE:
+        case SYS_SAGE_COMPONENT_CORE:
             return "Core";
-        case SYS_TOPO_COMPONENT_CACHE:
+        case SYS_SAGE_COMPONENT_CACHE:
             return "Cache";
-        case SYS_TOPO_COMPONENT_NUMA:
+        case SYS_SAGE_COMPONENT_NUMA:
             return "NUMA";
-        case SYS_TOPO_COMPONENT_CHIP:
+        case SYS_SAGE_COMPONENT_CHIP:
             return "Chip";
-        case SYS_TOPO_COMPONENT_NODE:
+        case SYS_SAGE_COMPONENT_NODE:
             return "Node";
-        case SYS_TOPO_COMPONENT_TOPOLOGY:
+        case SYS_SAGE_COMPONENT_TOPOLOGY:
             return "Topology";
     }
     return "";
@@ -204,25 +204,32 @@ long long Cache::GetCacheSize(){return cache_size;}
 int Cache::GetCacheAssociativityWays(){return cache_associativity_ways;}
 
 Component::Component(int _id, string _name, int _componentType) : id(_id), name(_name), componentType(_componentType){}
-Component::Component() :Component(0,"unknown",SYS_TOPO_COMPONENT_NONE){}
+Component::Component() :Component(0,"unknown",SYS_SAGE_COMPONENT_NONE){}
 
-Topology::Topology():Component(0, "topology", SYS_TOPO_COMPONENT_TOPOLOGY){}
+Topology::Topology():Component(0, "topology", SYS_SAGE_COMPONENT_TOPOLOGY){}
 
-Node::Node(int _id):Component(id, "sys-topo node", SYS_TOPO_COMPONENT_NODE){}
+Node::Node(int _id):Component(id, "sys-sage node", SYS_SAGE_COMPONENT_NODE){}
 Node::Node():Node(0){}
 
-Chip::Chip(int _id):Component(_id, "Chip", SYS_TOPO_COMPONENT_CHIP){}
+Chip::Chip(int _id):Component(_id, "Chip", SYS_SAGE_COMPONENT_CHIP){}
 Chip::Chip():Chip(0){}
 
-Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Component(_id, "cache", SYS_TOPO_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity){}
+Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Component(_id, "cache", SYS_SAGE_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity){}
 Cache::Cache():Cache(0,0,0,0){}
 
-Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_TOPO_COMPONENT_NUMA), size(_size){}
+Subdivision::Subdivision(int _id): Component(_id, "Subdivision", SYS_SAGE_COMPONENT_SUBDIVISION){}
+Subdivision::Subdivision():Subdivision(0){}
+
+Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_SAGE_COMPONENT_NUMA), size(_size), type(SYS_SAGE_SUBDIVISION_TYPE_NUMA){}
 Numa::Numa(int _id):Numa(_id, 0){}
 Numa::Numa():Numa(0){}
 
-Core::Core(int _id):Component(_id, "Core", SYS_TOPO_COMPONENT_CORE){}
+Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_SAGE_COMPONENT_NUMA), size(_size){}
+Numa::Numa(int _id):Numa(_id, 0){}
+Numa::Numa():Numa(0){}
+
+Core::Core(int _id):Component(_id, "Core", SYS_SAGE_COMPONENT_CORE){}
 Core::Core():Core(0){}
 
-Thread::Thread(int _id):Component(_id, "Thread", SYS_TOPO_COMPONENT_THREAD){}
+Thread::Thread(int _id):Component(_id, "Thread", SYS_SAGE_COMPONENT_THREAD){}
 Thread::Thread():Thread(0){}

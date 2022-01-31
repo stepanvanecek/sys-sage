@@ -1,6 +1,6 @@
 
 
-link_libraries(sys-topo sys-topo)
+link_libraries(sys-sage sys-sage)
 include_directories(../src)
 
 find_package(OpenMP)
