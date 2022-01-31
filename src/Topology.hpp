@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "DataPath.hpp"
 
@@ -51,6 +52,7 @@ public:
     void GetSubtreeNodeList(vector<Component*>* outArray);
     vector<DataPath*>* GetDataPaths(int orientation);
     int GetTopologySize();
+    int GetTopologySize(std::set<DataPath*>* counted_dataPaths);
 
     void SetParent(Component* parent);
 
@@ -81,10 +83,22 @@ public:
     Node();
     Node(int _id);
 
-//#ifdef CAT_AWARE //defined in CAT_aware.cpp
+#ifdef CAT_AWARE //defined in CAT_aware.cpp
     int UpdateL3CATCoreCOS();
-//#endif
+#endif
 
+private:
+};
+
+class Memory : public Component {
+public:
+    Memory();
+private:
+};
+
+class Storage : public Component {
+public:
+    Storage();
 private:
 };
 
@@ -112,6 +126,7 @@ class Subdivision : public Component {
 public:
     Subdivision();
     Subdivision(int _id);
+    Subdivision(int _id, string _name, int _componentType);
 protected:
     int type;
 };

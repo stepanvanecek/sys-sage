@@ -8,6 +8,7 @@ DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, dou
 }
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency)
 {
+    //cout << "inserting datapath bw " << _bw << "src id " << _source->GetId() << " target id " << _target->GetId() <<  endl;
     DataPath* p = new DataPath(_source, _target, _oriented, _type, _bw, _latency);
     if(_oriented == SYS_SAGE_DATAPATH_BIDIRECTIONAL)
     {
@@ -17,7 +18,7 @@ DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int
         _target->AddDataPath(p, SYS_SAGE_DATAPATH_INCOMING);
         return p;//ok
     }
-    else if(_oriented == SYS_SAGE_DATAPATH_BIDIRECTIONAL)
+    else if(_oriented == SYS_SAGE_DATAPATH_ORIENTED)
     {
         _source->AddDataPath(p, SYS_SAGE_DATAPATH_OUTGOING);
         _target->AddDataPath(p, SYS_SAGE_DATAPATH_INCOMING);

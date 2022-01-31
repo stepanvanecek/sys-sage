@@ -15,7 +15,7 @@ set(HEADERS
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp)
 
-add_definitions(-DCAT_AWARE )
+#add_definitions(-DCAT_AWARE )
 
 add_library(sys-sage STATIC ${SOURCES} ${HEADERS})
 

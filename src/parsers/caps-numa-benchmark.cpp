@@ -47,6 +47,7 @@ int parseCapsNumaBenchmark(Component* rootComponent, string benchmarkPath, strin
         return 1;
     }
 
+    //cout << "caps-numa-benchmark parser: num entries: " << benchmarkData.size()-1 << endl;
     //parse each line as one DataPath, skip header
     for(unsigned int i=1; i<benchmarkData.size(); i++)
     {

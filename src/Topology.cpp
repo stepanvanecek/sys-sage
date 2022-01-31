@@ -189,6 +189,10 @@ string Component::GetComponentTypeStr()
     return "";
 }
 
+int Component::GetTopologySize()
+{
+    return GetTopologySize(NULL);
+}
 int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
 {
     if(counted_dataPaths == NULL)
@@ -237,19 +241,19 @@ int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
 
     int dataPathSize = 0;
     for(auto it = std::begin(dp_incoming); it != std::end(dp_incoming); ++it) {
-        if(!counted_dataPaths.contains((DataPath*)it)){
-            cout << "new datapath " << (DataPath*)it << endl;
+        if(!counted_dataPaths->contains((DataPath*)(*it))) {
+            //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
             dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
-            counted_dataPaths.insert((DataPath*)it);
+            counted_dataPaths->insert((DataPath*)(*it));
         }
     }
     for(auto it = std::begin(dp_outgoing); it != std::end(dp_outgoing); ++it) {
-        if(!counted_dataPaths.contains((DataPath*)it)){
-            cout << "new datapath " << (DataPath*)it << endl;
+        if(!counted_dataPaths->contains((DataPath*)(*it))){
+            //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
             dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
-            counted_dataPaths.insert((DataPath*)it);
+            counted_dataPaths->insert((DataPath*)(*it));
         }
     }
 
@@ -279,7 +283,11 @@ Component::Component() :Component(0,"unknown",SYS_SAGE_COMPONENT_NONE){}
 
 Topology::Topology():Component(0, "topology", SYS_SAGE_COMPONENT_TOPOLOGY){}
 
-Node::Node(int _id):Component(id, "sys-sage node", SYS_SAGE_COMPONENT_NODE){}
+Memory::Memory():Component(0, "Memory", SYS_SAGE_COMPONENT_MEMORY){}
+
+Storage::Storage():Component(0, "Storage", SYS_SAGE_COMPONENT_STORAGE){}
+
+Node::Node(int _id):Component(_id, "sys-sage node", SYS_SAGE_COMPONENT_NODE){}
 Node::Node():Node(0){}
 
 Chip::Chip(int _id):Component(_id, "Chip", SYS_SAGE_COMPONENT_CHIP){}
@@ -288,14 +296,11 @@ Chip::Chip():Chip(0){}
 Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Component(_id, "cache", SYS_SAGE_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity){}
 Cache::Cache():Cache(0,0,0,0){}
 
+Subdivision::Subdivision(int _id, string _name, int _componentType): Component(_id, _name, _componentType){}
 Subdivision::Subdivision(int _id): Component(_id, "Subdivision", SYS_SAGE_COMPONENT_SUBDIVISION){}
 Subdivision::Subdivision():Subdivision(0){}
 
-Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_SAGE_COMPONENT_NUMA), size(_size), type(SYS_SAGE_SUBDIVISION_TYPE_NUMA){}
-Numa::Numa(int _id):Numa(_id, 0){}
-Numa::Numa():Numa(0){}
-
-Numa::Numa(int _id, int _size):Component(_id, "Numa", SYS_SAGE_COMPONENT_NUMA), size(_size){}
+Numa::Numa(int _id, int _size):Subdivision(_id, "Numa", SYS_SAGE_COMPONENT_NUMA), size(_size){}
 Numa::Numa(int _id):Numa(_id, 0){}
 Numa::Numa():Numa(0){}
 

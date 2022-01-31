@@ -1,6 +1,6 @@
 //code written based on https://github.com/intel/intel-cmt-cat/blob/master/examples/c/CAT_MBA/allocation_app_l3cat.c
 
-//#ifdef CAT_AWARE
+#ifdef CAT_AWARE
 
 #include "Topology.hpp"
 
@@ -194,4 +194,4 @@ long long Thread::GetCATAwareL3Size()
     return -1;
 }
 
-//#endif
+#endif
