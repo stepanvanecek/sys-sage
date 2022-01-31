@@ -50,6 +50,7 @@ public:
     void GetSubcomponentsByType(vector<Component*>* outArray, int componentType);
     void GetSubtreeNodeList(vector<Component*>* outArray);
     vector<DataPath*>* GetDataPaths(int orientation);
+    int GetTopologySize();
 
     void SetParent(Component* parent);
 

@@ -189,6 +189,77 @@ string Component::GetComponentTypeStr()
     return "";
 }
 
+int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
+{
+    if(counted_dataPaths == NULL)
+        counted_dataPaths = new std::set<DataPath*>();
+
+    int component_size = 0;
+    switch(componentType)
+    {
+        case SYS_SAGE_COMPONENT_NONE:
+        break;
+        case SYS_SAGE_COMPONENT_THREAD:
+        component_size += sizeof(Thread);
+        break;
+        case SYS_SAGE_COMPONENT_CORE:
+        component_size += sizeof(Core);
+        break;
+        case SYS_SAGE_COMPONENT_CACHE:
+        component_size += sizeof(Cache);
+        break;
+        case SYS_SAGE_COMPONENT_SUBDIVISION:
+        component_size += sizeof(Subdivision);
+        break;
+        case SYS_SAGE_COMPONENT_NUMA:
+        component_size += sizeof(Numa);
+        break;
+        case SYS_SAGE_COMPONENT_CHIP:
+        component_size += sizeof(Chip);
+        break;
+        case SYS_SAGE_COMPONENT_MEMORY:
+        component_size += sizeof(Memory);
+        break;
+        case SYS_SAGE_COMPONENT_STORAGE:
+        component_size += sizeof(Storage);
+        break;
+        case SYS_SAGE_COMPONENT_NODE:
+        component_size += sizeof(Node);
+        break;
+        case SYS_SAGE_COMPONENT_TOPOLOGY:
+        component_size += sizeof(Topology);
+        break;
+    }
+    component_size += metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+    component_size += children.size()*sizeof(Component*);
+    component_size += dp_incoming.size()*sizeof(DataPath*);
+    component_size += dp_outgoing.size()*sizeof(DataPath*);
+
+    int dataPathSize = 0;
+    for(auto it = std::begin(dp_incoming); it != std::end(dp_incoming); ++it) {
+        if(!counted_dataPaths.contains((DataPath*)it)){
+            cout << "new datapath " << (DataPath*)it << endl;
+            dataPathSize += sizeof(DataPath);
+            dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+            counted_dataPaths.insert((DataPath*)it);
+        }
+    }
+    for(auto it = std::begin(dp_outgoing); it != std::end(dp_outgoing); ++it) {
+        if(!counted_dataPaths.contains((DataPath*)it)){
+            cout << "new datapath " << (DataPath*)it << endl;
+            dataPathSize += sizeof(DataPath);
+            dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+            counted_dataPaths.insert((DataPath*)it);
+        }
+    }
+
+    int subtreeSize = 0;
+    for(auto it = std::begin(children); it != std::end(children); ++it) {
+        subtreeSize += (*it)->GetTopologySize(counted_dataPaths);
+    }
+
+    return component_size + dataPathSize + subtreeSize;
+}
 
 Component* Component::GetParent(){return parent;}
 vector<Component*>* Component::GetChildren(){return &children;}
