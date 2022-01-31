@@ -13,12 +13,13 @@ endif()
 add_library(numa bw)
 
 add_executable(basic_usage basic_usage.cpp)
-add_executable(bw bw.cpp)
+#add_executable(bw bw.cpp)
 add_executable(matmul matmul.cpp)
 set_source_files_properties(matmul.cpp PROPERTIES COMPILE_FLAGS -O3)
 
 
 target_link_libraries(basic_usage hwloc )
 target_link_libraries(matmul hwloc pqos )
-target_link_libraries(bw -lnuma)
-install(TARGETS basic_usage bw matmul DESTINATION bin)
+#target_link_libraries(bw -lnuma)
+#install(TARGETS basic_usage bw matmul DESTINATION bin)
+install(TARGETS basic_usage matmul DESTINATION bin)

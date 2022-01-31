@@ -15,9 +15,9 @@ using namespace std::chrono;
 
 ////////////////////////////////////////////////////////////////////////
 //PARAMS TO SET
-#define REPEATS 1
-#define LATENCY_REPEATS 128
-#define MAIN_MEM_FRACTION 32//8             //allocate 1/x of main memory
+#define REPEATS 5
+#define LATENCY_REPEATS 256
+#define MAIN_MEM_FRACTION 8//8             //allocate 1/x of main memory
 #define CACHE_LINE_SZ 64
 #define TIMER_WARMUP 32
 #define TIMER_REPEATS 128
