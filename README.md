@@ -11,3 +11,4 @@ cmake -DCMAKE_INSTALL_PREFIX=../inst-dir ..
 make all install
 
 add_definitions(-DCAT_AWARE )
+-DBUILD_DATA_SOURCES=ON

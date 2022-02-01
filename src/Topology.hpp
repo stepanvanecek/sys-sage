@@ -51,8 +51,8 @@ public:
     void GetSubcomponentsByType(vector<Component*>* outArray, int componentType);
     void GetSubtreeNodeList(vector<Component*>* outArray);
     vector<DataPath*>* GetDataPaths(int orientation);
-    int GetTopologySize();
-    int GetTopologySize(std::set<DataPath*>* counted_dataPaths);
+    int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize);
+    int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize, std::set<DataPath*>* counted_dataPaths);
 
     void SetParent(Component* parent);
 

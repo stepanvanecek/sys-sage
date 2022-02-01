@@ -10,13 +10,12 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-add_executable(basic_usage basic_usage.cpp)
-add_executable(sys-sage-benchmarking sys-sage-benchmarking.cpp)
 
-install(TARGETS basic_usage sys-sage-benchmarking DESTINATION bin)
-install(DIRECTORY example_data DESTINATION bin)
+add_executable(hwloc-output hwloc-output.cpp)
 
-#add_library(numa bw)
+add_library(numa caps-numa-benchmark)
+add_executable(caps-numa-benchmark caps-numa-benchmark.cpp)
+
 #add_executable(bw bw.cpp)
 #add_executable(matmul matmul.cpp)
 #set_source_files_properties(matmul.cpp PROPERTIES COMPILE_FLAGS -O3)
@@ -26,3 +25,5 @@ install(DIRECTORY example_data DESTINATION bin)
 #target_link_libraries(matmul hwloc pqos )
 #target_link_libraries(bw -lnuma)
 #install(TARGETS basic_usage bw matmul DESTINATION bin)
+
+install(TARGETS hwloc-output caps-numa-benchmark DESTINATION bin)

@@ -189,11 +189,11 @@ string Component::GetComponentTypeStr()
     return "";
 }
 
-int Component::GetTopologySize()
+int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize)
 {
-    return GetTopologySize(NULL);
+    return GetTopologySize(out_component_size, out_dataPathSize, NULL);
 }
-int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
+int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize, std::set<DataPath*>* counted_dataPaths)
 {
     if(counted_dataPaths == NULL)
         counted_dataPaths = new std::set<DataPath*>();
@@ -236,10 +236,11 @@ int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
     }
     component_size += metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
     component_size += children.size()*sizeof(Component*);
-    component_size += dp_incoming.size()*sizeof(DataPath*);
-    component_size += dp_outgoing.size()*sizeof(DataPath*);
+    (*out_component_size) += component_size;
 
     int dataPathSize = 0;
+    dataPathSize += dp_incoming.size()*sizeof(DataPath*);
+    dataPathSize += dp_outgoing.size()*sizeof(DataPath*);
     for(auto it = std::begin(dp_incoming); it != std::end(dp_incoming); ++it) {
         if(!counted_dataPaths->contains((DataPath*)(*it))) {
             //cout << "new datapath " << (DataPath*)(*it) << endl;
@@ -256,10 +257,11 @@ int Component::GetTopologySize(std::set<DataPath*>* counted_dataPaths)
             counted_dataPaths->insert((DataPath*)(*it));
         }
     }
+    (*out_dataPathSize) += dataPathSize;
 
     int subtreeSize = 0;
     for(auto it = std::begin(children); it != std::end(children); ++it) {
-        subtreeSize += (*it)->GetTopologySize(counted_dataPaths);
+        subtreeSize += (*it)->GetTopologySize(out_component_size, out_dataPathSize, counted_dataPaths);
     }
 
     return component_size + dataPathSize + subtreeSize;
