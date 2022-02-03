@@ -17,10 +17,20 @@
 //intel cat
 #include <pqos.h>
 
+////////////////////////////////////////////////////////////////////////
+//PARAMS TO SET
+#define TIMER_WARMUP 32
+#define TIMER_REPEATS 128
+
+#define MEASURE_TIME
+
+////////////////////////////////////////////////////////////////////////
+
 using namespace std;
 using namespace std::chrono;
 
 int hwloc_dump_xml(const char *filename);
+uint64_t get_timer_overhead(int repeats, int warmup);
 
 double * A;
 double * B;
@@ -63,6 +73,9 @@ int main(int argc, char *argv[]) {
     const int n_dim = atoi(argv[2]);
     const int l_dim = atoi(argv[3]);
 
+    high_resolution_clock::time_point t_start, t_end;
+    uint64_t timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
+
     int tile_sz_bytes;
     if(argc == 5)
         tile_sz_bytes = atoi(argv[4]) * 0.9 /3 ;
@@ -99,13 +112,30 @@ int main(int argc, char *argv[]) {
 
         //////////////////////////////////// check CAT settings
 
+#ifdef MEASURE_TIME
+
+        t_start = high_resolution_clock::now();
+        n->UpdateL3CATCoreCOS();
+        t_end = high_resolution_clock::now();
+        uint64_t time_UpdateL3CATCoreCOS = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
+        //n->PrintAllDataPathsInSubtree();
+        t_start = high_resolution_clock::now();
+        long long available_L3_size = t->GetCATAwareL3Size();
+        t_end = high_resolution_clock::now();
+        uint64_t time_GetCATAwareL3Size = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
+        cout << "time_UpdateL3CATCoreCOS; " << time_UpdateL3CATCoreCOS << "; time_GetCATAwareL3Size; " << time_GetCATAwareL3Size << endl;
+#else
+
         n->UpdateL3CATCoreCOS();
         //n->PrintAllDataPathsInSubtree();
         long long available_L3_size = t->GetCATAwareL3Size();
+#endif
+
+
 
         ////////////////////////////////////
 
-        cout << "core " << myCpu << " available L3 cache size " << available_L3_size << endl;
+        cout << "core " << myCpu << ": available L3 cache size " << available_L3_size << endl;
 
         tile_sz_bytes = available_L3_size * 0.9 / 3 ; //3 martices, do not go over 90 % cache occupancy
 
@@ -141,7 +171,6 @@ int main(int argc, char *argv[]) {
     // cout << "m_dim/tl_sz" << m_dim/tl_sz << " n_dim/tl_sz" << n_dim/tl_sz << " l_dim/tl_sz" << l_dim/tl_sz << endl;
 
 
-    high_resolution_clock::time_point t_start, t_end;
     t_start = high_resolution_clock::now();
     for (int m = 0; m < m_dim; m += tl_sz) {
         //cout << "m" << m << endl;
@@ -169,6 +198,31 @@ int main(int argc, char *argv[]) {
 
 
     return 0;
+}
+
+uint64_t get_timer_overhead(int repeats, int warmup)
+{
+    high_resolution_clock::time_point t_start, t_end;
+    uint64_t time = 0;
+    //uint64_t time_arr[10];
+    for(int i=0; i<repeats+warmup; i++)
+    {
+        t_start = high_resolution_clock::now();
+        t_end = high_resolution_clock::now();
+        if(i>=warmup)
+            time += t_end.time_since_epoch().count()-t_start.time_since_epoch().count();
+        // if(i<10)
+        //     time_arr[i]=t_end.time_since_epoch().count()-t_start.time_since_epoch().count();
+
+    }
+    // for(int i=0; i<10; i++)
+    // {
+    //     cout << time_arr[i] << "; ";
+    // } //cout << endl;
+
+    time = time/repeats;
+
+    return time;
 }
 
 

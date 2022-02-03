@@ -8,8 +8,6 @@
 
 ////////////////////////////////////////////////////////////////////////
 //PARAMS TO SET
-#define REPEATS 5
-
 #define TIMER_WARMUP 32
 #define TIMER_REPEATS 128
 
@@ -50,10 +48,13 @@ int main(int argc, char *argv[])
     component_size=0;
     dataPathSize=0;
     cout << "HWLOC; num_elements; " << nodesList.size() << "; size[B]; " << n->GetTopologySize(&component_size, &dataPathSize) << "; component_size; " << component_size << "; dataPathSize; " << dataPathSize << endl;
-    cout << "time_parseHwlocOutput; " << time_parseHwlocOutput << "; time_GetSubtreeNodeList; " << time_GetSubtreeNodeList << "; components; " << nodesList.size() << endl;
 
     string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
-    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0)
+    t_start = high_resolution_clock::now();
+    ret = parseCapsNumaBenchmark((Component*)n, bwPath, ";");
+    t_end = high_resolution_clock::now();
+    uint64_t time_parseCapsNumaBenchmark = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
+    if(ret != 0)
     {
         cout << "failed parsing caps-numa-benchmark" << endl;
         return 1;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     dataPathSize=0;
     n->GetSubtreeNodeList(&nodesList);
     cout << "HWLOC+DATAPATH; num_elements; " << nodesList.size() << "; size[B]; " << n->GetTopologySize(&component_size, &dataPathSize) << "; component_size; " << component_size << "; dataPathSize; " << dataPathSize << endl;
-
+    cout << "time_parseHwlocOutput; " << time_parseHwlocOutput << "; time_parseCapsNumaBenchmark; " << time_parseCapsNumaBenchmark << "; time_GetSubtreeNodeList; " << time_GetSubtreeNodeList << "; components; " << nodesList.size() << endl;
     return 0;
 }
 
