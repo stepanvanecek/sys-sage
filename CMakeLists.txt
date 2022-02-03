@@ -31,7 +31,12 @@ link_libraries(${LIBXML2_LIBRARIES})
 
 ###Options:
 #add_definitions(-DCAT_AWARE )
+option(CAT_AWARE "Build and install functionality regarding Intel L3 CAT" OFF)
 option(BUILD_DATA_SOURCES "Build and install contents of data-sources folder" OFF)
+
+if(CAT_AWARE)
+    add_definitions(-DCAT_AWARE )
+endif()
 
 # Top-level build just includes subdirectories.
 add_subdirectory(src)

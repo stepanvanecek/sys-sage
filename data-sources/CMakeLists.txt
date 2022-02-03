@@ -12,9 +12,11 @@ endif()
 
 
 add_executable(hwloc-output hwloc-output.cpp)
+target_link_libraries(hwloc-output hwloc )
 
-add_library(numa caps-numa-benchmark)
+#add_library(numa caps-numa-benchmark)
 add_executable(caps-numa-benchmark caps-numa-benchmark.cpp)
+target_link_libraries(caps-numa-benchmark numa)
 
 #add_executable(bw bw.cpp)
 #add_executable(matmul matmul.cpp)
@@ -23,7 +25,6 @@ add_executable(caps-numa-benchmark caps-numa-benchmark.cpp)
 
 #target_link_libraries(basic_usage hwloc )
 #target_link_libraries(matmul hwloc pqos )
-#target_link_libraries(bw -lnuma)
 #install(TARGETS basic_usage bw matmul DESTINATION bin)
 
 install(TARGETS hwloc-output caps-numa-benchmark DESTINATION bin)

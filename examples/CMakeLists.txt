@@ -16,13 +16,16 @@ add_executable(sys-sage-benchmarking sys-sage-benchmarking.cpp)
 install(TARGETS basic_usage sys-sage-benchmarking DESTINATION bin)
 install(DIRECTORY example_data DESTINATION bin)
 
+if(CAT_AWARE)
+    add_executable(matmul matmul.cpp)
+    set_source_files_properties(matmul.cpp PROPERTIES COMPILE_FLAGS -O3)
+    target_link_libraries(matmul hwloc pqos )
+    install(TARGETS matmul DESTINATION bin)
+endif()
+
 #add_library(numa bw)
 #add_executable(bw bw.cpp)
-#add_executable(matmul matmul.cpp)
-#set_source_files_properties(matmul.cpp PROPERTIES COMPILE_FLAGS -O3)
 
 
 #target_link_libraries(basic_usage hwloc )
-#target_link_libraries(matmul hwloc pqos )
 #target_link_libraries(bw -lnuma)
-#install(TARGETS basic_usage bw matmul DESTINATION bin)
