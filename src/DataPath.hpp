@@ -37,6 +37,10 @@ public:
     Component* GetSource();
     Component* GetTarget();
 
+    double GetBw();
+    double GetLatency();
+    int GetDpType();
+
     void Print();
     map<string,void*> metadata;
 private:

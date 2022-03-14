@@ -38,11 +38,10 @@ public:
     int GetComponentType();
     string GetComponentTypeStr();
     int GetId();
-
     vector<Component*>* GetChildren();
-
     Component* GetParent();
     Component* GetChild(int _id);
+
     Component* FindSubcomponentById(int id, int componentType);
     Component* FindParentByType(int componentType);
     int GetNumThreads();
