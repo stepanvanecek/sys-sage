@@ -20,7 +20,7 @@ set(HEADERS
 add_library(sys-sage STATIC ${SOURCES} ${HEADERS})
 
 set_target_properties(sys-sage PROPERTIES
-    PUBLIC_HEADER "sys-sage.hpp;parsers/hwloc.hpp;Topology.hpp"
+    PUBLIC_HEADER "sys-sage.hpp;Topology.hpp;DataPath.hpp;parsers/hwloc.hpp;parsers/caps-numa-benchmark.hpp"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
 )
