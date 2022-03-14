@@ -27,12 +27,15 @@ int main(int argc, char *argv[])
     unsigned component_size=0, dataPathSize=0;
     cout << "EMPTY; num_elements; " << nodesList.size() << "; size[B]; " << n->GetTopologySize(&component_size, &dataPathSize) << "; component_size; " << component_size << "; dataPathSize; " << dataPathSize << endl;
 
+    std::string path_prefix(argv[0]);
+    std::size_t found = path_prefix.find_last_of("/\\");
+    path_prefix=path_prefix.substr(0,found) + "/";
     string topoPath = "example_data/skylake_hwloc.xml";
 
     high_resolution_clock::time_point t_start, t_end;
     uint64_t timer_overhead = get_timer_overhead(TIMER_REPEATS, TIMER_WARMUP);
     t_start = high_resolution_clock::now();
-    int ret = parseHwlocOutput(n, topoPath);
+    int ret = parseHwlocOutput(n, path_prefix+topoPath);
     t_end = high_resolution_clock::now();
     uint64_t time_parseHwlocOutput = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
     if(ret != 0) {//adds topo to a next node
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
 
     string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
     t_start = high_resolution_clock::now();
-    ret = parseCapsNumaBenchmark((Component*)n, bwPath, ";");
+    ret = parseCapsNumaBenchmark((Component*)n, path_prefix+bwPath, ";");
     t_end = high_resolution_clock::now();
     uint64_t time_parseCapsNumaBenchmark = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
     if(ret != 0)

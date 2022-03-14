@@ -38,9 +38,6 @@ public:
     Component* GetTarget();
     double GetBw();
     double GetLatency();
-
-    double GetBw();
-    double GetLatency();
     int GetDpType();
 
     void Print();

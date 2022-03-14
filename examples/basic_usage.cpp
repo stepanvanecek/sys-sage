@@ -15,8 +15,11 @@ int main(int argc, char *argv[])
     topo->InsertChild((Component*)n);
 
     cout << "---- start parseHwlocOutput" << endl;
+    std::string path_prefix(argv[0]);
+    std::size_t found = path_prefix.find_last_of("/\\");
+    path_prefix=path_prefix.substr(0,found) + "/";
     string topoPath = "example_data/skylake_hwloc.xml";
-    if(parseHwlocOutput(n, topoPath) != 0) //adds topo to a next node
+    if(parseHwlocOutput(n, path_prefix+topoPath) != 0) //adds topo to a next node
     {   //parsing failed -> try creating new hwloc output and parsing it
         // hwloc_dump_xml("tmp_hwloc.xml");
         // if(parseHwlocOutput(n, "tmp_hwloc.xml") != 0){
@@ -34,8 +37,8 @@ int main(int argc, char *argv[])
 
 
     cout << "---- start parseCapsNumaBenchmark" << endl;
-    string bwPath = "example_data/skylake_caps_numa_benchmark.out";
-    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0)
+    string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
+    if(parseCapsNumaBenchmark((Component*)n, path_prefix+bwPath, ";") != 0)
     {
         cout << "failed parsing caps-numa-benchmark" << endl;
         return 1;
