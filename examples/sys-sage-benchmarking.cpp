@@ -66,6 +66,24 @@ int main(int argc, char *argv[])
     n->GetSubtreeNodeList(&nodesList);
     cout << "HWLOC+DATAPATH; num_elements; " << nodesList.size() << "; size[B]; " << n->GetTopologySize(&component_size, &dataPathSize) << "; component_size; " << component_size << "; dataPathSize; " << dataPathSize << endl;
     cout << "time_parseHwlocOutput; " << time_parseHwlocOutput << "; time_parseCapsNumaBenchmark; " << time_parseCapsNumaBenchmark << "; time_GetSubtreeNodeList; " << time_GetSubtreeNodeList << "; components; " << nodesList.size() << endl;
+
+    //for NUMA 0 get NUMA with min BW
+    Numa * numa = (Numa*)n->FindSubcomponentById(0, SYS_SAGE_COMPONENT_NUMA);
+    if(numa==NULL){ cerr << "numa 0 not found in sys-sage" << endl; return 1;}
+    unsigned int max_bw = 0;
+    Component* max_bw_component = NULL;
+    t_start = high_resolution_clock::now();
+    vector<DataPath*>* dp = numa->GetDataPaths(SYS_SAGE_DATAPATH_OUTGOING);
+    for(auto it = std::begin(*dp); it != std::end(*dp); ++it) {
+        if( (*it)->GetBw() > max_bw ){
+            max_bw = (*it)->GetBw();
+            max_bw_component = (*it)->GetTarget();
+        }
+    }
+    t_end = high_resolution_clock::now();
+    uint64_t time_getNumaMaxBw = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
+    cout << "time_getNumaMaxBw; " << time_getNumaMaxBw << "; bw; " << max_bw << "; ComponentId; " << max_bw_component->GetId() << endl;
+
     return 0;
 }
 
