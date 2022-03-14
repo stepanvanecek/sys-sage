@@ -36,6 +36,8 @@ public:
 
     Component* GetSource();
     Component* GetTarget();
+    double GetBw();
+    double GetLatency();
 
     void Print();
     map<string,void*> metadata;

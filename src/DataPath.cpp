@@ -33,6 +33,8 @@ DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int
 
 Component * DataPath::GetSource() {return source;}
 Component * DataPath::GetTarget() {return target;}
+double Component::GetLatency() {return latency;}
+double Component::GetBw() {return bw;}
 
 DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type): source(_source), target(_target), oriented(_oriented), dp_type(_type) {}
 DataPath::DataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency): source(_source), target(_target), oriented(_oriented), dp_type(SYS_SAGE_DATAPATH_TYPE_NONE), bw(_bw), latency(_latency) {}
