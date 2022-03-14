@@ -160,6 +160,9 @@ if(round == 0) cerr << "    numa" << n << ": mem_sz[mb] "<< numa[n].numa_mem_sz/
 
 int main(int argc, char *argv[])
 {
+    cerr << "usage: ./caps-numa-benchmark > output_file.csv     (otherwise, stdout gets mixed with stderr debug ouput)" << endl;
+    cerr << "  params: MEASURE_EACH_CPU, REPEATS, LATENCY_REPEATS, MAIN_MEM_FRACTION, CACHE_LINE_SZ, TIMER_WARMUP, TIMER_REPEATS can be set only in the source code (will be improved)" << endl;
+
     cpu_set_t set;
     unsigned int this_cpu, this_numa;
 
