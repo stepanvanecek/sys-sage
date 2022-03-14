@@ -31,15 +31,19 @@ public:
     Component();
     Component(int,string,int);
     void InsertChild(Component * child);
-    void PrintSubtree(int level);
+    void SetParent(Component* parent);
+
+    void PrintSubtree();
+    void PrintSubtree(int level); //TODO move to protected
     void PrintAllDataPathsInSubtree();
 
     string GetName();
+    int GetId();
     int GetComponentType();
     string GetComponentTypeStr();
-    int GetId();
     vector<Component*>* GetChildren();
     Component* GetParent();
+
     Component* GetChild(int _id);
 
     Component* FindSubcomponentById(int id, int componentType);
@@ -49,15 +53,16 @@ public:
     void GetComponentsNLevelsDeeper(vector<Component*>* outArray, int depth);
     void GetSubcomponentsByType(vector<Component*>* outArray, int componentType);
     void GetSubtreeNodeList(vector<Component*>* outArray);
+
     vector<DataPath*>* GetDataPaths(int orientation);
+    void AddDataPath(DataPath* p, int orientation);
+
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize);
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize, std::set<DataPath*>* counted_dataPaths);
 
-    void SetParent(Component* parent);
 
-    void AddDataPath(DataPath* p, int orientation);
 
-    map<string,void*> metadata;
+    map<string,void*> metadata;//TODO rename to 'attributes'
 protected:
     int id;
     int depth;
@@ -151,9 +156,9 @@ class Thread : public Component {
 public:
     Thread();
     Thread(int _id);
-    //#ifdef CAT_AWARE //defined in CAT_aware.cpp
+    #ifdef CAT_AWARE //defined in CAT_aware.cpp
         long long GetCATAwareL3Size();
-    //#endif
+    #endif
 private:
 };
 

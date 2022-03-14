@@ -36,6 +36,8 @@ public:
 
     Component* GetSource();
     Component* GetTarget();
+    double GetBw();
+    double GetLatency();
 
     double GetBw();
     double GetLatency();

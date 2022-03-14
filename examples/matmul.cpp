@@ -15,14 +15,14 @@
 #include <hwloc.h>
 
 //intel cat
+#ifdef CAT_AWARE
 #include <pqos.h>
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 //PARAMS TO SET
 #define TIMER_WARMUP 32
 #define TIMER_REPEATS 128
-
-#define MEASURE_TIME
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -97,42 +97,27 @@ int main(int argc, char *argv[]) {
         }
 
         //////////////////////////////////// whole L3 size
+#ifndef CAT_AWARE
 
-        // Component * c = (Component*)t;
-        // while(c->GetParent() != NULL){
-        //     //go up until L3 found
-        //     c = c->GetParent();
-        //     if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
-        //         break;
-        // };
-        // if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
-        //     cerr << "L3 cache not found" << endl; return 1;
-        // }
-        // long long available_L3_size = ((Cache*)c)->GetCacheSize();
+        Component * c = (Component*)t;
+        while(c->GetParent() != NULL){
+            //go up until L3 found
+            c = c->GetParent();
+            if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
+                break;
+        };
+        if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
+            cerr << "L3 cache not found" << endl; return 1;
+        }
+        long long available_L3_size = ((Cache*)c)->GetCacheSize();
 
         //////////////////////////////////// check CAT settings
-
-#ifdef MEASURE_TIME
-
-        t_start = high_resolution_clock::now();
-        n->UpdateL3CATCoreCOS();
-        t_end = high_resolution_clock::now();
-        uint64_t time_UpdateL3CATCoreCOS = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
-        //n->PrintAllDataPathsInSubtree();
-        t_start = high_resolution_clock::now();
-        long long available_L3_size = t->GetCATAwareL3Size();
-        t_end = high_resolution_clock::now();
-        uint64_t time_GetCATAwareL3Size = t_end.time_since_epoch().count()-t_start.time_since_epoch().count()-timer_overhead;
-        cout << "time_UpdateL3CATCoreCOS; " << time_UpdateL3CATCoreCOS << "; time_GetCATAwareL3Size; " << time_GetCATAwareL3Size << endl;
 #else
 
         n->UpdateL3CATCoreCOS();
         //n->PrintAllDataPathsInSubtree();
         long long available_L3_size = t->GetCATAwareL3Size();
 #endif
-
-
-
         ////////////////////////////////////
 
         cout << "core " << myCpu << ": available L3 cache size " << available_L3_size << endl;

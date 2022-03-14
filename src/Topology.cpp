@@ -1,5 +1,6 @@
 #include "Topology.hpp"
 
+void Component::PrintSubtree() { PrintSubtree(0); }
 void Component::PrintSubtree(int level)
 {
     //cout << "---PrintSubtree---" << endl;
@@ -270,6 +271,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
 Component* Component::GetParent(){return parent;}
 vector<Component*>* Component::GetChildren(){return &children;}
 int Component::GetComponentType(){return componentType;}
+
 string Component::GetName(){return name;}
 int Component::GetId(){return id;}
 
