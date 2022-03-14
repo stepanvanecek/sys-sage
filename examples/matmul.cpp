@@ -15,7 +15,9 @@
 #include <hwloc.h>
 
 //intel cat
+#ifdef CAT_AWARE
 #include <pqos.h>
+#endif
 
 using namespace std;
 using namespace std::chrono;
@@ -84,25 +86,26 @@ int main(int argc, char *argv[]) {
         }
 
         //////////////////////////////////// whole L3 size
+#ifndef CAT_AWARE
 
-        // Component * c = (Component*)t;
-        // while(c->GetParent() != NULL){
-        //     //go up until L3 found
-        //     c = c->GetParent();
-        //     if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
-        //         break;
-        // };
-        // if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
-        //     cerr << "L3 cache not found" << endl; return 1;
-        // }
-        // long long available_L3_size = ((Cache*)c)->GetCacheSize();
+        Component * c = (Component*)t;
+        while(c->GetParent() != NULL){
+            //go up until L3 found
+            c = c->GetParent();
+            if(c->GetComponentType() == SYS_SAGE_COMPONENT_CACHE && ((Cache*)c)->GetCacheLevel() == 3)
+                break;
+        };
+        if(c==NULL || c->GetComponentType() != SYS_SAGE_COMPONENT_CACHE){
+            cerr << "L3 cache not found" << endl; return 1;
+        }
+        long long available_L3_size = ((Cache*)c)->GetCacheSize();
 
         //////////////////////////////////// check CAT settings
-
+#else
         n->UpdateL3CATCoreCOS();
         //n->PrintAllDataPathsInSubtree();
         long long available_L3_size = t->GetCATAwareL3Size();
-
+#endif
         ////////////////////////////////////
 
         cout << "core " << myCpu << " available L3 cache size " << available_L3_size << endl;
