@@ -243,7 +243,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
     dataPathSize += dp_incoming.size()*sizeof(DataPath*);
     dataPathSize += dp_outgoing.size()*sizeof(DataPath*);
     for(auto it = std::begin(dp_incoming); it != std::end(dp_incoming); ++it) {
-        if(!counted_dataPaths->contains((DataPath*)(*it))) {
+        if(!counted_dataPaths->count((DataPath*)(*it))) {
             //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
             dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
@@ -251,7 +251,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
         }
     }
     for(auto it = std::begin(dp_outgoing); it != std::end(dp_outgoing); ++it) {
-        if(!counted_dataPaths->contains((DataPath*)(*it))){
+        if(!counted_dataPaths->count((DataPath*)(*it))){
             //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
             dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
