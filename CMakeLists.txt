@@ -9,12 +9,14 @@ endmacro()
 
 
 cmake_policy(SET CMP0048 NEW)
-project(sys-sage VERSION 0.0.0 LANGUAGES C CXX )
+project(sys-sage VERSION 0.1.2 LANGUAGES C CXX )
+
 
 cmake_minimum_required(VERSION 3.12.0)
 #cmake_minimum_required(VERSION 3.10.0)
+set (CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS " -Wall -O0")
+set (CMAKE_CXX_FLAGS " -Wall -O0")
 
 find_package(LibXml2 REQUIRED) # Use pkg-config via the LibXml2 find-module
 
