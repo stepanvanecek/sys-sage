@@ -7,6 +7,8 @@
 #include <set>
 
 #include "DataPath.hpp"
+#include <libxml/parser.h>
+
 
 #define SYS_SAGE_COMPONENT_NONE 1
 #define SYS_SAGE_COMPONENT_THREAD 2
@@ -60,7 +62,7 @@ public:
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize);
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize, std::set<DataPath*>* counted_dataPaths);
 
-
+    xmlNodePtr CreateXmlSubtree();
 
     map<string,void*> metadata;//TODO rename to 'attributes'
 protected:
@@ -120,6 +122,8 @@ public:
     int GetCacheLevel();
     long long GetCacheSize();
     int GetCacheAssociativityWays();
+
+    xmlNodePtr CreateXmlSubtree();
 private:
     int cache_level;
     long long cache_size;
@@ -131,6 +135,8 @@ public:
     Subdivision();
     Subdivision(int _id);
     Subdivision(int _id, string _name, int _componentType);
+
+    xmlNodePtr CreateXmlSubtree();
 protected:
     int type;
 };
@@ -141,6 +147,8 @@ public:
     Numa(int _id);
     Numa(int _id, int _size);
     int GetSize();
+
+    xmlNodePtr CreateXmlSubtree();
 private:
     long long size;
 };

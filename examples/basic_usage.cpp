@@ -49,5 +49,8 @@ int main(int argc, char *argv[])
     n->PrintAllDataPathsInSubtree();
     cout << "----------------                        ----------------" << endl;
     remove("tmp_hwloc.xml");
+
+    exportToXml(topo, "test.xml");
+
     return 0;
 }

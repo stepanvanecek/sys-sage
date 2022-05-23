@@ -5,6 +5,7 @@ set(SOURCES
     Topology.cpp
     DataPath.cpp
     CAT_aware.cpp
+    xml_dump.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp)
 
@@ -12,13 +13,14 @@ set(HEADERS
     sys-sage.hpp
     Topology.hpp
     DataPath.hpp
+    xml_dump.hpp
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp)
 
 add_library(sys-sage STATIC ${SOURCES} ${HEADERS})
 
 set_target_properties(sys-sage PROPERTIES
-    PUBLIC_HEADER "sys-sage.hpp;Topology.hpp;DataPath.hpp;parsers/hwloc.hpp;parsers/caps-numa-benchmark.hpp"
+    PUBLIC_HEADER "sys-sage.hpp;Topology.hpp;DataPath.hpp;xml_dump.hpp;parsers/hwloc.hpp;parsers/caps-numa-benchmark.hpp"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
 )
