@@ -235,7 +235,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
         component_size += sizeof(Topology);
         break;
     }
-    component_size += metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+    component_size += attrib.size()*(sizeof(string)+sizeof(void*)); //TODO improve
     component_size += children.size()*sizeof(Component*);
     (*out_component_size) += component_size;
 
@@ -246,7 +246,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
         if(!counted_dataPaths->count((DataPath*)(*it))) {
             //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
-            dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+            dataPathSize += (*it)->attrib.size()*(sizeof(string)+sizeof(void*)); //TODO improve
             counted_dataPaths->insert((DataPath*)(*it));
         }
     }
@@ -254,7 +254,7 @@ int Component::GetTopologySize(unsigned * out_component_size, unsigned * out_dat
         if(!counted_dataPaths->count((DataPath*)(*it))){
             //cout << "new datapath " << (DataPath*)(*it) << endl;
             dataPathSize += sizeof(DataPath);
-            dataPathSize += (*it)->metadata.size()*(sizeof(string)+sizeof(void*)); //TODO improve
+            dataPathSize += (*it)->attrib.size()*(sizeof(string)+sizeof(void*)); //TODO improve
             counted_dataPaths->insert((DataPath*)(*it));
         }
     }

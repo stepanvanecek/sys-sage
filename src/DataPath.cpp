@@ -43,10 +43,10 @@ DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _t
 void DataPath::Print()
 {
     cout << "DataPath src: (" << source->GetComponentTypeStr() << ") id " << source->GetId() << ", target: (" << target->GetComponentTypeStr() << ") id " << target->GetId() << " - bw: " << bw << ", latency: " << latency;
-    if(!metadata.empty())
+    if(!attrib.empty())
     {
-        cout << " - metadata: ";
-        for (const auto& n : metadata) {
+        cout << " - attrib: ";
+        for (const auto& n : attrib) {
             uint64_t* val = (uint64_t*)n.second;
             std::cout << n.first << " = " << *val << "; ";
         }

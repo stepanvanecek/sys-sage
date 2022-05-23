@@ -154,8 +154,8 @@ int Node::UpdateL3CATCoreCOS(){
 
             //add DataPath to thread and L3
             DataPath* d = NewDataPath(thread, c, SYS_SAGE_DATAPATH_BIDIRECTIONAL, SYS_SAGE_DATAPATH_TYPE_L3CAT);
-            d->metadata.insert({"CATcos", (void*)cos});
-            d->metadata.insert({"CATL3mask", (void*)mask});
+            d->attrib.insert({"CATcos", (void*)cos});
+            d->attrib.insert({"CATL3mask", (void*)mask});
         }
     }
     return 1;
@@ -163,12 +163,12 @@ int Node::UpdateL3CATCoreCOS(){
 
 long long Thread::GetCATAwareL3Size()
 {
-    //look for dp_outgoing where metadata contains "CATL3mask"
+    //look for dp_outgoing where attrib contains "CATL3mask"
     for(auto it = std::begin(dp_outgoing); it != std::end(dp_outgoing); ++it)
     {
         DataPath* dp = *it;
-        auto search = dp->metadata.find("CATL3mask");
-        if (search == dp->metadata.end()) {
+        auto search = dp->attrib.find("CATL3mask");
+        if (search == dp->attrib.end()) {
             continue;
         }
         uint64_t* mask = (uint64_t*)search->second;

@@ -41,7 +41,7 @@ public:
     int GetDpType();
 
     void Print();
-    map<string,void*> metadata;
+    map<string,void*> attrib;
 private:
     Component * source;
     Component * target;

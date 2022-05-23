@@ -64,7 +64,7 @@ public:
 
     xmlNodePtr CreateXmlSubtree();
 
-    map<string,void*> metadata;//TODO rename to 'attributes'
+    map<string,void*> attrib;//TODO rename to 'attributes'
 protected:
     int id;
     int depth;

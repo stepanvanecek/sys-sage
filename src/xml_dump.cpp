@@ -63,6 +63,8 @@ int exportToXml(Component* root, string path)
 
     xmlDocSetRootElement(doc, components_root);
 
+    xmlSaveFormatFileEnc(path=="" ? "-" : path.c_str(), doc, "UTF-8", 1);
+
     /*
      * Dump the document to a buffer and print it
      * for demonstration purposes.
