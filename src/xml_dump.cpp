@@ -1,3 +1,6 @@
+#include <sstream>
+
+
 #include "xml_dump.hpp"
 #include <libxml/parser.h>
 
@@ -28,9 +31,11 @@ xmlNodePtr Numa::CreateXmlSubtree()
 xmlNodePtr Component::CreateXmlSubtree()
 {
     xmlNodePtr n = xmlNewNode(NULL, (const unsigned char *)GetComponentTypeStr().c_str());
-    xmlNewProp(n, (const unsigned char *)"name", (const unsigned char *)(std::to_string(id)).c_str());
+    xmlNewProp(n, (const unsigned char *)"id", (const unsigned char *)(std::to_string(id)).c_str());
     xmlNewProp(n, (const unsigned char *)"name", (const unsigned char *)name.c_str());
-
+    std::ostringstream addr;
+    addr << this;
+    xmlNewProp(n, (const unsigned char *)"addr", (const unsigned char *)(addr.str().c_str()));
 
     for(auto it = begin(children); it != end(children); ++it)
     {
@@ -52,32 +57,51 @@ xmlNodePtr Component::CreateXmlSubtree()
 
 int exportToXml(Component* root, string path)
 {
-    xmlNodePtr components_root = xmlNewNode(NULL, BAD_CAST "components");
-    xmlNodeSetContent(components_root, BAD_CAST "content");
-
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+
+    xmlNodePtr sys_sage_root = xmlNewNode(NULL, BAD_CAST "sys-sage");
+    xmlNodePtr components_root = xmlNewNode(NULL, BAD_CAST "components");
+    xmlNodePtr data_paths_root = xmlNewNode(NULL, BAD_CAST "data-paths");
+    //xmlNodeSetContent(components_root, BAD_CAST "content");
+
+    xmlDocSetRootElement(doc, sys_sage_root);
+    xmlAddChild(sys_sage_root, components_root);
+    xmlAddChild(sys_sage_root, data_paths_root);
 
     xmlNodePtr n = root->CreateXmlSubtree();
     xmlAddChild(components_root, n);
 
+    //scan all Components for their DataPaths
+    vector<Component*> components;
+    root->GetSubtreeNodeList(&components);
+    std::cout << "comp " << components.size() << std::endl;
+    for(Component* cPtr : components)
+    {
+        vector<DataPath*>* dpList = cPtr->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING);
+        vector<DataPath*> printed_dp;
 
-    xmlDocSetRootElement(doc, components_root);
+        for(DataPath* dpPtr : *dpList)
+        {
+            //check if previously processed
+            if (std::find(printed_dp.begin(), printed_dp.end(), dpPtr) == printed_dp.end())
+            {
+                xmlNodePtr dp_n = xmlNewNode(NULL, BAD_CAST "datapath");
+                std::ostringstream src_addr;
+                src_addr << dpPtr->GetSource();
+                std::ostringstream target_addr;
+                target_addr << dpPtr->GetTarget();
+                xmlNewProp(dp_n, (const unsigned char *)"source", (const unsigned char *)(src_addr.str().c_str()));
+                xmlNewProp(dp_n, (const unsigned char *)"target", (const unsigned char *)(target_addr.str().c_str()));
+                xmlNewProp(dp_n, (const unsigned char *)"bw", (const unsigned char *)(std::to_string(dpPtr->GetBw())).c_str());
+                xmlNewProp(dp_n, (const unsigned char *)"latency", (const unsigned char *)(std::to_string(dpPtr->GetLatency())).c_str());
+                xmlAddChild(data_paths_root, dp_n);
+                printed_dp.push_back(dpPtr);
+            }
+        }
+    }
 
     xmlSaveFormatFileEnc(path=="" ? "-" : path.c_str(), doc, "UTF-8", 1);
 
-    /*
-     * Dump the document to a buffer and print it
-     * for demonstration purposes.
-     */
-    xmlChar *xmlbuff;
-    int buffersize;
-    xmlDocDumpFormatMemory(doc, &xmlbuff, &buffersize, 1);
-    printf("%s", (char *) xmlbuff);
-
-    /*
-     * Free associated memory.
-     */
-    xmlFree(xmlbuff);
     xmlFreeDoc(doc);
 
     return 0;
