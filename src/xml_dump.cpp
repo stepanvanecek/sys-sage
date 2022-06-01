@@ -1,6 +1,5 @@
 #include <sstream>
 
-
 #include "xml_dump.hpp"
 #include <libxml/parser.h>
 
@@ -103,6 +102,7 @@ int exportToXml(Component* root, string path)
     xmlSaveFormatFileEnc(path=="" ? "-" : path.c_str(), doc, "UTF-8", 1);
 
     xmlFreeDoc(doc);
+    xmlCleanupParser();
 
     return 0;
 }

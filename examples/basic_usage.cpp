@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
     cout << "----------------                        ----------------" << endl;
     remove("tmp_hwloc.xml");
 
-    exportToXml(topo, "test.xml");
+    string output_name = "sys-sage_sample_output.xml";
+    cout << "-------- Exporting as XML to " << output_name << " --------" << endl;
+    exportToXml(topo, output_name);
 
     return 0;
 }
