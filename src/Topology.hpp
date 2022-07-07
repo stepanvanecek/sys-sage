@@ -58,13 +58,14 @@ public:
 
     vector<DataPath*>* GetDataPaths(int orientation);
     void AddDataPath(DataPath* p, int orientation);
+    DataPath* GetDpByType(int dp_type, int orientation);
 
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize);
     int GetTopologySize(unsigned * out_component_size, unsigned * out_dataPathSize, std::set<DataPath*>* counted_dataPaths);
 
     xmlNodePtr CreateXmlSubtree();
 
-    map<string,void*> attrib;//TODO rename to 'attributes'
+    map<string,void*> attrib;
 protected:
     int id;
     int depth;

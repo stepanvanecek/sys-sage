@@ -156,6 +156,28 @@ void Component::AddDataPath(DataPath* p, int orientation)
         dp_incoming.push_back(p);
 }
 
+DataPath* Component::GetDpByType(int dp_type, int orientation)
+{
+    if(orientation == SYS_SAGE_DATAPATH_OUTGOING)
+    {
+        for(auto it = std::begin(dp_outgoing); it != std::end(dp_outgoing); ++it)
+        {
+            if((*it)->GetDpType() == dp_type)
+                return *it;
+        }
+    }
+    else if(orientation == SYS_SAGE_DATAPATH_INCOMING)
+    {
+        for(auto it = std::begin(dp_incoming); it != std::end(dp_incoming); ++it)
+        {
+            if((*it)->GetDpType() == dp_type)
+                return *it;
+        }
+    }
+    return NULL;
+}
+
+
 vector<DataPath*>* Component::GetDataPaths(int orientation)
 {
     if(orientation == SYS_SAGE_DATAPATH_INCOMING)
