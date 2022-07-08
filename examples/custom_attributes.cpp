@@ -9,6 +9,8 @@ public:
     int frequency;
 };
 
+// define your own XML output function, where you define how your custom attribs will get printed.
+// key is the attrib key, value is the void* to the value, and ret_value_str is an output parameter where you save the output string to put to the XML.
 int print_my_attribs(string key, void* value, string* ret_value_str)
 {
     if(!key.compare("codename") || !key.compare("info"))
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
 {
     //first, populate sys-sage with some data
     Node* n = new Node(1);
-    cout << "---- start parse example input" << endl;
+    std::cout << "---- start parse example input" << std::endl;
     std::string path_prefix(argv[0]);
     std::size_t found = path_prefix.find_last_of("/\\");
     path_prefix=path_prefix.substr(0,found) + "/";
@@ -49,7 +51,7 @@ int main(int argc, char *argv[])
         std::cout << "failed parsing caps-numa-benchmark in path " << path_prefix+bwPath << std::endl;
         return 1;
     }
-    cout << "---- end parse example input" << endl;
+    std::cout << "---- end parse example input" << std::endl;
 
     //let's add a few custom attributes
     string codename = "marsupial";
@@ -75,7 +77,7 @@ int main(int argc, char *argv[])
 
     //export to xml
     string output_name = "sys-sage_custom_attributes.xml";
-    cout << "-------- Exporting as XML to " << output_name << " --------" << endl;
+    std::cout << "-------- Exporting as XML to " << output_name << std::endl;
     exportToXml(n, output_name, print_my_attribs);
 
     return 0;
