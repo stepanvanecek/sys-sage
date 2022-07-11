@@ -1,13 +1,13 @@
-
-
 #include <iostream>
-//#include <hwloc.h>
+#include <filesystem>
 
 #include "sys-sage.hpp"
 
 
 int main(int argc, char *argv[])
 {
+    std::cout << "Current path is " << std::filesystem::current_path() << '\n'; // (1)
+
     //create root Topology and one node
     Topology* topo = new Topology();
     Node* n = new Node(1);
