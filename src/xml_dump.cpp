@@ -1,10 +1,20 @@
 #include <sstream>
-#include <functional>
 
 #include "xml_dump.hpp"
 #include <libxml/parser.h>
 
 std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL;
+
+//for a specific key, return the value as a string to be printed in the xml
+int search_default_attrib_key(string key, void* value, string* ret_value_str)
+{
+    if(!key.compare("CATcos") || !key.compare("CATL3mask"))
+    {
+        *ret_value_str=std::to_string(*(uint64_t*)value);
+        return 1;
+    }
+    return 0;
+}
 
 int print_attrib(map<string,void*> attrib, xmlNodePtr n)
 {
@@ -26,17 +36,6 @@ int print_attrib(map<string,void*> attrib, xmlNodePtr n)
     }
 
     return 1;
-}
-
-//for a specific key, return the value as a string to be printed in the xml
-int search_default_attrib_key(string key, void* value, string* ret_value_str)
-{
-    if(!key.compare("CATcos") || !key.compare("CATL3mask"))
-    {
-        *ret_value_str=std::to_string(*(uint64_t*)value);
-        return 1;
-    }
-    return 0;
 }
 
 xmlNodePtr Cache::CreateXmlSubtree()

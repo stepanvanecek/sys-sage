@@ -1,6 +1,8 @@
 #ifndef XML_DUMP
 #define XML_DUMP
 
+#include <functional>
+
 #include "Topology.hpp"
 #include "DataPath.hpp"
 
