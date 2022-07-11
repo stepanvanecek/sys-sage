@@ -33,25 +33,50 @@ int print_my_attribs(string key, void* value, string* ret_value_str)
     return 0;
 }
 
+void usage(char* argv0)
+{
+    std::cerr << "usage: " << argv0 << " <hwloc xml path> <caps-numa-benchmark csv path>" << std::endl;
+    std::cerr << "       or" << std::endl;
+    std::cerr << "       " << argv0 << " (uses predefined paths which may be incorrect.)" << std::endl;
+    return;
+}
+
 int main(int argc, char *argv[])
 {
+    string topoPath;
+    string bwPath;
+    if(argc < 2){
+        std::string path_prefix(argv[0]);
+        std::size_t found = path_prefix.find_last_of("/\\");
+        path_prefix=path_prefix.substr(0,found) + "/";
+        topoPath = path_prefix + "example_data/skylake_hwloc.xml";
+        bwPath = path_prefix + "example_data/skylake_caps_numa_benchmark.csv";
+    }
+    else if(argc == 3){
+        topoPath = argv[1];
+        bwPath = argv[2];
+    }
+    else{
+        usage(argv[0]);
+        return 1;
+    }
+
     //first, populate sys-sage with some data
     Node* n = new Node(1);
-    std::cout << "---- start parse example input" << std::endl;
-    std::string path_prefix(argv[0]);
-    std::size_t found = path_prefix.find_last_of("/\\");
-    path_prefix=path_prefix.substr(0,found) + "/";
-    string topoPath = "example_data/skylake_hwloc.xml";
-    if(parseHwlocOutput(n, path_prefix+topoPath) != 0){
-        std::cout << "error parsing hwloc in path " << path_prefix+topoPath << std::endl;
+
+    cout << "-- Parsing Hwloc output from file " << topoPath << endl;
+    if(parseHwlocOutput(n, topoPath) != 0) { //adds topo to a next node
+        usage(argv[0]);
         return 1;
     }
-    string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
-    if(parseCapsNumaBenchmark((Component*)n, path_prefix+bwPath, ";") != 0){
-        std::cout << "failed parsing caps-numa-benchmark in path " << path_prefix+bwPath << std::endl;
+    cout << "-- End parseHwlocOutput" << endl;
+    cout << "-- Parsing CapsNumaBenchmark output from file " << bwPath << endl;
+    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0) {
+        cout << "failed parsing caps-numa-benchmark" << endl;
+        usage(argv[0]);
         return 1;
     }
-    std::cout << "---- end parse example input" << std::endl;
+    cout << "-- End parseCapsNumaBenchmark" << endl;
 
     //let's add a few custom attributes
     string codename = "marsupial";
@@ -62,18 +87,24 @@ int main(int argc, char *argv[])
 
     My_core_attributes c1_attrib(38.222, 2000000000);
     Core* c1 = (Core*)n->FindSubcomponentById(1, SYS_SAGE_COMPONENT_CORE);
-    c1->attrib["my_core_info"]=(void*)&c1_attrib;
+    if(c1 != NULL)
+        c1->attrib["my_core_info"]=(void*)&c1_attrib;
 
     My_core_attributes c4_attrib(44.1, 1500000000);
     Core* c4 = (Core*)n->FindSubcomponentById(4, SYS_SAGE_COMPONENT_CORE);
-    c4->attrib["my_core_info"]=(void*)&c4_attrib;
+    if(c4 != NULL)
+        c4->attrib["my_core_info"]=(void*)&c4_attrib;
 
     string benchmark_info="measured with no load on 07.07.";
     Numa* n2 = (Numa*)n->FindSubcomponentById(2, SYS_SAGE_COMPONENT_NUMA);
-    DataPath * dp = (*(n2->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING)))[0];
-    dp->attrib["info"]=(void*)&benchmark_info;
-    dp = (*(n2->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING)))[2];
-    dp->attrib["info"]=(void*)&benchmark_info;
+    if(n2 != NULL){
+        DataPath * dp = (*(n2->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING)))[0];
+        if(dp != NULL)
+            dp->attrib["info"]=(void*)&benchmark_info;
+        dp = (*(n2->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING)))[2];
+        if(dp != NULL)
+            dp->attrib["info"]=(void*)&benchmark_info;
+    }
 
     //export to xml
     string output_name = "sys-sage_custom_attributes.xml";

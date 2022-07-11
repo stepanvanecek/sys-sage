@@ -12,14 +12,12 @@ int main(int argc, char *argv[])
 {
     if(argc < 2){
         hwloc_dump_xml("tmp_hwloc.xml");
-        cout << "param1 " << argv[0] << endl;
     } else {
         hwloc_dump_xml(argv[1]);
     }
 
     return 0;
 }
-
 
 int hwloc_dump_xml(const char *filename)
 {
@@ -42,6 +40,9 @@ int hwloc_dump_xml(const char *filename)
     err = hwloc_topology_export_xml(topology, filename, flags);
     if(err){
         std::cerr << "hwloc: Failed to export xml" << std::endl; return 1;
+    }
+    else {
+        std::cout << "Hwloc XML output exported to " << filename << std::endl;
     }
     return 0;
 }

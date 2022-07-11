@@ -3,10 +3,33 @@
 
 #include "sys-sage.hpp"
 
+void usage(char* argv0)
+{
+    std::cerr << "usage: " << argv0 << " <hwloc xml path> <caps-numa-benchmark csv path>" << std::endl;
+    std::cerr << "       or" << std::endl;
+    std::cerr << "       " << argv0 << " (uses predefined paths which may be incorrect.)" << std::endl;
+    return;
+}
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Current path is " << std::filesystem::current_path() << '\n'; // (1)
+    string topoPath;
+    string bwPath;
+    if(argc < 2){
+        std::string path_prefix(argv[0]);
+        std::size_t found = path_prefix.find_last_of("/\\");
+        path_prefix=path_prefix.substr(0,found) + "/";
+        topoPath = path_prefix + "example_data/skylake_hwloc.xml";
+        bwPath = path_prefix + "example_data/skylake_caps_numa_benchmark.csv";
+    }
+    else if(argc == 3){
+        topoPath = argv[1];
+        bwPath = argv[2];
+    }
+    else{
+        usage(argv[0]);
+        return 1;
+    }
 
     //create root Topology and one node
     Topology* topo = new Topology();
@@ -14,41 +37,31 @@ int main(int argc, char *argv[])
     n->SetParent((Component*)topo);
     topo->InsertChild((Component*)n);
 
-    cout << "---- start parseHwlocOutput" << endl;
-    std::string path_prefix(argv[0]);
-    std::size_t found = path_prefix.find_last_of("/\\");
-    path_prefix=path_prefix.substr(0,found) + "/";
-    string topoPath = "example_data/skylake_hwloc.xml";
-    if(parseHwlocOutput(n, path_prefix+topoPath) != 0) //adds topo to a next node
-    {   //parsing failed -> try creating new hwloc output and parsing it
-        // hwloc_dump_xml("tmp_hwloc.xml");
-        // if(parseHwlocOutput(n, "tmp_hwloc.xml") != 0){
-        //     cout << "failed parsing hwloc output" << endl;
-        //     return 1;
-        // }
+    cout << "-- Parsing Hwloc output from file " << topoPath << endl;
+    if(parseHwlocOutput(n, topoPath) != 0) { //adds topo to a next node
+        usage(argv[0]);
+        return 1;
     }
-    cout << "---- end parseHwlocOutput" << endl;
-
+    cout << "-- End parseHwlocOutput" << endl;
 
     cout << "Total num HW threads: " << topo->GetNumThreads() << endl;
+
     cout << "---------------- Printing whole tree ----------------" << endl;
     topo->PrintSubtree(2);
     cout << "----------------                     ----------------" << endl;
 
-
-    cout << "---- start parseCapsNumaBenchmark" << endl;
-    string bwPath = "example_data/skylake_caps_numa_benchmark.csv";
-    if(parseCapsNumaBenchmark((Component*)n, path_prefix+bwPath, ";") != 0)
+    cout << "-- Parsing CapsNumaBenchmark output from file " << bwPath << endl;
+    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0)
     {
         cout << "failed parsing caps-numa-benchmark" << endl;
+        usage(argv[0]);
         return 1;
     }
-    cout << "---- end parseCapsNumaBenchmark" << endl;
+    cout << "-- End parseCapsNumaBenchmark" << endl;
 
     cout << "---------------- Printing all DataPaths ----------------" << endl;
     n->PrintAllDataPathsInSubtree();
     cout << "----------------                        ----------------" << endl;
-    remove("tmp_hwloc.xml");
 
     string output_name = "sys-sage_sample_output.xml";
     cout << "-------- Exporting as XML to " << output_name << " --------" << endl;
