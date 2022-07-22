@@ -51,8 +51,7 @@ int main(int argc, char *argv[])
     cout << "----------------                     ----------------" << endl;
 
     cout << "-- Parsing CapsNumaBenchmark output from file " << bwPath << endl;
-    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0)
-    {
+    if(parseCapsNumaBenchmark((Component*)n, bwPath, ";") != 0){
         cout << "failed parsing caps-numa-benchmark" << endl;
         usage(argv[0]);
         return 1;
