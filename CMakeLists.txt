@@ -9,7 +9,7 @@ endmacro()
 
 
 cmake_policy(SET CMP0048 NEW)
-project(sys-sage VERSION 0.1.2 LANGUAGES C CXX )
+project(sys-sage VERSION 0.2.2 LANGUAGES C CXX )
 
 
 cmake_minimum_required(VERSION 3.12.0)
