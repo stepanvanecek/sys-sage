@@ -1,5 +1,4 @@
 
-
 link_libraries(sys-sage sys-sage)
 include_directories(../src)
 
@@ -24,10 +23,3 @@ if(CAT_AWARE)
     target_link_libraries(matmul hwloc pqos )
     install(TARGETS matmul DESTINATION bin)
 endif()
-
-#add_library(numa bw)
-#add_executable(bw bw.cpp)
-
-
-#target_link_libraries(basic_usage hwloc )
-#target_link_libraries(bw -lnuma)
