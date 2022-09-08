@@ -1,0 +1,63 @@
+\hypertarget{_data_path_8hpp_source}{}\doxysection{Data\+Path.\+hpp}
+\label{_data_path_8hpp_source}\index{/Users/stepan/Documents/phd/repos/sys-\/sage/src/DataPath.hpp@{/Users/stepan/Documents/phd/repos/sys-\/sage/src/DataPath.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef DATAPATH}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define DATAPATH}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}Topology.hpp"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <map>}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{comment}{//void AddDataPath(DataPath* p, int orientation);}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_NONE 1}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_OUTGOING 2}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_INCOMING 4}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{comment}{//int oriented}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_BIDIRECTIONAL 8}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_ORIENTED 16}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{comment}{//dp\_type}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_TYPE\_NONE 64}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_TYPE\_LOGICAL 64}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_TYPE\_PHYSICAL 128}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define SYS\_SAGE\_DATAPATH\_TYPE\_L3CAT 256}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{23 \textcolor{keyword}{class }\mbox{\hyperlink{class_component}{Component}};}
+\DoxyCodeLine{24 \textcolor{keyword}{class }\mbox{\hyperlink{class_data_path}{DataPath}};}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{30 \mbox{\hyperlink{class_data_path}{DataPath}}* NewDataPath(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{int} \_type = SYS\_SAGE\_DATAPATH\_TYPE\_NONE);}
+\DoxyCodeLine{35 \mbox{\hyperlink{class_data_path}{DataPath}}* NewDataPath(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{double} \_bw, \textcolor{keywordtype}{double} \_latency);}
+\DoxyCodeLine{40 \mbox{\hyperlink{class_data_path}{DataPath}}* NewDataPath(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{int} \_type, \textcolor{keywordtype}{double} \_bw, \textcolor{keywordtype}{double} \_latency);}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{47 \textcolor{keyword}{class }\mbox{\hyperlink{class_data_path}{DataPath}} \{}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49 \textcolor{keyword}{public}:}
+\DoxyCodeLine{58     \mbox{\hyperlink{class_data_path_aa2dd4ac77918e24d63c64b68aa960921}{DataPath}}(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{int} \_type = SYS\_SAGE\_DATAPATH\_TYPE\_NONE);}
+\DoxyCodeLine{67     \mbox{\hyperlink{class_data_path_aa2dd4ac77918e24d63c64b68aa960921}{DataPath}}(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{double} \_bw, \textcolor{keywordtype}{double} \_latency);}
+\DoxyCodeLine{78     \mbox{\hyperlink{class_data_path_aa2dd4ac77918e24d63c64b68aa960921}{DataPath}}(\mbox{\hyperlink{class_component}{Component}}* \_source, \mbox{\hyperlink{class_component}{Component}}* \_target, \textcolor{keywordtype}{int} \_oriented, \textcolor{keywordtype}{int} \_type, \textcolor{keywordtype}{double} \_bw, \textcolor{keywordtype}{double} \_latency);}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{83     \mbox{\hyperlink{class_component}{Component}}* \mbox{\hyperlink{class_data_path_adf97535aa3182b0536633a8a235ba876}{GetSource}}();}
+\DoxyCodeLine{87     \mbox{\hyperlink{class_component}{Component}}* \mbox{\hyperlink{class_data_path_ac44059832173729a12204c00eb3f7fe9}{GetTarget}}();}
+\DoxyCodeLine{91     \textcolor{keywordtype}{double} \mbox{\hyperlink{class_data_path_a71a775e06d425efa3514d68e81d00f1b}{GetBw}}();}
+\DoxyCodeLine{95     \textcolor{keywordtype}{double} \mbox{\hyperlink{class_data_path_a1518f91cfbf734ea4cd50a755e4809e4}{GetLatency}}();}
+\DoxyCodeLine{100     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_data_path_a6acada4a9fae87e4e5023ee6abd8b4dc}{GetDpType}}();}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{105     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_data_path_a19e2e241cdb1c3eefc79588f37f688e3}{Print}}();}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{107     map<string,void*> attrib;}
+\DoxyCodeLine{108 \textcolor{keyword}{private}:}
+\DoxyCodeLine{109     \mbox{\hyperlink{class_component}{Component}} * source;}
+\DoxyCodeLine{110     \mbox{\hyperlink{class_component}{Component}} * target;}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112     \textcolor{keyword}{const} \textcolor{keywordtype}{int} oriented;}
+\DoxyCodeLine{113     \textcolor{keyword}{const} \textcolor{keywordtype}{int} dp\_type; }
+\DoxyCodeLine{115     \textcolor{keywordtype}{double} bw;}
+\DoxyCodeLine{116     \textcolor{keywordtype}{double} latency;}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118 \};}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

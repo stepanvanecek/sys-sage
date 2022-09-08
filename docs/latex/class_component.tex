@@ -1,0 +1,570 @@
+\hypertarget{class_component}{}\doxysection{Component Class Reference}
+\label{class_component}\index{Component@{Component}}
+
+
+{\ttfamily \#include $<$Topology.\+hpp$>$}
+
+Inheritance diagram for Component\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=10.000000cm]{class_component}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_component_a8775db6d1a2c1afc2e77cd3c8f39da6f}{Component}} ()
+\item 
+\mbox{\hyperlink{class_component_a4dc07bab6252108d438da11353929b63}{Component}} (int \+\_\+id, string \+\_\+name, int \+\_\+component\+Type)
+\item 
+void \mbox{\hyperlink{class_component_a8506f89d8714c3fe2a3e435b97b5544f}{Insert\+Child}} (\mbox{\hyperlink{class_component}{Component}} $\ast$child)
+\item 
+void \mbox{\hyperlink{class_component_a18d4b870ab8f711d030d4a7f1291c42b}{Set\+Parent}} (\mbox{\hyperlink{class_component}{Component}} $\ast$\mbox{\hyperlink{class_component_add189dc18ca4dd121d7dede5a0dbeab8}{parent}})
+\item 
+void \mbox{\hyperlink{class_component_ad1cc172d9c737b978ad30f64196e96f9}{Print\+Subtree}} ()
+\item 
+void \mbox{\hyperlink{class_component_a7db6813ba9bf728892e8c4b571e3169b}{Print\+Subtree}} (int level)
+\item 
+void \mbox{\hyperlink{class_component_a6b7a769dc19d12ece34053a9b5294cc9}{Print\+All\+Data\+Paths\+In\+Subtree}} ()
+\item 
+string \mbox{\hyperlink{class_component_a1a9d620ac8795ddec325b7e05707b9ef}{Get\+Name}} ()
+\item 
+int \mbox{\hyperlink{class_component_aa8e0d9af5f40df0ccad6be3edde7dad0}{Get\+Id}} ()
+\item 
+int \mbox{\hyperlink{class_component_ad508ec920dee8d5800a3e285659c4dab}{Get\+Component\+Type}} ()
+\item 
+string \mbox{\hyperlink{class_component_a32113dd8489115c7e9a1696a8018e7a6}{Get\+Component\+Type\+Str}} ()
+\item 
+vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_component_adbfab074ef1ad7f359f22eafb66b59dc}{Get\+Children}} ()
+\item 
+\mbox{\hyperlink{class_component}{Component}} $\ast$ \mbox{\hyperlink{class_component_a877ef6f7e49b6d38019988b07a7ceb20}{Get\+Parent}} ()
+\item 
+\mbox{\hyperlink{class_component}{Component}} $\ast$ \mbox{\hyperlink{class_component_ae747cc962324d0b1174bcab97efec34f}{Get\+Child}} (int \+\_\+id)
+\item 
+\mbox{\hyperlink{class_component}{Component}} $\ast$ \mbox{\hyperlink{class_component_a37dfa5d4a2453292326fe7e3207706be}{Find\+Subcomponent\+By\+Id}} (int \+\_\+id, int \+\_\+component\+Type)
+\item 
+\mbox{\hyperlink{class_component}{Component}} $\ast$ \mbox{\hyperlink{class_component_adcd1f0282351370ad3abffd9224ecd9c}{Find\+Parent\+By\+Type}} (int \+\_\+component\+Type)
+\item 
+int \mbox{\hyperlink{class_component_ad23ffe1aa55edc8b50e39b0835cdc2cf}{Get\+Num\+Threads}} ()
+\item 
+int \mbox{\hyperlink{class_component_a5b8958dfede66328449a187f52a60e69}{Get\+Topo\+Tree\+Depth}} ()
+\item 
+void \mbox{\hyperlink{class_component_afb13075452af21cb196771a01538db3b}{Get\+Components\+NLevels\+Deeper}} (vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$out\+Array, int \mbox{\hyperlink{class_component_a1f32d0806b8c40635e9d4224ed23dede}{depth}})
+\item 
+void \mbox{\hyperlink{class_component_acceb7931c7ff2f553e62368e77430c60}{Get\+Subcomponents\+By\+Type}} (vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$out\+Array, int \mbox{\hyperlink{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}{component\+Type}})
+\item 
+void \mbox{\hyperlink{class_component_aebffe16d7a18f8eb0fc11e7962d4ed6a}{Get\+Subtree\+Node\+List}} (vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$out\+Array)
+\item 
+vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_component_af29f5f5a1ee41d9b4d448482dc980a0e}{Get\+Data\+Paths}} (int orientation)
+\item 
+void \mbox{\hyperlink{class_component_af1e3ffe6daf1aaf5fdd6dc640b27026a}{Add\+Data\+Path}} (\mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$p, int orientation)
+\item 
+\mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ \mbox{\hyperlink{class_component_a8e37c0f02a79fbaff3d6d2756b03f7f5}{Get\+Dp\+By\+Type}} (int dp\+\_\+type, int orientation)
+\item 
+void \mbox{\hyperlink{class_component_a76bfe3048d5aff8cd0af5c32329b2e81}{Get\+All\+Dp\+By\+Type}} (vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$out\+Dp\+Arr, int dp\+\_\+type, int orientation)
+\item 
+int \mbox{\hyperlink{class_component_a2be4dace6140a0de5f00d9d5ad189d59}{Get\+Topology\+Size}} (unsigned $\ast$out\+\_\+component\+\_\+size, unsigned $\ast$out\+\_\+data\+Path\+Size)
+\item 
+int \mbox{\hyperlink{class_component_acafba2fd0728bca653b59e752b5734bf}{Get\+Topology\+Size}} (unsigned $\ast$out\+\_\+component\+\_\+size, unsigned $\ast$out\+\_\+data\+Path\+Size, std\+::set$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$counted\+\_\+data\+Paths)
+\item 
+xml\+Node\+Ptr \mbox{\hyperlink{class_component_a2e7387f56a6aa133bc94f0aebebd0cc0}{Create\+Xml\+Subtree}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+map$<$ string, void $\ast$ $>$ \mbox{\hyperlink{class_component_a50334dc9af0c22ad2b05c038b2c8bc67}{attrib}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_component_a7b51904172e22f13a182eb16b7de4aaf}{id}}
+\item 
+int \mbox{\hyperlink{class_component_a1f32d0806b8c40635e9d4224ed23dede}{depth}}
+\item 
+string \mbox{\hyperlink{class_component_a3f51bb245c415a384cd29c60f7b25ba2}{name}}
+\item 
+const int \mbox{\hyperlink{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}{component\+Type}}
+\item 
+vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ \mbox{\hyperlink{class_component_a6c3106b9a8ba60fead5f7bf3430ab00f}{children}}
+\item 
+\mbox{\hyperlink{class_component}{Component}} $\ast$ \mbox{\hyperlink{class_component_add189dc18ca4dd121d7dede5a0dbeab8}{parent}}
+\item 
+vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ \mbox{\hyperlink{class_component_a40517588f7b89687289bea681c6bfc79}{dp\+\_\+incoming}}
+\item 
+vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ \mbox{\hyperlink{class_component_a16af6908e826a8a2531f0a0e0d65d533}{dp\+\_\+outgoing}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Generic class \mbox{\hyperlink{class_component}{Component}} -\/ all components inherit from this class, i.\+e. this class defines attributes and methods common to all components. ~\newline
+ Therefore, these can be used universally among all components. Usually, a \mbox{\hyperlink{class_component}{Component}} instance would be an instance of one of the child classes, but a generic component (instance of class \mbox{\hyperlink{class_component}{Component}}) is also possible. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_component_a8775db6d1a2c1afc2e77cd3c8f39da6f}\label{class_component_a8775db6d1a2c1afc2e77cd3c8f39da6f}} 
+\index{Component@{Component}!Component@{Component}}
+\index{Component@{Component}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{Component()}{Component()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Component\+::\+Component (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Generic constructor. Sets\+: ~\newline
+ id=\texorpdfstring{$>$}{>}0 ~\newline
+ name=\texorpdfstring{$>$}{>}\char`\"{}unknown\char`\"{} ~\newline
+ component\+Type=\texorpdfstring{$>$}{>}SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NONE \mbox{\Hypertarget{class_component_a4dc07bab6252108d438da11353929b63}\label{class_component_a4dc07bab6252108d438da11353929b63}} 
+\index{Component@{Component}!Component@{Component}}
+\index{Component@{Component}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{Component()}{Component()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Component\+::\+Component (\begin{DoxyParamCaption}\item[{int}]{\+\_\+id,  }\item[{string}]{\+\_\+name,  }\item[{int}]{\+\_\+component\+Type }\end{DoxyParamCaption})}
+
+Generic \mbox{\hyperlink{class_component}{Component}} constructor. Usually should not be called. Sets\+: 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+id} & = id \\
+\hline
+{\em \+\_\+name} & = name \\
+\hline
+{\em \+\_\+component\+Type} & = component\+Type \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_component_af1e3ffe6daf1aaf5fdd6dc640b27026a}\label{class_component_af1e3ffe6daf1aaf5fdd6dc640b27026a}} 
+\index{Component@{Component}!AddDataPath@{AddDataPath}}
+\index{AddDataPath@{AddDataPath}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{AddDataPath()}{AddDataPath()}}
+{\footnotesize\ttfamily void Component\+::\+Add\+Data\+Path (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$}]{p,  }\item[{int}]{orientation }\end{DoxyParamCaption})}
+
+!!\+Normally should not be called; Use New\+Data\+Path() instead!! Stores (pushes back) a \mbox{\hyperlink{class_data_path}{Data\+Path}} pointer to the list(std\+::vector) of Data\+Paths of this component. According to the orientation param, the proper list is chosen. 
+\begin{DoxyParams}{Parameters}
+{\em p} & -\/ the pointer to store \\
+\hline
+{\em orientation} & -\/ orientation of the \mbox{\hyperlink{class_data_path}{Data\+Path}}. Either SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING (lands in dp\+\_\+outgoing) or SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING (lands in dp\+\_\+incoming) \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+New\+Data\+Path() 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a2e7387f56a6aa133bc94f0aebebd0cc0}\label{class_component_a2e7387f56a6aa133bc94f0aebebd0cc0}} 
+\index{Component@{Component}!CreateXmlSubtree@{CreateXmlSubtree}}
+\index{CreateXmlSubtree@{CreateXmlSubtree}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{CreateXmlSubtree()}{CreateXmlSubtree()}}
+{\footnotesize\ttfamily xml\+Node\+Ptr Component\+::\+Create\+Xml\+Subtree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+!!\+Should normally not be used!! Helper function of XML dump generation. \begin{DoxySeeAlso}{See also}
+export\+To\+Xml(Component$\ast$ root, string path = \char`\"{}\char`\"{}, std\+::function$<$int(string,void$\ast$,string$\ast$)$>$ custom\+\_\+search\+\_\+attrib\+\_\+key\+\_\+fcn = NULL); 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_adcd1f0282351370ad3abffd9224ecd9c}\label{class_component_adcd1f0282351370ad3abffd9224ecd9c}} 
+\index{Component@{Component}!FindParentByType@{FindParentByType}}
+\index{FindParentByType@{FindParentByType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{FindParentByType()}{FindParentByType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_component}{Component}} $\ast$ Component\+::\+Find\+Parent\+By\+Type (\begin{DoxyParamCaption}\item[{int}]{\+\_\+component\+Type }\end{DoxyParamCaption})}
+
+Moves up the tree until a parent of given type. 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+component\+Type} & -\/ the desired component type \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{class_component}{Component}} $\ast$ matching the criteria. NULL if no match found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_a37dfa5d4a2453292326fe7e3207706be}\label{class_component_a37dfa5d4a2453292326fe7e3207706be}} 
+\index{Component@{Component}!FindSubcomponentById@{FindSubcomponentById}}
+\index{FindSubcomponentById@{FindSubcomponentById}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{FindSubcomponentById()}{FindSubcomponentById()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_component}{Component}} $\ast$ Component\+::\+Find\+Subcomponent\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{\+\_\+id,  }\item[{int}]{\+\_\+component\+Type }\end{DoxyParamCaption})}
+
+Searches the subtree to find a component with a matching id and component\+Type, i.\+e. looks for a certain component with a matching ID. The search is a DFS. The search starts with the calling component. ~\newline
+ Returns first occurence that matches these criteria. 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+id} & -\/ the id to look for \\
+\hline
+{\em \+\_\+component\+Type} & -\/ the component type where to look for the id \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{class_component}{Component}} $\ast$ matching the criteria. NULL if no match found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_a76bfe3048d5aff8cd0af5c32329b2e81}\label{class_component_a76bfe3048d5aff8cd0af5c32329b2e81}} 
+\index{Component@{Component}!GetAllDpByType@{GetAllDpByType}}
+\index{GetAllDpByType@{GetAllDpByType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetAllDpByType()}{GetAllDpByType()}}
+{\footnotesize\ttfamily void Component\+::\+Get\+All\+Dp\+By\+Type (\begin{DoxyParamCaption}\item[{vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$}]{out\+Dp\+Arr,  }\item[{int}]{dp\+\_\+type,  }\item[{int}]{orientation }\end{DoxyParamCaption})}
+
+Retrieves all \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ from the list of this component\textquotesingle{}s data paths with matching type and orientation. Results are returned in vector$<$\+Data\+Path$\ast$$>$$\ast$ out\+Dp\+Arr, where first the matching data paths in dp\+\_\+outgoing are pushed back, then the ones in dp\+\_\+incoming. 
+\begin{DoxyParams}{Parameters}
+{\em dp\+\_\+type} & -\/ \mbox{\hyperlink{class_data_path}{Data\+Path}} type (dp\+\_\+type) to search for. \\
+\hline
+{\em orientation} & -\/ orientation of the \mbox{\hyperlink{class_data_path}{Data\+Path}} (SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING or SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING or a logical or of these) \\
+\hline
+{\em out\+Dp\+Arr} & -\/ output parameter (vector with results) ~\newline
+ An input is pointer to a std\+::vector$<$\+Data\+Path $\ast$$>$, in which the data paths will be pushed. It must be allocated before the call (but does not have to be empty). ~\newline
+ The method pushes back the found data paths -- i.\+e. the data paths(pointers) can be found in this array after the method returns. (If no found, the vector is not changed.) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_component_ae747cc962324d0b1174bcab97efec34f}\label{class_component_ae747cc962324d0b1174bcab97efec34f}} 
+\index{Component@{Component}!GetChild@{GetChild}}
+\index{GetChild@{GetChild}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetChild()}{GetChild()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_component}{Component}} $\ast$ Component\+::\+Get\+Child (\begin{DoxyParamCaption}\item[{int}]{\+\_\+id }\end{DoxyParamCaption})}
+
+Retrieve a Componet$\ast$ to a child with child.\+id=\+\_\+id. ~\newline
+ Should there be more children with the same id, the first match will be retrieved (i.\+e. the one with lower index in the children array.) \mbox{\Hypertarget{class_component_adbfab074ef1ad7f359f22eafb66b59dc}\label{class_component_adbfab074ef1ad7f359f22eafb66b59dc}} 
+\index{Component@{Component}!GetChildren@{GetChildren}}
+\index{GetChildren@{GetChildren}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetChildren()}{GetChildren()}}
+{\footnotesize\ttfamily vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$ Component\+::\+Get\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns a pointer to std\+::vector containing all children of the component (empty vector if no children) . \begin{DoxyReturn}{Returns}
+vector$<$\+Component $\ast$$>$ $\ast$ with children 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_afb13075452af21cb196771a01538db3b}\label{class_component_afb13075452af21cb196771a01538db3b}} 
+\index{Component@{Component}!GetComponentsNLevelsDeeper@{GetComponentsNLevelsDeeper}}
+\index{GetComponentsNLevelsDeeper@{GetComponentsNLevelsDeeper}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetComponentsNLevelsDeeper()}{GetComponentsNLevelsDeeper()}}
+{\footnotesize\ttfamily void Component\+::\+Get\+Components\+NLevels\+Deeper (\begin{DoxyParamCaption}\item[{vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$}]{out\+Array,  }\item[{int}]{depth }\end{DoxyParamCaption})}
+
+Retrieves a std\+::vector of \mbox{\hyperlink{class_component}{Component}} pointers, which reside \textquotesingle{}depth\textquotesingle{} levels deeper. The tree is traversed in order as the children are stored in std\+::vector children. ~\newline
+ E.\+g. if depth=1, only children of the current are retrieved; if depth=2, only children of the children are retrieved.. 
+\begin{DoxyParams}{Parameters}
+{\em depth} & -\/ how many levels down the tree should be looked \\
+\hline
+{\em out\+Array} & -\/ output parameter (vector with results) ~\newline
+ An input is pointer to a std\+::vector$<$\+Component $\ast$$>$, in which the elements will be pushed. It must be allocated before the call (but does not have to be empty). ~\newline
+ The method pushes back the found elements -- i.\+e. the elements(pointers) can be found in this array after the method returns. (If no found, nothing will be pushed into the vector.) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_component_ad508ec920dee8d5800a3e285659c4dab}\label{class_component_ad508ec920dee8d5800a3e285659c4dab}} 
+\index{Component@{Component}!GetComponentType@{GetComponentType}}
+\index{GetComponentType@{GetComponentType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetComponentType()}{GetComponentType()}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Component\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns component type of the component. The component type denotes of which class the instance is (Often the components are stored as Component$\ast$, even though they are a member of one of the child classes) ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NONE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_component}{Component}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+THREAD -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_thread}{Thread}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CORE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_core}{Core}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CACHE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_cache}{Cache}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+SUBDIVISION -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_subdivision}{Subdivision}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NUMA -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_numa}{Numa}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CHIP -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_chip}{Chip}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+MEMORY -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_memory}{Memory}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+STORAGE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_storage}{Storage}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NODE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_node}{Node}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+TOPOLOGY -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_topology}{Topology}} \begin{DoxyReturn}{Returns}
+component\+Type 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}{component\+Type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a32113dd8489115c7e9a1696a8018e7a6}\label{class_component_a32113dd8489115c7e9a1696a8018e7a6}} 
+\index{Component@{Component}!GetComponentTypeStr@{GetComponentTypeStr}}
+\index{GetComponentTypeStr@{GetComponentTypeStr}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetComponentTypeStr()}{GetComponentTypeStr()}}
+{\footnotesize\ttfamily string Component\+::\+Get\+Component\+Type\+Str (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns component type in human-\/readable string. ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NONE -\/\texorpdfstring{$>$}{>} \char`\"{}\+None\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+THREAD -\/\texorpdfstring{$>$}{>} \char`\"{}\+HW\+\_\+thread\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CORE -\/\texorpdfstring{$>$}{>} \char`\"{}\+Core\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CACHE -\/\texorpdfstring{$>$}{>} \char`\"{}\+Cache\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+SUBDIVISION -\/\texorpdfstring{$>$}{>} \char`\"{}\+Subdivision\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NUMA -\/\texorpdfstring{$>$}{>} \char`\"{}\+NUMA\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CHIP -\/\texorpdfstring{$>$}{>} \char`\"{}\+Chip\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+MEMORY -\/\texorpdfstring{$>$}{>} \char`\"{}\+Memory\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+STORAGE -\/\texorpdfstring{$>$}{>} \char`\"{}\+Storage\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NODE -\/\texorpdfstring{$>$}{>} \char`\"{}\+Node\char`\"{} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+TOPOLOGY -\/\texorpdfstring{$>$}{>} \char`\"{}\+Topology\char`\"{} \begin{DoxyReturn}{Returns}
+string component type 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}{component\+Type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_af29f5f5a1ee41d9b4d448482dc980a0e}\label{class_component_af29f5f5a1ee41d9b4d448482dc980a0e}} 
+\index{Component@{Component}!GetDataPaths@{GetDataPaths}}
+\index{GetDataPaths@{GetDataPaths}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetDataPaths()}{GetDataPaths()}}
+{\footnotesize\ttfamily vector$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$ Component\+::\+Get\+Data\+Paths (\begin{DoxyParamCaption}\item[{int}]{orientation }\end{DoxyParamCaption})}
+
+Returns the Data\+Paths of this component according to their orientation. 
+\begin{DoxyParams}{Parameters}
+{\em orientation} & -\/ either SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING or SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to std\+::vector$<$\+Data\+Path $\ast$$>$ with the result (dp\+\_\+outgoing on SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING, or dp\+\_\+incoming on SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING, otherwise NULL) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_a40517588f7b89687289bea681c6bfc79}{dp\+\_\+incoming}} 
+
+\mbox{\hyperlink{class_component_a16af6908e826a8a2531f0a0e0d65d533}{dp\+\_\+outgoing}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a8e37c0f02a79fbaff3d6d2756b03f7f5}\label{class_component_a8e37c0f02a79fbaff3d6d2756b03f7f5}} 
+\index{Component@{Component}!GetDpByType@{GetDpByType}}
+\index{GetDpByType@{GetDpByType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetDpByType()}{GetDpByType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ Component\+::\+Get\+Dp\+By\+Type (\begin{DoxyParamCaption}\item[{int}]{dp\+\_\+type,  }\item[{int}]{orientation }\end{DoxyParamCaption})}
+
+Retrieves a \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ from the list of this component\textquotesingle{}s data paths with matching type and orientation. ~\newline
+ The first match is returned -- first SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING are searched, then SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING. 
+\begin{DoxyParams}{Parameters}
+{\em dp\+\_\+type} & -\/ \mbox{\hyperlink{class_data_path}{Data\+Path}} type (dp\+\_\+type) to search for \\
+\hline
+{\em orientation} & -\/ orientation of the \mbox{\hyperlink{class_data_path}{Data\+Path}} (SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+OUTGOING or SYS\+\_\+\+SAGE\+\_\+\+DATAPATH\+\_\+\+INCOMING or a logical or of these) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{class_data_path}{Data\+Path}} pointer to the found data path; NULL if nothing found. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_aa8e0d9af5f40df0ccad6be3edde7dad0}\label{class_component_aa8e0d9af5f40df0ccad6be3edde7dad0}} 
+\index{Component@{Component}!GetId@{GetId}}
+\index{GetId@{GetId}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetId()}{GetId()}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns id of the component. \begin{DoxyReturn}{Returns}
+id 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_a7b51904172e22f13a182eb16b7de4aaf}{id}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a1a9d620ac8795ddec325b7e05707b9ef}\label{class_component_a1a9d620ac8795ddec325b7e05707b9ef}} 
+\index{Component@{Component}!GetName@{GetName}}
+\index{GetName@{GetName}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetName()}{GetName()}}
+{\footnotesize\ttfamily string Component\+::\+Get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns name of the component. \begin{DoxyReturn}{Returns}
+name 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_a3f51bb245c415a384cd29c60f7b25ba2}{name}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_ad23ffe1aa55edc8b50e39b0835cdc2cf}\label{class_component_ad23ffe1aa55edc8b50e39b0835cdc2cf}} 
+\index{Component@{Component}!GetNumThreads@{GetNumThreads}}
+\index{GetNumThreads@{GetNumThreads}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetNumThreads()}{GetNumThreads()}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Num\+Threads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns the number of Components of type SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+THREAD in the subtree. \mbox{\Hypertarget{class_component_a877ef6f7e49b6d38019988b07a7ceb20}\label{class_component_a877ef6f7e49b6d38019988b07a7ceb20}} 
+\index{Component@{Component}!GetParent@{GetParent}}
+\index{GetParent@{GetParent}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetParent()}{GetParent()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_component}{Component}} $\ast$ Component\+::\+Get\+Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns \mbox{\hyperlink{class_component}{Component}} pointer to parent (or NULL if this component is the root) \mbox{\Hypertarget{class_component_acceb7931c7ff2f553e62368e77430c60}\label{class_component_acceb7931c7ff2f553e62368e77430c60}} 
+\index{Component@{Component}!GetSubcomponentsByType@{GetSubcomponentsByType}}
+\index{GetSubcomponentsByType@{GetSubcomponentsByType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetSubcomponentsByType()}{GetSubcomponentsByType()}}
+{\footnotesize\ttfamily void Component\+::\+Get\+Subcomponents\+By\+Type (\begin{DoxyParamCaption}\item[{vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$}]{out\+Array,  }\item[{int}]{component\+Type }\end{DoxyParamCaption})}
+
+Retrieves a std\+::vector of \mbox{\hyperlink{class_component}{Component}} pointers, which reside \textquotesingle{}depth\textquotesingle{} levels deeper. The tree is traversed in order as the children are stored in each std\+::vector children. ~\newline
+ E.\+g. if depth=1, only children of the current are retrieved; if depth=2, only children of the children are retrieved.. 
+\begin{DoxyParams}{Parameters}
+{\em depth} & -\/ how many levels down the tree should be looked \\
+\hline
+{\em out\+Array} & -\/ output parameter (vector with results) ~\newline
+ An input is pointer to a std\+::vector$<$\+Component $\ast$$>$, in which the elements will be pushed. It must be allocated before the call (but does not have to be empty). ~\newline
+ The method pushes back the found elements -- i.\+e. the elements(pointers) can be found in this array after the method returns. (If no found, the vector is not changed.) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_component_aebffe16d7a18f8eb0fc11e7962d4ed6a}\label{class_component_aebffe16d7a18f8eb0fc11e7962d4ed6a}} 
+\index{Component@{Component}!GetSubtreeNodeList@{GetSubtreeNodeList}}
+\index{GetSubtreeNodeList@{GetSubtreeNodeList}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetSubtreeNodeList()}{GetSubtreeNodeList()}}
+{\footnotesize\ttfamily void Component\+::\+Get\+Subtree\+Node\+List (\begin{DoxyParamCaption}\item[{vector$<$ \mbox{\hyperlink{class_component}{Component}} $\ast$ $>$ $\ast$}]{out\+Array }\end{DoxyParamCaption})}
+
+Retrieves a std\+::vector of \mbox{\hyperlink{class_component}{Component}} pointers, which reside in the subtree and have a matching type. The tree is traversed DFS in order as the children are stored in each std\+::vector children. 
+\begin{DoxyParams}{Parameters}
+{\em component\+Type} & -\/ component\+Type \\
+\hline
+{\em out\+Array} & -\/ output parameter (vector with results) ~\newline
+ An input is pointer to a std\+::vector$<$\+Component $\ast$$>$, in which the elements will be pushed. It must be allocated before the call (but does not have to be empty). ~\newline
+ The method pushes back the found elements -- i.\+e. the elements(pointers) can be found in this array after the method returns. (If no found, the vector is not changed.) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_component_a2be4dace6140a0de5f00d9d5ad189d59}\label{class_component_a2be4dace6140a0de5f00d9d5ad189d59}} 
+\index{Component@{Component}!GetTopologySize@{GetTopologySize}}
+\index{GetTopologySize@{GetTopologySize}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetTopologySize()}{GetTopologySize()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Topology\+Size (\begin{DoxyParamCaption}\item[{unsigned $\ast$}]{out\+\_\+component\+\_\+size,  }\item[{unsigned $\ast$}]{out\+\_\+data\+Path\+Size }\end{DoxyParamCaption})}
+
+Calculates approximate memory footprint of the subtree of this element (including the relevant data paths). 
+\begin{DoxyParams}{Parameters}
+{\em out\+\_\+component\+\_\+size} & -\/ output parameter (contains the footprint of the component tree elements); an already allocated unsigned $\ast$ is the input, the value is expected to be 0 (the result is accumulated here) \\
+\hline
+{\em out\+\_\+data\+Path\+Size} & -\/ output parameter (contains the footprint of the data-\/path graph elements); an already allocated unsigned $\ast$ is the input, the value is expected to be 0 (the result is accumulated here) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The total size in bytes 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_acafba2fd0728bca653b59e752b5734bf}\label{class_component_acafba2fd0728bca653b59e752b5734bf}} 
+\index{Component@{Component}!GetTopologySize@{GetTopologySize}}
+\index{GetTopologySize@{GetTopologySize}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetTopologySize()}{GetTopologySize()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Topology\+Size (\begin{DoxyParamCaption}\item[{unsigned $\ast$}]{out\+\_\+component\+\_\+size,  }\item[{unsigned $\ast$}]{out\+\_\+data\+Path\+Size,  }\item[{std\+::set$<$ \mbox{\hyperlink{class_data_path}{Data\+Path}} $\ast$ $>$ $\ast$}]{counted\+\_\+data\+Paths }\end{DoxyParamCaption})}
+
+Helper function of int \mbox{\hyperlink{class_component_a2be4dace6140a0de5f00d9d5ad189d59}{Get\+Topology\+Size(unsigned $\ast$ out\+\_\+component\+\_\+size, unsigned $\ast$ out\+\_\+data\+Path\+Size)}}; -- normally you would call this one. ~\newline
+ Calculates approximate memory footprint of the subtree of this element (including the relevant data paths). Does not count Data\+Paths stored in counted\+\_\+data\+Paths. 
+\begin{DoxyParams}{Parameters}
+{\em out\+\_\+component\+\_\+size} & -\/ output parameter (contains the footprint of the component tree elements); an already allocated unsigned $\ast$ is the input, the value is expected to be 0 (the result is accumulated here) \\
+\hline
+{\em out\+\_\+data\+Path\+Size} & -\/ output parameter (contains the footprint of the data-\/path graph elements); an already allocated unsigned $\ast$ is the input, the value is expected to be 0 (the result is accumulated here) \\
+\hline
+{\em counted\+\_\+data\+Paths} & -\/ std\+::set$<$\+Data\+Path$\ast$$>$$\ast$ of data paths that should not be counted \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The total size in bytes 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_a2be4dace6140a0de5f00d9d5ad189d59}{Get\+Topology\+Size(unsigned $\ast$ out\+\_\+component\+\_\+size, unsigned $\ast$ out\+\_\+data\+Path\+Size)}}; 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a5b8958dfede66328449a187f52a60e69}\label{class_component_a5b8958dfede66328449a187f52a60e69}} 
+\index{Component@{Component}!GetTopoTreeDepth@{GetTopoTreeDepth}}
+\index{GetTopoTreeDepth@{GetTopoTreeDepth}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{GetTopoTreeDepth()}{GetTopoTreeDepth()}}
+{\footnotesize\ttfamily int Component\+::\+Get\+Topo\+Tree\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Retrieves maximal distance to a leaf (i.\+e. the depth of the subtree). ~\newline
+ 0=leaf, 1=children are leaves, 2=at most children\textquotesingle{}s children are leaves ..... \begin{DoxyReturn}{Returns}
+maximal distance to a leaf 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_component_a8506f89d8714c3fe2a3e435b97b5544f}\label{class_component_a8506f89d8714c3fe2a3e435b97b5544f}} 
+\index{Component@{Component}!InsertChild@{InsertChild}}
+\index{InsertChild@{InsertChild}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{InsertChild()}{InsertChild()}}
+{\footnotesize\ttfamily void Component\+::\+Insert\+Child (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_component}{Component}} $\ast$}]{child }\end{DoxyParamCaption})}
+
+Inserts a Child component to this component (in the \mbox{\hyperlink{class_component}{Component}} Tree). The child pointer will be inserted at the end of std\+::vector of children (retrievable through \mbox{\hyperlink{class_component_adbfab074ef1ad7f359f22eafb66b59dc}{Get\+Children()}}, \mbox{\hyperlink{class_component_ae747cc962324d0b1174bcab97efec34f}{Get\+Child(int \+\_\+id)}} etc.) 
+\begin{DoxyParams}{Parameters}
+{\em child} & -\/ a pointer to a \mbox{\hyperlink{class_component}{Component}} (or any class instance that inherits from \mbox{\hyperlink{class_component}{Component}}). \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_adbfab074ef1ad7f359f22eafb66b59dc}{Get\+Children()}} 
+
+\mbox{\hyperlink{class_component_ae747cc962324d0b1174bcab97efec34f}{Get\+Child(int \+\_\+id)}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a6b7a769dc19d12ece34053a9b5294cc9}\label{class_component_a6b7a769dc19d12ece34053a9b5294cc9}} 
+\index{Component@{Component}!PrintAllDataPathsInSubtree@{PrintAllDataPathsInSubtree}}
+\index{PrintAllDataPathsInSubtree@{PrintAllDataPathsInSubtree}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{PrintAllDataPathsInSubtree()}{PrintAllDataPathsInSubtree()}}
+{\footnotesize\ttfamily void Component\+::\+Print\+All\+Data\+Paths\+In\+Subtree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Prints to stdout basic information about all Data\+Paths that go either from or to the components in the subtree. ~\newline
+ For each component, all outgoing and incoming Data\+Paths are printed, i.\+e. a \mbox{\hyperlink{class_data_path}{Data\+Path}} may be printed twice. \mbox{\Hypertarget{class_component_ad1cc172d9c737b978ad30f64196e96f9}\label{class_component_ad1cc172d9c737b978ad30f64196e96f9}} 
+\index{Component@{Component}!PrintSubtree@{PrintSubtree}}
+\index{PrintSubtree@{PrintSubtree}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{PrintSubtree()}{PrintSubtree()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Component\+::\+Print\+Subtree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Prints the whole subtree of this component (including the component itself) to stdout. The tree is printed in DFS order, so that the hierarchy can be easily seen. Each child is indented by \char`\"{}  \char`\"{}. For each component in the subtree, the following is printed\+: "{}$<$string component type$>$ (name $<$name$>$) id $<$id$>$ -\/ children\+: $<$num children$>$ \mbox{\Hypertarget{class_component_a7db6813ba9bf728892e8c4b571e3169b}\label{class_component_a7db6813ba9bf728892e8c4b571e3169b}} 
+\index{Component@{Component}!PrintSubtree@{PrintSubtree}}
+\index{PrintSubtree@{PrintSubtree}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{PrintSubtree()}{PrintSubtree()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Component\+::\+Print\+Subtree (\begin{DoxyParamCaption}\item[{int}]{level }\end{DoxyParamCaption})}
+
+Helper function of \mbox{\hyperlink{class_component_ad1cc172d9c737b978ad30f64196e96f9}{Print\+Subtree()}};, which ensures the proper indentation. Using \mbox{\hyperlink{class_component_ad1cc172d9c737b978ad30f64196e96f9}{Print\+Subtree()}}; is recommended, however this method can be used as well. 
+\begin{DoxyParams}{Parameters}
+{\em level} & -\/ number of \char`\"{}  \char`\"{} to print out in front of the first component. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_ad1cc172d9c737b978ad30f64196e96f9}{Print\+Subtree()}}; 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a18d4b870ab8f711d030d4a7f1291c42b}\label{class_component_a18d4b870ab8f711d030d4a7f1291c42b}} 
+\index{Component@{Component}!SetParent@{SetParent}}
+\index{SetParent@{SetParent}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{SetParent()}{SetParent()}}
+{\footnotesize\ttfamily void Component\+::\+Set\+Parent (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_component}{Component}} $\ast$}]{parent }\end{DoxyParamCaption})}
+
+Define a parent to the component. This is usually used when inserting a component in the tree (by calling Insert\+Child on the parent, and calling Set\+Parent on the child). 
+\begin{DoxyParams}{Parameters}
+{\em parent} & -\/ a pointer to a \mbox{\hyperlink{class_component}{Component}} (or any class instance that inherits from \mbox{\hyperlink{class_component}{Component}}). \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_component_a8506f89d8714c3fe2a3e435b97b5544f}{Insert\+Child()}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_component_a50334dc9af0c22ad2b05c038b2c8bc67}\label{class_component_a50334dc9af0c22ad2b05c038b2c8bc67}} 
+\index{Component@{Component}!attrib@{attrib}}
+\index{attrib@{attrib}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{attrib}{attrib}}
+{\footnotesize\ttfamily map$<$string,void$\ast$$>$ Component\+::attrib}
+
+TODO this part \mbox{\Hypertarget{class_component_a6c3106b9a8ba60fead5f7bf3430ab00f}\label{class_component_a6c3106b9a8ba60fead5f7bf3430ab00f}} 
+\index{Component@{Component}!children@{children}}
+\index{children@{children}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{children}{children}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{class_component}{Component}}$\ast$$>$ Component\+::children\hspace{0.3cm}{\ttfamily [protected]}}
+
+Contains the list (std\+::vector) of pointers to children of the component in the component tree. \mbox{\Hypertarget{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}\label{class_component_ac6d7a80d187b4ec48f6bf6f084378ac0}} 
+\index{Component@{Component}!componentType@{componentType}}
+\index{componentType@{componentType}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{componentType}{componentType}}
+{\footnotesize\ttfamily const int Component\+::component\+Type\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\hyperlink{class_component}{Component}} type of the component. The component type denotes of which class the instance is (Often the components are stored as Component$\ast$, even though they are a member of one of the child classes) ~\newline
+ This attribute is constant, set by the constructor, and READONLY. ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NONE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_component}{Component}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+THREAD -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_thread}{Thread}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CORE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_core}{Core}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CACHE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_cache}{Cache}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+SUBDIVISION -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_subdivision}{Subdivision}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NUMA -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_numa}{Numa}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CHIP -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_chip}{Chip}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+MEMORY -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_memory}{Memory}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+STORAGE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_storage}{Storage}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+NODE -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_node}{Node}} ~\newline
+ SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+TOPOLOGY -\/\texorpdfstring{$>$}{>} class \mbox{\hyperlink{class_topology}{Topology}} \mbox{\Hypertarget{class_component_a1f32d0806b8c40635e9d4224ed23dede}\label{class_component_a1f32d0806b8c40635e9d4224ed23dede}} 
+\index{Component@{Component}!depth@{depth}}
+\index{depth@{depth}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{depth}{depth}}
+{\footnotesize\ttfamily int Component\+::depth\hspace{0.3cm}{\ttfamily [protected]}}
+
+TODO not implemented \mbox{\Hypertarget{class_component_a40517588f7b89687289bea681c6bfc79}\label{class_component_a40517588f7b89687289bea681c6bfc79}} 
+\index{Component@{Component}!dp\_incoming@{dp\_incoming}}
+\index{dp\_incoming@{dp\_incoming}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{dp\_incoming}{dp\_incoming}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{class_data_path}{Data\+Path}}$\ast$$>$ Component\+::dp\+\_\+incoming\hspace{0.3cm}{\ttfamily [protected]}}
+
+Contains references to data paths that point to this component. \begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_data_path}{Data\+Path}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a16af6908e826a8a2531f0a0e0d65d533}\label{class_component_a16af6908e826a8a2531f0a0e0d65d533}} 
+\index{Component@{Component}!dp\_outgoing@{dp\_outgoing}}
+\index{dp\_outgoing@{dp\_outgoing}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{dp\_outgoing}{dp\_outgoing}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{class_data_path}{Data\+Path}}$\ast$$>$ Component\+::dp\+\_\+outgoing\hspace{0.3cm}{\ttfamily [protected]}}
+
+Contains references to data paths that point from this component. \begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_data_path}{Data\+Path}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_component_a7b51904172e22f13a182eb16b7de4aaf}\label{class_component_a7b51904172e22f13a182eb16b7de4aaf}} 
+\index{Component@{Component}!id@{id}}
+\index{id@{id}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily int Component\+::id\hspace{0.3cm}{\ttfamily [protected]}}
+
+Numeric ID of the component. There is no requirement for uniqueness of the ID, however it is advised to have unique IDs at least in the realm of parent\textquotesingle{}s children. Some tree search functions, which take the id as a search parameter search for first match, so the user is responsible to manage uniqueness in the realm of the search subtree (or should be aware of the consequences of not doing so). \mbox{\hyperlink{class_component}{Component}}\textquotesingle{}s ID is set by the constructor, and is retrieved via int \mbox{\hyperlink{class_component_aa8e0d9af5f40df0ccad6be3edde7dad0}{Get\+Id()}}; \mbox{\Hypertarget{class_component_a3f51bb245c415a384cd29c60f7b25ba2}\label{class_component_a3f51bb245c415a384cd29c60f7b25ba2}} 
+\index{Component@{Component}!name@{name}}
+\index{name@{name}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily string Component\+::name\hspace{0.3cm}{\ttfamily [protected]}}
+
+Name of the component (as a string). \mbox{\Hypertarget{class_component_add189dc18ca4dd121d7dede5a0dbeab8}\label{class_component_add189dc18ca4dd121d7dede5a0dbeab8}} 
+\index{Component@{Component}!parent@{parent}}
+\index{parent@{parent}!Component@{Component}}
+\doxysubsubsection{\texorpdfstring{parent}{parent}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_component}{Component}}$\ast$ Component\+::parent\hspace{0.3cm}{\ttfamily [protected]}}
+
+Contains pointer to the parent component in the component tree. If this component is the root, parent will be NULL. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/Topology.\+hpp\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/Topology.\+cpp\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/xml\+\_\+dump.\+cpp\end{DoxyCompactItemize}

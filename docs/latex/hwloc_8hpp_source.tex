@@ -1,0 +1,27 @@
+\hypertarget{hwloc_8hpp_source}{}\doxysection{hwloc.\+hpp}
+\label{hwloc_8hpp_source}\index{/Users/stepan/Documents/phd/repos/sys-\/sage/src/parsers/hwloc.hpp@{/Users/stepan/Documents/phd/repos/sys-\/sage/src/parsers/hwloc.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef HWLOC}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define HWLOC}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <libxml/parser.h>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <libxml/tree.h>}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include "{}Topology.hpp"{}}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{keywordtype}{int} parseHwlocOutput(\mbox{\hyperlink{class_node}{Node}}* n, std::string topoPath);}
+\DoxyCodeLine{13 \textcolor{keywordtype}{int} xmlProcessChildren(\mbox{\hyperlink{class_component}{Component}}* c, xmlNode* parent, \textcolor{keywordtype}{int} level);}
+\DoxyCodeLine{14 \mbox{\hyperlink{class_component}{Component}}* createChildC(std::string type, xmlNode* node);}
+\DoxyCodeLine{15 std::string xmlGetPropStr(xmlNode* node, std::string key);}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{keyword}{extern} std::vector<std::string> xmlRelevantObjectTypes;}
+\DoxyCodeLine{18 \textcolor{keyword}{extern} std::vector<std::string> xmlRelevantNames;}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

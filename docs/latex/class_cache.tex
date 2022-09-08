@@ -1,0 +1,121 @@
+\hypertarget{class_cache}{}\doxysection{Cache Class Reference}
+\label{class_cache}\index{Cache@{Cache}}
+
+
+{\ttfamily \#include $<$Topology.\+hpp$>$}
+
+Inheritance diagram for Cache\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_cache}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_cache_a486f257a48e32d0083f8ae41f78074d1}{Cache}} ()
+\item 
+\mbox{\hyperlink{class_cache_ac6f979c3f36173536ef758676b27ec26}{Cache}} (int \+\_\+id, int \+\_\+cache\+\_\+level, unsigned long long \+\_\+cache\+\_\+size, int \+\_\+associativity)
+\item 
+int \mbox{\hyperlink{class_cache_a5edc710de1a1e15c6ff9dd4da038fcd1}{Get\+Cache\+Level}} ()
+\item 
+long long \mbox{\hyperlink{class_cache_a288f33b3406bd31a58be4d11b078a5c7}{Get\+Cache\+Size}} ()
+\item 
+int \mbox{\hyperlink{class_cache_a71cc633425926859fe231345c1ac7e80}{Get\+Cache\+Associativity\+Ways}} ()
+\item 
+int \mbox{\hyperlink{class_cache_a2d5d79bbd9eceb3ef05a1600d21ec9b1}{Get\+Cache\+Line\+Size}} ()
+\item 
+xml\+Node\+Ptr \mbox{\hyperlink{class_cache_a3196866277eff478f567992ded097834}{Create\+Xml\+Subtree}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+Class \mbox{\hyperlink{class_cache}{Cache}} -\/ represents a data cache memories in the system (of different levels/purposes). ~\newline
+ This class is a child of \mbox{\hyperlink{class_component}{Component}} class, therefore inherits its attributes and methods. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_cache_a486f257a48e32d0083f8ae41f78074d1}\label{class_cache_a486f257a48e32d0083f8ae41f78074d1}} 
+\index{Cache@{Cache}!Cache@{Cache}}
+\index{Cache@{Cache}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{Cache()}{Cache()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Cache\+::\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Generic constructor. Sets\+: ~\newline
+ id=\texorpdfstring{$>$}{>}0 ~\newline
+ name=\texorpdfstring{$>$}{>}\char`\"{}cache\char`\"{} ~\newline
+ component\+Type=\texorpdfstring{$>$}{>}SYS\+\_\+\+SAGE\+\_\+\+COMPONENT\+\_\+\+CACHE \mbox{\Hypertarget{class_cache_ac6f979c3f36173536ef758676b27ec26}\label{class_cache_ac6f979c3f36173536ef758676b27ec26}} 
+\index{Cache@{Cache}!Cache@{Cache}}
+\index{Cache@{Cache}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{Cache()}{Cache()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Cache\+::\+Cache (\begin{DoxyParamCaption}\item[{int}]{\+\_\+id,  }\item[{int}]{\+\_\+cache\+\_\+level,  }\item[{unsigned long long}]{\+\_\+cache\+\_\+size,  }\item[{int}]{\+\_\+associativity }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{class_cache}{Cache}} component constructor. The name and component\+Type are set as in \mbox{\hyperlink{class_cache_a486f257a48e32d0083f8ae41f78074d1}{Cache()}} constructor 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+id} & -\/ id of the \mbox{\hyperlink{class_cache}{Cache}} \\
+\hline
+{\em \+\_\+cache\+\_\+level} & -\/ (int) cache level (1=L1, 2=L2, ...) \\
+\hline
+{\em \+\_\+cache\+\_\+size} & -\/ size of the cache (Bytes?) \\
+\hline
+{\em \+\_\+associativity} & -\/ number of cache associativity ways \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cache_a486f257a48e32d0083f8ae41f78074d1}{Cache()}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cache_a3196866277eff478f567992ded097834}\label{class_cache_a3196866277eff478f567992ded097834}} 
+\index{Cache@{Cache}!CreateXmlSubtree@{CreateXmlSubtree}}
+\index{CreateXmlSubtree@{CreateXmlSubtree}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{CreateXmlSubtree()}{CreateXmlSubtree()}}
+{\footnotesize\ttfamily xml\+Node\+Ptr Cache\+::\+Create\+Xml\+Subtree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+!!\+Should normally not be used!! Helper function of XML dump generation. \begin{DoxySeeAlso}{See also}
+export\+To\+Xml(Component$\ast$ root, string path = \char`\"{}\char`\"{}, std\+::function$<$int(string,void$\ast$,string$\ast$)$>$ custom\+\_\+search\+\_\+attrib\+\_\+key\+\_\+fcn = NULL); 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_cache_a71cc633425926859fe231345c1ac7e80}\label{class_cache_a71cc633425926859fe231345c1ac7e80}} 
+\index{Cache@{Cache}!GetCacheAssociativityWays@{GetCacheAssociativityWays}}
+\index{GetCacheAssociativityWays@{GetCacheAssociativityWays}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{GetCacheAssociativityWays()}{GetCacheAssociativityWays()}}
+{\footnotesize\ttfamily int Cache\+::\+Get\+Cache\+Associativity\+Ways (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+the number of the cache associativity ways of this cache 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_cache_a5edc710de1a1e15c6ff9dd4da038fcd1}\label{class_cache_a5edc710de1a1e15c6ff9dd4da038fcd1}} 
+\index{Cache@{Cache}!GetCacheLevel@{GetCacheLevel}}
+\index{GetCacheLevel@{GetCacheLevel}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{GetCacheLevel()}{GetCacheLevel()}}
+{\footnotesize\ttfamily int Cache\+::\+Get\+Cache\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+cache level of this cache 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_cache_a2d5d79bbd9eceb3ef05a1600d21ec9b1}\label{class_cache_a2d5d79bbd9eceb3ef05a1600d21ec9b1}} 
+\index{Cache@{Cache}!GetCacheLineSize@{GetCacheLineSize}}
+\index{GetCacheLineSize@{GetCacheLineSize}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{GetCacheLineSize()}{GetCacheLineSize()}}
+{\footnotesize\ttfamily int Cache\+::\+Get\+Cache\+Line\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+the size of a cache line of this cache 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_cache_a288f33b3406bd31a58be4d11b078a5c7}\label{class_cache_a288f33b3406bd31a58be4d11b078a5c7}} 
+\index{Cache@{Cache}!GetCacheSize@{GetCacheSize}}
+\index{GetCacheSize@{GetCacheSize}!Cache@{Cache}}
+\doxysubsubsection{\texorpdfstring{GetCacheSize()}{GetCacheSize()}}
+{\footnotesize\ttfamily long long Cache\+::\+Get\+Cache\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+cache size of this cache 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/Topology.\+hpp\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/Topology.\+cpp\item 
+/\+Users/stepan/\+Documents/phd/repos/sys-\/sage/src/xml\+\_\+dump.\+cpp\end{DoxyCompactItemize}

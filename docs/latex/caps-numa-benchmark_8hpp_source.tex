@@ -1,0 +1,25 @@
+\hypertarget{caps-numa-benchmark_8hpp_source}{}\doxysection{caps-\/numa-\/benchmark.hpp}
+\label{caps-numa-benchmark_8hpp_source}\index{/Users/stepan/Documents/phd/repos/sys-\/sage/src/parsers/caps-\/numa-\/benchmark.hpp@{/Users/stepan/Documents/phd/repos/sys-\/sage/src/parsers/caps-\/numa-\/benchmark.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef CAPS\_NUMA\_BENCHMARK}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define CAPS\_NUMA\_BENCHMARK}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}Topology.hpp"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}DataPath.hpp"{}}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{keywordtype}{int} parseCapsNumaBenchmark(\mbox{\hyperlink{class_component}{Component}}* rootComponent, \textcolor{keywordtype}{string} benchmarkPath, \textcolor{keywordtype}{string} delim);}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{keyword}{class }\mbox{\hyperlink{class_c_s_v_reader}{CSVReader}}}
+\DoxyCodeLine{10 \{}
+\DoxyCodeLine{11     std::string benchmarkPath;}
+\DoxyCodeLine{12     std::string delimiter;}
+\DoxyCodeLine{13 \textcolor{keyword}{public}:}
+\DoxyCodeLine{14     \mbox{\hyperlink{class_c_s_v_reader}{CSVReader}}(std::string benchmarkPath, std::string delm = \textcolor{stringliteral}{"{};"{}}) : benchmarkPath(benchmarkPath), delimiter(delm) \{ \}}
+\DoxyCodeLine{15     \textcolor{comment}{// Function to fetch data from a CSV File}}
+\DoxyCodeLine{16     \textcolor{keywordtype}{int} getData(std::vector<std::vector<std::string> >*);}
+\DoxyCodeLine{17 \};}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
