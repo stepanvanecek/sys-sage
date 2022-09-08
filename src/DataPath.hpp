@@ -39,6 +39,7 @@ public:
     double GetBw();
     double GetLatency();
     int GetDpType();
+    int GetOriented();
 
     void Print();
     map<string,void*> attrib;
