@@ -350,7 +350,7 @@ public:
     Memory();
 private:
     long long size; /**< size/capacity of the memory element*/
-    boolean is_volatile; /**< is volatile? */
+    bool is_volatile; /**< is volatile? */
 };
 
 /**

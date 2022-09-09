@@ -23,13 +23,13 @@ void Component::PrintAllDataPathsInSubtree()
         vector<DataPath*>* dp_out = c->GetDataPaths(SYS_SAGE_DATAPATH_OUTGOING);
         if(dp_in->size() > 0 || dp_out->size() > 0 )
         {
-            cout << "DataPaths regarding Component (" << (*it)->GetComponentTypeStr() << ") id " << (*it)->GetId() << endl;
-            for(DataPath * dp : dp_out)
+            cout << "DataPaths regarding Component (" << c->GetComponentTypeStr() << ") id " << c->GetId() << endl;
+            for(DataPath * dp : *dp_out)
             {
                 cout << "    ";
                 dp->Print();
             }
-            for(DataPath * dp : dp_in)
+            for(DataPath * dp : *dp_in)
             {
                 cout << "    ";
                 dp->Print();
