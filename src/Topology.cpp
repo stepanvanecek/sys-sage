@@ -8,34 +8,31 @@ void Component::PrintSubtree(int level)
         cout << "  " ;
     cout << GetComponentTypeStr() << " (name " << name << ") id " << id << " - children: " << children.size() <<  endl;
 
-    if(!children.empty())
+    for(Component* child: children)
     {
-        for(auto it = begin(children); it != end(children); ++it)
-        {
-            (*it)->PrintSubtree(level+1);
-        }
+        child->PrintSubtree(level+1);
     }
 }
 void Component::PrintAllDataPathsInSubtree()
 {
     vector<Component*> subtreeList;
     GetSubtreeNodeList(&subtreeList);
-    for(auto it = std::begin(subtreeList); it != std::end(subtreeList); ++it)
+    for(Component * c : subtreeList)
     {
-        vector<DataPath*>* dp_in = (*it)->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING);
-        vector<DataPath*>* dp_out = (*it)->GetDataPaths(SYS_SAGE_DATAPATH_OUTGOING);
+        vector<DataPath*>* dp_in = c->GetDataPaths(SYS_SAGE_DATAPATH_INCOMING);
+        vector<DataPath*>* dp_out = c->GetDataPaths(SYS_SAGE_DATAPATH_OUTGOING);
         if(dp_in->size() > 0 || dp_out->size() > 0 )
         {
             cout << "DataPaths regarding Component (" << (*it)->GetComponentTypeStr() << ") id " << (*it)->GetId() << endl;
-            for(auto it2 = std::begin(*dp_out); it2 != std::end(*dp_out); ++it2)
+            for(DataPath * dp : dp_out)
             {
                 cout << "    ";
-                (*it2)->Print();
+                dp->Print();
             }
-            for(auto it2 = std::begin(*dp_in); it2 != std::end(*dp_in); ++it2)
+            for(DataPath * dp : dp_in)
             {
                 cout << "    ";
-                (*it2)->Print();
+                dp->Print();
             }
         }
     }
@@ -48,10 +45,10 @@ void Component::InsertChild(Component * child)
 }
 Component* Component::GetChild(int _id)
 {
-    for(auto it = begin(children); it != end(children); ++it)
+    for(Component* child: children)
     {
-        if((*it)->id == _id)
-            return (Component*)(*it);
+        if(child->id == _id)
+            return child;
     }
     return NULL;
 }
@@ -61,9 +58,9 @@ int Component::GetNumThreads()
     if(componentType == SYS_SAGE_COMPONENT_THREAD)
         return 1;
     int numPu = 0;
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component* child: children)
     {
-        numPu+=(*it)->GetNumThreads();
+        numPu+=child->GetNumThreads();
     }
     return numPu;
 }
@@ -71,11 +68,11 @@ int Component::GetNumThreads()
 int Component::GetTopoTreeDepth()
 {
     if(children.empty()) //is leaf
-        return 1;
+        return 0;
     int maxDepth = 0;
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component* child: children)
     {
-        int subtreeDepth = (*it)->GetTopoTreeDepth();
+        int subtreeDepth = child->GetTopoTreeDepth();
         if(subtreeDepth > maxDepth)
             maxDepth = subtreeDepth;
     }
@@ -89,9 +86,9 @@ void Component::GetComponentsNLevelsDeeper(vector<Component*>* outArray, int dep
         outArray->push_back(this);
         return;
     }
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component* child: children)
     {
-        (*it)->GetComponentsNLevelsDeeper(outArray, depth-1);
+        child->GetComponentsNLevelsDeeper(outArray, depth-1);
     }
     return;
 }
@@ -102,18 +99,18 @@ void Component::GetSubcomponentsByType(vector<Component*>* outArray, int _compon
     {
         outArray->push_back(this);
     }
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component* child: children)
     {
-        (*it)->GetSubcomponentsByType(outArray, _componentType);
+        child->GetSubcomponentsByType(outArray, _componentType);
     }
 }
 
 void Component::GetSubtreeNodeList(vector<Component*>* outArray)
 {
     outArray->push_back(this);
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component * child : children)
     {
-        (*it)->GetSubtreeNodeList(outArray);
+        child->GetSubtreeNodeList(outArray);
     }
     return;
 }
@@ -121,12 +118,11 @@ void Component::GetSubtreeNodeList(vector<Component*>* outArray)
 Component* Component::FindSubcomponentById(int _id, int _componentType)
 {
     if(componentType == _componentType && id == _id){
-        //cout << "   found component " << GetId() << " (" << GetComponentType() << ") found .." << _id << " " << _componentType << endl;
         return this;
     }
-    for(auto it = std::begin(children); it != std::end(children); ++it)
+    for(Component * child : children)
     {
-        Component* ret = (*it)->FindSubcomponentById(_id, _componentType);
+        Component* ret = child->FindSubcomponentById(_id, _componentType);
         if(ret != NULL)
         {
             return ret;
@@ -141,10 +137,9 @@ Component* Component::FindParentByType(int _componentType)
         return this;
     }
     if(parent != NULL){
-        cout << "   passing through component " << GetId() << " " << GetComponentType() << "(" << GetComponentTypeStr() << ") - searching for " << _componentType << endl;
+        //cout << "   passing through component " << GetId() << " " << GetComponentType() << "(" << GetComponentTypeStr() << ") - searching for " << _componentType << endl;
         return parent->FindParentByType(_componentType);
     }
-
     return NULL;
 }
 
@@ -211,10 +206,16 @@ string Component::GetComponentTypeStr()
             return "Core";
         case SYS_SAGE_COMPONENT_CACHE:
             return "Cache";
+        case SYS_SAGE_COMPONENT_SUBDIVISION:
+            return "Subdivision";
         case SYS_SAGE_COMPONENT_NUMA:
             return "NUMA";
         case SYS_SAGE_COMPONENT_CHIP:
             return "Chip";
+        case SYS_SAGE_COMPONENT_MEMORY:
+            return "Memory";
+        case SYS_SAGE_COMPONENT_STORAGE:
+            return "Storage";
         case SYS_SAGE_COMPONENT_NODE:
             return "Node";
         case SYS_SAGE_COMPONENT_TOPOLOGY:
