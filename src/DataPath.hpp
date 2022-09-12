@@ -98,6 +98,7 @@ public:
     @see dp_type
     */
     int GetDpType();
+    int GetOriented();
 
     /**
     Prints basic information about the Data Path to stdout. Prints componentType and Id of the source and target Components, the bandwidth, load latency, and the attributes; for each attribute, the name and value are printed, however the value is only retyped to uint64_t (therefore will print nonsensical values for other data types).
