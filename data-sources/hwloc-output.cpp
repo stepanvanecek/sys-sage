@@ -4,10 +4,17 @@
 
 #include "sys-sage.hpp"
 
+/*! \file */
+/// @private
 int hwloc_dump_xml(const char *filename);
 
 using namespace std;
 
+/**
+Binary (entrypoint) for generating hwloc topology XML output (to current directory)
+\n usage: ./hwloc-output [output_filename]
+@param filename of the output file (default: tmp_hwloc.xml)
+*/
 int main(int argc, char *argv[])
 {
     if(argc < 2){
