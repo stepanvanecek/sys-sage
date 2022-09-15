@@ -1,8 +1,23 @@
 # sys-sage
 
-Library for capturing and manipulating hadrware topology of compute systems.
+sys-sage is a library for capturing and manipulating hardware topology of compute systems.
 
-Still in development, no stable release available yet.
+It is currently under development, so there may be breaking changes in the API in the future.
+
+### Documentation
+
+The documentation is available [here](https://stepanvanecek.github.io/sys-sage/html/index.html).
+
+### Installation
+
+Please refer to the [Installation Guide](https://stepanvanecek.github.io/sys-sage/html/md__installation__guide.html) for more information.
+
+The recommended installation is through spack, alternatively, sys-sage can be built from the sources.
+
+```bash
+spack install sys-sage
+#see "spack info sys-sage" for available options and versions
+```
 
 Installation with CMAKE:
 ```bash
@@ -14,3 +29,9 @@ cmake ..
 # -DCMAKE_INSTALL_PREFIX=../inst-dir    - to install locally into the git repo folder
 make all install
 ```
+
+### About
+
+sys-sage has been created by Stepan Vanecek (stepan.vanecek@tum.de) and the [CAPS TUM](https://www.ce.cit.tum.de/en/caps/homepage/). Please contact us in case of questions, bug reporting etc.
+
+sys-sage is available under the LGPL-2.1 license. (see [License](https://github.com/caps-tum/sys-sage/blob/master/LICENSE))
