@@ -26,10 +26,11 @@ configure_file(${sys-sage_SOURCE_DIR}/pkg/sys-sage-config-version.cmake.in
 configure_file(${sys-sage_SOURCE_DIR}/pkg/sys-sage.pc.in
                 ${sys-sage_BINARY_DIR}/pkg/sys-sage.pc @ONLY)
 
+install(FILES ${sys-sage_BINARY_DIR}/pkg/sys-sage.pc
+         DESTINATION pkgconfig)
 install(FILES ${sys-sage_BINARY_DIR}/pkg/sys-sage-config.cmake
                 ${sys-sage_BINARY_DIR}/pkg/sys-sage-config-version.cmake
-                ${sys-sage_BINARY_DIR}/pkg/sys-sage.pc
-         DESTINATION lib)
+         DESTINATION lib/cmake/sys-sage)
 
 
 ###Options:
