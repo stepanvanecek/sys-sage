@@ -30,6 +30,9 @@ target_include_directories(sys-sage PRIVATE .)
 install(DIRECTORY "."
     DESTINATION inc
     FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY "."
+    DESTINATION lib/cmake/inc
+    FILES_MATCHING PATTERN "*.hpp")
 install(TARGETS sys-sage
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 #    PUBLIC_HEADER DESTINATION inc
