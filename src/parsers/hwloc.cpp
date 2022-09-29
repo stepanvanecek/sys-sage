@@ -191,36 +191,33 @@ int xmlProcessChildren(Component* c, xmlNode* parent, int level)
 }
 
 int removeUnknownCompoents(Component* c){
-    std::cout << "--visiting " << c->GetComponentTypeStr() << " " << c->GetId() << " - children" << c->GetChildren()->size() << std::endl;
-
     vector<Component*>* children = c->GetChildren();
     vector<Component*> children_copy;
     for(Component* child : *children){
         children_copy.push_back(child);
     }
 
+    int ret = 0;
     for(Component* child : children_copy){
-        std::cout << "--checking " << child->GetComponentTypeStr() << " " << child->GetId() << " - children" << child->GetChildren()->size() << std::endl;
         if(child->GetComponentType() == SYS_SAGE_COMPONENT_NONE){
             vector<Component*>* grandchildren = child->GetChildren();
             int num_grandchildren = grandchildren->size();
-            std::cout << "removing child " << child->GetComponentTypeStr() << " has children " << num_grandchildren << std::endl;
             if(num_grandchildren >= 1) {
                 int removed = c->RemoveChild(child);
-                std::cout << removed << ": removed child " << child->GetComponentTypeStr() << " from " << c->GetComponentTypeStr()<< std::endl;
                 for(Component * grandchild : *grandchildren){
                     c->InsertChild(grandchild);
                 }
                 delete child;
+                ret += num_grandchildren - 1;
             }
             else {
                 c->RemoveChild(child);
                 delete child;
             }
         }
-        removeUnknownCompoents(child);
+        ret += removeUnknownCompoents(child);
     }
-    return 0;
+    return ret;
 }
 
 //parses a hwloc output and adds it to topology
