@@ -43,6 +43,10 @@ void Component::InsertChild(Component * child)
     child->SetParent(this);
     children.push_back(child);
 }
+int Component::RemoveChild(Component * child)
+{
+    return std::erase(children, child);
+}
 Component* Component::GetChild(int _id)
 {
     for(Component* child: children)
@@ -311,27 +315,34 @@ int Component::GetId(){return id;}
 
 void Component::SetParent(Component* _parent){parent = _parent;}
 
+string Chip::GetVendor(){return vendor;}
+void Chip::SetVendor(string _vendor){vendor = _vendor;}
+string Chip::GetModel(){return model;}
+void Chip::SetModel(string _model){model = _model;}
+
 int Numa::GetSize(){return size;}
 int Cache::GetCacheLevel(){return cache_level;}
 long long Cache::GetCacheSize(){return cache_size;}
 int Cache::GetCacheAssociativityWays(){return cache_associativity_ways;}
 
-Component::Component(int _id, string _name, int _componentType) : id(_id), name(_name), componentType(_componentType){}
+Component::Component(int _id, string _name, int _componentType) : id(_id), name(_name), componentType(_componentType) { count = -1;}
 Component::Component() :Component(0,"unknown",SYS_SAGE_COMPONENT_NONE){}
 
-Topology::Topology():Component(0, "topology", SYS_SAGE_COMPONENT_TOPOLOGY){}
+Topology::Topology():Component(0, "sys-sage Topology", SYS_SAGE_COMPONENT_TOPOLOGY){}
 
 Memory::Memory():Component(0, "Memory", SYS_SAGE_COMPONENT_MEMORY){}
 
 Storage::Storage():Component(0, "Storage", SYS_SAGE_COMPONENT_STORAGE){}
 
-Node::Node(int _id):Component(_id, "sys-sage node", SYS_SAGE_COMPONENT_NODE){}
+Node::Node(int _id):Component(_id, "Node", SYS_SAGE_COMPONENT_NODE){}
 Node::Node():Node(0){}
 
-Chip::Chip(int _id):Component(_id, "Chip", SYS_SAGE_COMPONENT_CHIP){}
+Chip::Chip(int _id, string _name):Component(_id, _name, SYS_SAGE_COMPONENT_CHIP){}
+Chip::Chip(int _id):Chip(_id, "Chip"){}
 Chip::Chip():Chip(0){}
 
-Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Component(_id, "cache", SYS_SAGE_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity){}
+Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size): Component(_id, "Cache", SYS_SAGE_COMPONENT_CACHE), cache_level(_cache_level), cache_size(_cache_size), cache_associativity_ways(_associativity), cache_line_size(_cache_line_size){}
+Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Cache(_id, _cache_level, _cache_size, _associativity, 0){}
 Cache::Cache():Cache(0,0,0,0){}
 
 Subdivision::Subdivision(int _id, string _name, int _componentType): Component(_id, _name, _componentType){}
@@ -342,8 +353,10 @@ Numa::Numa(int _id, int _size):Subdivision(_id, "Numa", SYS_SAGE_COMPONENT_NUMA)
 Numa::Numa(int _id):Numa(_id, 0){}
 Numa::Numa():Numa(0){}
 
-Core::Core(int _id):Component(_id, "Core", SYS_SAGE_COMPONENT_CORE){}
+Core::Core(int _id, string _name):Component(_id, _name, SYS_SAGE_COMPONENT_CORE){}
+Core::Core(int _id):Core(_id, "Core"){}
 Core::Core():Core(0){}
 
-Thread::Thread(int _id):Component(_id, "Thread", SYS_SAGE_COMPONENT_THREAD){}
+Thread::Thread(int _id, string _name):Component(_id, _name, SYS_SAGE_COMPONENT_THREAD){}
+Thread::Thread(int _id):Thread(_id, "Thread"){}
 Thread::Thread():Thread(0){}

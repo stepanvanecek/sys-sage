@@ -59,6 +59,11 @@ public:
     */
     void InsertChild(Component * child);
     /**
+    //TODO
+    @return how many elements were deleted (normally, 0 or 1 should be possible)
+    */
+    int RemoveChild(Component * child);
+    /**
     Define a parent to the component. This is usually used when inserting a component in the tree (by calling InsertChild on the parent, and calling SetParent on the child).
     @param parent - a pointer to a Component (or any class instance that inherits from Component).
     @see InsertChild()
@@ -262,6 +267,7 @@ protected:
     int id; /**< Numeric ID of the component. There is no requirement for uniqueness of the ID, however it is advised to have unique IDs at least in the realm of parent's children. Some tree search functions, which take the id as a search parameter search for first match, so the user is responsible to manage uniqueness in the realm of the search subtree (or should be aware of the consequences of not doing so). Component's ID is set by the constructor, and is retrieved via int GetId(); */
     int depth; /**< TODO not implemented */
     string name; /**< Name of the component (as a string). */
+    int count; /**< Can be used to represent multiple Components with the same properties. By default, it represents only 1 component, and is set to -1. */
     /**
     Component type of the component. The component type denotes of which class the instance is (Often the components are stored as Component*, even though they are a member of one of the child classes)
     \n This attribute is constant, set by the constructor, and READONLY.
@@ -348,6 +354,11 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_MEMORY
     */
     Memory();
+    /**
+    !!Should normally not be used!! Helper function of XML dump generation.
+    @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
+    */
+    xmlNodePtr CreateXmlSubtree();
 private:
     long long size; /**< size/capacity of the memory element*/
     bool is_volatile; /**< is volatile? */
@@ -366,6 +377,11 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_STORAGE
     */
     Storage();
+    /**
+    !!Should normally not be used!! Helper function of XML dump generation.
+    @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
+    */
+    xmlNodePtr CreateXmlSubtree();
 private:
     long long size; /**< size/capacity of the storage device */
 };
@@ -390,7 +406,19 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_CHIP
     */
     Chip(int _id);
+    Chip(int _id, string _name);
+    void SetVendor(string _vendor);
+    string GetVendor();
+    void SetModel(string _model);
+    string GetModel();
+    /**
+    !!Should normally not be used!! Helper function of XML dump generation.
+    @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
+    */
+    xmlNodePtr CreateXmlSubtree();
 private:
+    string vendor;
+    string model;
 };
 
 /**
@@ -415,6 +443,7 @@ public:
     @see Cache()
     */
     Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
+    Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
     /**
     @returns cache level of this cache
     */
@@ -544,6 +573,7 @@ public:
     @param _id - id of the component
     */
     Core(int _id);
+    Core(int _id, string _name);
 private:
 };
 
@@ -567,6 +597,7 @@ public:
     @param _id - id of the component
     */
     Thread(int _id);
+    Thread(int _id, string _name);
     #ifdef CAT_AWARE //defined in CAT_aware.cpp
         /**
         !!! Only if compiled with CAT_AWARE functionality, only for Intel CPUs !!!
