@@ -44,6 +44,7 @@ xmlNodePtr Cache::CreateXmlSubtree()
     xmlNewProp(n, (const unsigned char *)"cache_level", (const unsigned char *)(std::to_string(cache_level)).c_str());
     xmlNewProp(n, (const unsigned char *)"cache_size", (const unsigned char *)(std::to_string(cache_size)).c_str());
     xmlNewProp(n, (const unsigned char *)"cache_associativity_ways", (const unsigned char *)(std::to_string(cache_associativity_ways)).c_str());
+    xmlNewProp(n, (const unsigned char *)"cache_line_size", (const unsigned char *)(std::to_string(cache_line_size)).c_str());
     return n;
 }
 
@@ -61,30 +62,79 @@ xmlNodePtr Numa::CreateXmlSubtree()
         xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
     return n;
 }
+xmlNodePtr Chip::CreateXmlSubtree()
+{
+    xmlNodePtr n = Component::CreateXmlSubtree();
+    if(!vendor.empty())
+        xmlNewProp(n, (const unsigned char *)"vendor", (const unsigned char *)(vendor.c_str()));
+    if(!model.empty())
+        xmlNewProp(n, (const unsigned char *)"model", (const unsigned char *)(model.c_str()));
+    return n;
+}
+xmlNodePtr Memory::CreateXmlSubtree()
+{
+    xmlNodePtr n = Component::CreateXmlSubtree();
+    if(size > 0)
+        xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
+    xmlNewProp(n, (const unsigned char *)"is_volatile", (const unsigned char *)(std::to_string(is_volatile?1:0)).c_str());
+    return n;
+}
+xmlNodePtr Storage::CreateXmlSubtree()
+{
+    xmlNodePtr n = Component::CreateXmlSubtree();
+    if(size > 0)
+        xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
+        if(size > 0)
+    return n;
+}
 xmlNodePtr Component::CreateXmlSubtree()
 {
     xmlNodePtr n = xmlNewNode(NULL, (const unsigned char *)GetComponentTypeStr().c_str());
     xmlNewProp(n, (const unsigned char *)"id", (const unsigned char *)(std::to_string(id)).c_str());
     xmlNewProp(n, (const unsigned char *)"name", (const unsigned char *)name.c_str());
+    if(count > 0)
+        xmlNewProp(n, (const unsigned char *)"count", (const unsigned char *)(std::to_string(count)).c_str());
     std::ostringstream addr;
     addr << this;
     xmlNewProp(n, (const unsigned char *)"addr", (const unsigned char *)(addr.str().c_str()));
 
     print_attrib(attrib, n);
 
-    for(auto it = begin(children); it != end(children); ++it)
+    for(Component * c : children)
     {
         xmlNodePtr child;
-        if((*it)->GetComponentType() == SYS_SAGE_COMPONENT_CACHE)
-            child = ((Cache*)*it)->CreateXmlSubtree();
-        else if((*it)->GetComponentType() == SYS_SAGE_COMPONENT_NUMA)
-            child = ((Numa*)*it)->CreateXmlSubtree();
-        else if((*it)->GetComponentType() == SYS_SAGE_COMPONENT_SUBDIVISION)
-            child = ((Subdivision*)*it)->CreateXmlSubtree();
-        else
-            child = (*it)->CreateXmlSubtree();
+        switch (c->GetComponentType()) {
+            case SYS_SAGE_COMPONENT_CACHE:
+                child = ((Cache*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_SUBDIVISION:
+                child = ((Subdivision*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_NUMA:
+                child = ((Numa*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_CHIP:
+                child = ((Chip*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_MEMORY:
+                child = ((Memory*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_STORAGE:
+                child = ((Storage*)c)->CreateXmlSubtree();
+                break;
+            case SYS_SAGE_COMPONENT_NONE:
+            case SYS_SAGE_COMPONENT_THREAD:
+            case SYS_SAGE_COMPONENT_CORE:
+            case SYS_SAGE_COMPONENT_NODE:
+            case SYS_SAGE_COMPONENT_TOPOLOGY:
+            default:
+                child = c->CreateXmlSubtree();
+                break;
+        };
+
         xmlAddChild(n, child);
     }
+
 
     return n;
 }

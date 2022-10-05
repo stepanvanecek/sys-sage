@@ -9,7 +9,8 @@ using namespace std;
 vector<string> xmlRelevantNames
 {
     "topology",
-    "object"
+    "object",
+    "info"
 };
 
 vector<string> xmlRelevantObjectTypes
@@ -22,8 +23,10 @@ vector<string> xmlRelevantObjectTypes
     "L1Cache",
     "NUMANode",
     "Core",
-    "PU"
+    "PU",
+    "Group"
 };
+
 
 
 
@@ -51,7 +54,7 @@ Component* createChildC(string type, xmlNode* node)
     {
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
-        c = (Component*)new Chip(id);
+        c = (Component*)new Chip(id, "socket");
     }
     else if(!type.compare("Cache") || !type.compare("L3Cache") || !type.compare("L2Cache") || !type.compare("L1Cache"))
     {
@@ -63,8 +66,10 @@ Component* createChildC(string type, xmlNode* node)
         int cache_level = stoi(s.empty()?"0":s);
         s = xmlGetPropStr(node, "cache_associativity");
         int associativity = stoi(s.empty()?"0":s);
+        s = xmlGetPropStr(node, "cache_linesize");
+        int cache_line_size = stoi(s.empty()?"0":s);
 
-        c = (Component*)new Cache(id, cache_level, size, associativity);
+        c = (Component*)new Cache(id, cache_level, size, associativity, cache_line_size);
     }
     else if(!type.compare("NUMANode"))
     {
@@ -86,7 +91,7 @@ Component* createChildC(string type, xmlNode* node)
         s = xmlGetPropStr(node, "os_index");
         int id = stoi(s.empty()?"0":s);
         //cout << "adding thread " << id << endl;
-        c = (Component*)new Thread(id);
+        c = (Component*)new Thread(id, "HW_thread");
     }
     else
     {
@@ -106,38 +111,113 @@ int xmlProcessChildren(Component* c, xmlNode* parent, int level)
             //interested in object or topology nodes
             if(find(xmlRelevantNames.begin(), xmlRelevantNames.end(), name) != xmlRelevantNames.end())
             {
-                string type = xmlGetPropStr(child, "type");
-
-                // for (int i = 0; i < level; ++i)
-                //     cout << " " ;
-                // cout << name <<  " - " << type << endl;
-
-                //if relevant object, it will be inserted in the topology
-                if(find(xmlRelevantObjectTypes.begin(), xmlRelevantObjectTypes.end(), type) != xmlRelevantObjectTypes.end())
+                if(name == "info"){
+                    string name = xmlGetPropStr(child, "name");
+                    if(!name.compare("CPUVendor")){
+                        string value = xmlGetPropStr(child, "value");
+                        if(c->GetComponentType() == SYS_SAGE_COMPONENT_CHIP)
+                            ((Chip*)c)->SetVendor(value);
+                    }
+                    else if(!name.compare("CPUModel")){
+                        string value = xmlGetPropStr(child, "value");
+                        if(c->GetComponentType() == SYS_SAGE_COMPONENT_CHIP)
+                            ((Chip*)c)->SetModel(value);
+                    }
+                }
+                else //name == object, topology
                 {
-                    Component * childC;
-                    if(!type.compare("Machine")) //node is already existing param
+                    string type = xmlGetPropStr(child, "type");
+
+                    // for (int i = 0; i < level; ++i)
+                    //     cout << " " ;
+                    // cout << name <<  " - " << type << endl;
+
+                    //if relevant object, it will be inserted in the topology
+                    if(find(xmlRelevantObjectTypes.begin(), xmlRelevantObjectTypes.end(), type) != xmlRelevantObjectTypes.end())
                     {
-                        childC = c;
-                        //cout << "already inserted " << type << endl;
+                        Component * childC;
+                        if(!type.compare("Machine")) //node is already existing param
+                        {
+                            childC = c;
+                            //cout << "already inserted " << type << endl;
+                        }
+                        else
+                        {
+                            //cout << "inserting " << type << " to " << c->GetName() << endl;
+                            childC = createChildC(type, child);
+
+                            bool inserted_as_sibling = false;
+                            if(childC->GetComponentType() == SYS_SAGE_COMPONENT_CACHE)
+                            {//make a cache a child of NUMA, if it is a sibling
+                                vector<Component*>* siblings = c->GetChildren();
+                                for(Component* sibling : *siblings){
+                                    if(sibling->GetComponentType() == SYS_SAGE_COMPONENT_NUMA) {
+                                        sibling->InsertChild(childC);
+                                        inserted_as_sibling = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            else if(childC->GetComponentType() == SYS_SAGE_COMPONENT_NUMA)
+                            {//make a (already inserted)cache a child of NUMA, if it is a sibling
+                                vector<Component*>* siblings = c->GetChildren();
+                                for(Component* sibling: *siblings){
+                                    if(sibling->GetComponentType() == SYS_SAGE_COMPONENT_CACHE) {
+                                        c->RemoveChild(sibling);
+                                        c->InsertChild(childC);
+                                        childC->InsertChild(childC);
+                                        sibling->InsertChild(sibling);
+                                        inserted_as_sibling = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(!inserted_as_sibling)
+                                c->InsertChild(childC);
+                        }
+                        xmlProcessChildren(childC, child, level+1);
                     }
                     else
                     {
-                        //cout << "inserting " << type << " to " << c->GetName() << endl;
-                        childC = createChildC(type, child);
-                        c->InsertChild(childC);
+                        //cout << "not inserting " << type << " to " << c->GetName() << endl;
+                        xmlProcessChildren(c, child, level+1);
                     }
-                    xmlProcessChildren(childC, child, level+1);
                 }
-                else
-                {
-                    //cout << "not inserting " << type << " to " << c->GetName() << endl;
-                    xmlProcessChildren(c, child, level+1);
-                }
+
             }
         }
     }
     return 0;
+}
+
+int removeUnknownCompoents(Component* c){
+    vector<Component*>* children = c->GetChildren();
+    vector<Component*> children_copy;
+    for(Component* child : *children){
+        children_copy.push_back(child);
+    }
+
+    int ret = 0;
+    for(Component* child : children_copy){
+        if(child->GetComponentType() == SYS_SAGE_COMPONENT_NONE){
+            vector<Component*>* grandchildren = child->GetChildren();
+            int num_grandchildren = grandchildren->size();
+            if(num_grandchildren >= 1) {
+                int removed = c->RemoveChild(child);
+                for(Component * grandchild : *grandchildren){
+                    c->InsertChild(grandchild);
+                }
+                delete child;
+                ret += num_grandchildren - 1;
+            }
+            else {
+                c->RemoveChild(child);
+                delete child;
+            }
+        }
+        ret += removeUnknownCompoents(child);
+    }
+    return ret;
 }
 
 //parses a hwloc output and adds it to topology
@@ -152,8 +232,19 @@ int parseHwlocOutput(Node* n, string topoPath)
 
     xmlNode *root= xmlDocGetRootElement(document);
 
-    int err = xmlProcessChildren((Component*)n, root, 0);
+    int err = xmlProcessChildren(n, root, 0);
+    if(err != 0){
+        std::cerr << "parseHwlocOutput on file " << topoPath << " failed on xmlProcessChildren" << std::endl;
+        return err;
+    }
+
+    err = removeUnknownCompoents(n);
+    if(err != 0){
+        std::cerr << "parseHwlocOutput on file " << topoPath << " failed on removeUnknownCompoents BUT WILL CONTINUE" << std::endl;
+        //return ret;
+    }
 
     xmlFreeDoc(document);
-    return err;
+    //return err;
+    return 0;
 }
