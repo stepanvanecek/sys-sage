@@ -29,7 +29,7 @@ int parseGpuTopo(Chip* gpu, string dataSourcePath, string delim)
 
 }
 
-GpuTopo::GpuTopo(Chip* gpu, string dataSourcePath, string delim) : dataSourcePath(dataSourcePath), delim(delim), root(gpu) { }
+GpuTopo::GpuTopo(Chip* gpu, string dataSourcePath, string delim) : dataSourcePath(dataSourcePath), delim(delim), root(gpu), Memory_Clock_Frequency(-1), Memory_Bus_Width(-1)  { }
 
 int GpuTopo::ReadBenchmarkFile()
 {
@@ -96,6 +96,15 @@ int GpuTopo::ParseBenchmarkData()
     } else {
         if((ret=parseREGISTER_INFORMATION()) != 0){
             cerr << "parseGpuTopo: parseREGISTER_INFORMATION failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
+    }
+
+    if(benchmarkData.find("ADDITIONAL_INFORMATION") == benchmarkData.end()){
+        cerr << "WARNING: parseGpuTopo: Could not find ADDITIONAL_INFORMATION in file " << dataSourcePath <<". Will skip."<< endl;
+    } else {
+        if((ret=parseADDITIONAL_INFORMATION()) != 0){
+            cerr << "parseGpuTopo: parseADDITIONAL_INFORMATION failed when parsing " << dataSourcePath << endl;
             return ret;
         }
     }
@@ -253,14 +262,49 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
 
 int GpuTopo::parseREGISTER_INFORMATION()
 {
-    vector<string> data = benchmarkData["REGISTER_INFORMATION"];
+    //TODO
+    return 0;
+}
+int GpuTopo::parseADDITIONAL_INFORMATION()
+{
+    vector<string> data = benchmarkData["ADDITIONAL_INFORMATION"];
     data.erase(data.begin());
 
     for(int i = 0; i<data.size(); i++)
     {
-        if(data[i]== "Memory_Clock_Frequency" ||
-            data[i]== "Memory_Bus_Width" ||
-            data[i]== "GPU_Clock_Rate")
+        if(data[i]== "Memory_Clock_Frequency")
+        {
+            if(i>=data.size()-2){
+                cerr << "parseREGISTER_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
+                return 1;
+            }
+            Memory_Clock_Frequency = stod(data[i+1]);
+            string unit = data[i+2];
+            if(unit == "KHz")
+                Memory_Clock_Frequency *= 1024;
+            else if(unit == "MHz")
+                Memory_Clock_Frequency *= 1024*1024;
+            else if(unit == "GHz")
+                Memory_Clock_Frequency *= 1024*1024*1024;
+            i+=2;
+        }
+        else if(data[i]== "Memory_Bus_Width")
+        {
+            if(i>=data.size()-2){
+                cerr << "parseREGISTER_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
+                return 1;
+            }
+            Memory_Bus_Width = stod(data[i+1]);
+            string unit = data[i+2];
+            if(unit == "KHz")
+                Memory_Bus_Width *= 1024;
+            else if(unit == "MHz")
+                Memory_Bus_Width *= 1024*1024;
+            else if(unit == "GHz")
+                Memory_Bus_Width *= 1024*1024*1024;
+            i+=2;
+        }
+        else if(data[i]== "GPU_Clock_Rate")
         {
             if(i>=data.size()-2){
                 cerr << "parseREGISTER_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
@@ -336,6 +380,15 @@ int GpuTopo::parseMAIN_MEMORY()
         if(size != -1)
             mem->SetSize((long long)size);
 
+        if(Memory_Clock_Frequency > -1){
+            double * mfreq = new double(Memory_Clock_Frequency);
+            mem->attrib.insert({"Clock_Frequency", (void*)mfreq});
+        }
+        if(Memory_Bus_Width > -1){
+            int * busW = new int(Memory_Bus_Width);
+            mem->attrib.insert({"Bus_Width_bit", (void*)busW});
+        }
+
         //make SMs as memory's children and inserd DP with latency
         vector<Component*> children_copy;
         for(Component* child : *(root->GetChildren())){
@@ -365,7 +418,7 @@ int GpuTopo::parseMAIN_MEMORY()
     return 0;
 }
 
-int GpuTopo::parseCaches(string header_name, string cache_name)
+int GpuTopo::parseCaches(string header_name, string cache_type)
 {
     vector<string> data = benchmarkData[header_name];
     data.erase(data.begin());
@@ -482,7 +535,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         }
     }
 
-    if(cache_name == "L2")
+    if(cache_type == "L2")
     {
         if(shared_on == 0)
             L2_shared_on_gpu = true;
@@ -491,32 +544,32 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
     }
 
     //if caches are shared, add process only the first one and add names of the others
-    if(cache_name == "L1")
+    if(cache_type == "L1")
     {
         if(share_texture == 1)
-            cache_name.append("+Texture");
+            cache_type.append("+Texture");
         if(share_ro == 1)
-            cache_name.append("+ReadOnly");
+            cache_type.append("+ReadOnly");
         if(share_constant == 1)
-            cache_name.append("+Constant_L1");
+            cache_type.append("+Constant_L1");
     }
-    else if(cache_name == "Texture")
+    else if(cache_type == "Texture")
     {
         if(share_l1 == 1)
             return 0;//already added in L1
         if(share_ro == 1)
-            cache_name.append("+ReadOnly");
+            cache_type.append("+ReadOnly");
         if(share_constant == 1)
-            cache_name.append("+Constant_L1");
+            cache_type.append("+Constant_L1");
     }
-    else if(cache_name == "ReadOnly")
+    else if(cache_type == "ReadOnly")
     {
         if(share_l1 == 1 || share_texture == 1)
             return 0;//already added in L1 or RO
         if(share_constant == 1)
-            cache_name.append("+Constant_L1");
+            cache_type.append("+Constant_L1");
     }
-    else if(cache_name == "Constant_L1")
+    else if(cache_type == "Constant_L1")
     {
         if(share_l1 == 1  || share_texture == 1 || share_ro == 1)
             return 0;//already added in L1 or texture or RO
@@ -529,14 +582,14 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         if(mem != NULL)
         {
             parent = mem;
-            if(cache_name != "L2")
+            if(cache_type != "L2")
             {
                 Component * l2 = mem->GetChildByType(SYS_SAGE_COMPONENT_CACHE);
                 if(((Cache*)l2)->GetCacheName() == "L2")
                     parent = l2;
             }
         }
-        Cache * cache = new Cache(parent, 0, cache_name);
+        Cache * cache = new Cache(parent, 0, cache_type);
         if(size != -1)
             cache->SetCacheSize(size);
         if(cache_line_size != -1)
@@ -568,7 +621,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         for(Component * parent : parents)
         {
             //if L2 is not shared on GPU, it will be the parent
-            if(cache_name != "L2" && !L2_shared_on_gpu)
+            if(cache_type != "L2" && !L2_shared_on_gpu)
             {
                 vector<Component*> caches = parent->GetAllChildrenByType(SYS_SAGE_COMPONENT_CACHE);
                 for(Component * cache: caches){
@@ -579,7 +632,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
                 }
             }
             //constant L1 is child of constant L1.5
-            if(cache_name == "Constant_L1")
+            if(cache_type == "Constant_L1")
             {
                 vector<Component*> caches = parent->GetAllChildrenByType(SYS_SAGE_COMPONENT_CACHE);
                 for(Component * cache: caches){
@@ -592,7 +645,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
 
             for(int i=0; i<caches_per_sm; i++)
             {
-                Cache * cache = new Cache(parent, i, cache_name);
+                Cache * cache = new Cache(parent, i, cache_type);
                 if(size != -1)
                     cache->SetCacheSize(size);
                 if(cache_line_size != -1)
@@ -614,7 +667,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
                         if(core_id >= cores_per_cache*(i) && core_id < cores_per_cache*(i+1))
                         {
                             //for L1 and L2, move cores as children
-                            if(cache_name.find("L1") != std::string::npos || cache_name == "L2")
+                            if(cache_type.find("L1") != std::string::npos || cache_type == "L2")
                             {
                                 parent->RemoveChild(child);
                                 cache->InsertChild(child);

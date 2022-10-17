@@ -13,6 +13,27 @@ int search_default_attrib_key(string key, void* value, string* ret_value_str)
         *ret_value_str=std::to_string(*(uint64_t*)value);
         return 1;
     }
+    else if(!key.compare("CUDA_compute_capability"))
+    {
+        *ret_value_str=*(string*)value;
+        return 1;
+    }
+    else if(!key.compare("Number_of_streaming_multiprocessors") || !key.compare("Number_of_cores_in_GPU") || !key.compare("Number_of_cores_per_SM")  || !key.compare("Bus_Width_bit"))
+    {
+        *ret_value_str=std::to_string(*(int*)value);
+        return 1;
+    }
+    else if(!key.compare("Clock_Frequency"))
+    {
+        *ret_value_str=std::to_string(*(double*)value);
+        return 1;
+    }
+    else if(!key.compare("GPU_Clock_Rate"))
+    {
+        auto [ freq, unit ] = *(std::tuple<double, std::string>*)value;
+        *ret_value_str = std::to_string(freq) + "; " + unit;
+        return 1;
+    }
     return 0;
 }
 
@@ -37,25 +58,15 @@ int print_attrib(map<string,void*> attrib, xmlNodePtr n)
 
     return 1;
 }
-
-xmlNodePtr Cache::CreateXmlSubtree()
+xmlNodePtr Memory::CreateXmlSubtree()
 {
     xmlNodePtr n = Component::CreateXmlSubtree();
-    xmlNewProp(n, (const unsigned char *)"cache_level", (const unsigned char *)cache_name.c_str());
-    xmlNewProp(n, (const unsigned char *)"cache_size", (const unsigned char *)(std::to_string(cache_size)).c_str());
-    xmlNewProp(n, (const unsigned char *)"cache_associativity_ways", (const unsigned char *)(std::to_string(cache_associativity_ways)).c_str());
-    xmlNewProp(n, (const unsigned char *)"cache_line_size", (const unsigned char *)(std::to_string(cache_line_size)).c_str());
+    if(size > 0)
+        xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
+    xmlNewProp(n, (const unsigned char *)"is_volatile", (const unsigned char *)(std::to_string(is_volatile?1:0)).c_str());
     return n;
 }
-
-xmlNodePtr Subdivision::CreateXmlSubtree()
-{
-    xmlNodePtr n = Component::CreateXmlSubtree();
-    xmlNewProp(n, (const unsigned char *)"subdivision_type", (const unsigned char *)(std::to_string(type)).c_str());
-    return n;
-}
-
-xmlNodePtr Numa::CreateXmlSubtree()
+xmlNodePtr Storage::CreateXmlSubtree()
 {
     xmlNodePtr n = Component::CreateXmlSubtree();
     if(size > 0)
@@ -71,20 +82,29 @@ xmlNodePtr Chip::CreateXmlSubtree()
         xmlNewProp(n, (const unsigned char *)"model", (const unsigned char *)(model.c_str()));
     return n;
 }
-xmlNodePtr Memory::CreateXmlSubtree()
+xmlNodePtr Cache::CreateXmlSubtree()
 {
     xmlNodePtr n = Component::CreateXmlSubtree();
-    if(size > 0)
-        xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
-    xmlNewProp(n, (const unsigned char *)"is_volatile", (const unsigned char *)(std::to_string(is_volatile?1:0)).c_str());
+    xmlNewProp(n, (const unsigned char *)"cache_level", (const unsigned char *)cache_type.c_str());
+    if(cache_size >= 0)
+        xmlNewProp(n, (const unsigned char *)"cache_size", (const unsigned char *)(std::to_string(cache_size)).c_str());
+    if(cache_associativity_ways >= 0)
+        xmlNewProp(n, (const unsigned char *)"cache_associativity_ways", (const unsigned char *)(std::to_string(cache_associativity_ways)).c_str());
+    if(cache_line_size >= 0)
+        xmlNewProp(n, (const unsigned char *)"cache_line_size", (const unsigned char *)(std::to_string(cache_line_size)).c_str());
     return n;
 }
-xmlNodePtr Storage::CreateXmlSubtree()
+xmlNodePtr Subdivision::CreateXmlSubtree()
+{
+    xmlNodePtr n = Component::CreateXmlSubtree();
+    xmlNewProp(n, (const unsigned char *)"subdivision_type", (const unsigned char *)(std::to_string(type)).c_str());
+    return n;
+}
+xmlNodePtr Numa::CreateXmlSubtree()
 {
     xmlNodePtr n = Component::CreateXmlSubtree();
     if(size > 0)
         xmlNewProp(n, (const unsigned char *)"size", (const unsigned char *)(std::to_string(size)).c_str());
-        if(size > 0)
     return n;
 }
 xmlNodePtr Component::CreateXmlSubtree()

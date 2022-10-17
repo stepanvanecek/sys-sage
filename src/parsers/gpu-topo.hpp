@@ -20,11 +20,15 @@ private:
     string delim;
     Chip* root;
     bool L2_shared_on_gpu;
+    double Memory_Clock_Frequency;
+    int Memory_Bus_Width;
+
     int parseGPU_INFORMATION();
     int parseCOMPUTE_RESOURCE_INFORMATION();
     int parseREGISTER_INFORMATION();
+    int parseADDITIONAL_INFORMATION();
     int parseMAIN_MEMORY();
-    int parseCaches(string header_name, string cache_name);
+    int parseCaches(string header_name, string cache_type);
 };
 
 const std::string whiteSpaces( " \f\n\r\t\v" );
