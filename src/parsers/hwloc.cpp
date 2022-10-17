@@ -246,6 +246,6 @@ int parseHwlocOutput(Node* n, string topoPath)
     }
 
     xmlFreeDoc(document);
-    //return err;
-    return 0;
+    err = n->CheckComponentTreeConsistency();
+    return err;
 }

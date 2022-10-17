@@ -24,7 +24,8 @@ int parseGpuTopo(Component* parent, string dataSourcePath, int gpuId, string del
 int parseGpuTopo(Chip* gpu, string dataSourcePath, string delim)
 {
     GpuTopo gpuT(gpu, dataSourcePath, delim);
-    return gpuT.ParseBenchmarkData();
+    int ret = gpuT.ParseBenchmarkData();
+    return ret;
 
 }
 
@@ -170,7 +171,9 @@ int GpuTopo::ParseBenchmarkData()
             return ret;
         }
     }
-    return 0;
+
+    ret = root->CheckComponentTreeConsistency();
+    return ret;
 }
 
 int GpuTopo::parseGPU_INFORMATION()
@@ -184,7 +187,7 @@ int GpuTopo::parseGPU_INFORMATION()
         {
             if(i>=data.size()-1){
                 cerr << "parseGPU_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             root->SetVendor(data[i+1]);
             i++;
@@ -193,7 +196,7 @@ int GpuTopo::parseGPU_INFORMATION()
         {
             if(i>=data.size()-1){
                 cerr << "parseGPU_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             root->SetModel(data[i+1]);
             i++;
@@ -214,7 +217,7 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
         {
             if(i>=data.size()-1){
                 cerr << "parseCOMPUTE_RESOURCE_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             string * val = new string(data[i+1]);
             root->attrib.insert({data[i], (void*)val});
@@ -226,7 +229,7 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
         {
             if(i>=data.size()-1){
                 cerr << "parseCOMPUTE_RESOURCE_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             int * val = new int(std::stoi(data[i+1]));
             root->attrib.insert({data[i], (void*)val});
@@ -261,7 +264,7 @@ int GpuTopo::parseREGISTER_INFORMATION()
         {
             if(i>=data.size()-2){
                 cerr << "parseREGISTER_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
-                return -1;
+                return 1;
             }
             std::tuple<double, std::string>* val = new std::tuple<double, std::string>(stod(data[i+1]), data[i+2]);
             root->attrib.insert({data[i], (void*)val});
@@ -285,7 +288,7 @@ int GpuTopo::parseMAIN_MEMORY()
         {
             if(i>=data.size()-3){
                 cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 3 additional values." << endl;
-                return -1;
+                return 1;
             }
             size = stod(data[i+1]);
             string unit = data[i+2];
@@ -301,7 +304,7 @@ int GpuTopo::parseMAIN_MEMORY()
         {
             if(i>=data.size()-2){
                 cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
-                return -1;
+                return 1;
             }
             if(data[i+2] == "cycles")
             {
@@ -313,7 +316,7 @@ int GpuTopo::parseMAIN_MEMORY()
         {
             if(i>=data.size()-1){
                 cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             if(data[i+1] == "GPU-level")
                 shared_on = 0;
@@ -322,7 +325,7 @@ int GpuTopo::parseMAIN_MEMORY()
             else
             {
                 cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be GPU-level or SM-level." << endl;
-                return -1;
+                return 1;
             }
             i+=1;
         }
@@ -356,7 +359,7 @@ int GpuTopo::parseMAIN_MEMORY()
     else if(shared_on == 1)
     {
         std::cerr << "GpuTopo::parseMAIN_MEMORY, shared_on == 1 --> this should not happen...if yes, the implementation needs to be extended." << std::endl;
-        return -1;
+        return 1;
     }
 
     return 0;
@@ -380,7 +383,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-3){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             size = stod(data[i+1]);
             string unit = data[i+2];
@@ -396,7 +399,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-2){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             cache_line_size = stoi(data[i+1]);
             string unit = data[i+2];
@@ -412,7 +415,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-2){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             if(data[i+2] == "cycles")
             {
@@ -424,7 +427,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             if(data[i+1] == "GPU-level")
                 shared_on = 0;
@@ -433,7 +436,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
             else
             {
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be GPU-level or SM-level." << endl;
-                return -1;
+                return 1;
             }
             i+=1;
         }
@@ -441,7 +444,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             caches_per_sm = stoi(data[i+1]);
         }
@@ -449,7 +452,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             share_l1 = stoi(data[i+1]);
         }
@@ -457,7 +460,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             share_texture = stoi(data[i+1]);
         }
@@ -465,7 +468,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             share_ro = stoi(data[i+1]);
         }
@@ -473,7 +476,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         {
             if(i>=data.size()-1){
                 cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
-                return -1;
+                return 1;
             }
             share_constant = stoi(data[i+1]);
         }
