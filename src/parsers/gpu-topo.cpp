@@ -28,7 +28,7 @@ int parseGpuTopo(Chip* gpu, string dataSourcePath, string delim)
 
 }
 
-GpuTopo::GpuTopo(Chip* gpu, string dataSourcePath, string delim) : root(gpu), dataSourcePath(dataSourcePath), delim(delim) { }
+GpuTopo::GpuTopo(Chip* gpu, string dataSourcePath, string delim) : dataSourcePath(dataSourcePath), delim(delim), root(gpu) { }
 
 int GpuTopo::ReadBenchmarkFile()
 {
@@ -53,7 +53,7 @@ int GpuTopo::ReadBenchmarkFile()
                 s = line.substr(0, line.length());
             trim(s);
             s.erase(std::remove(s.begin(), s.end(), '\"'), s.end());    //remove "" where present
-            std::cout << "adding " << s << std::endl;
+            //std::cout << "adding " << s << std::endl;
             vec.push_back(s);
             line.erase(0, pos + delim.length());
         }
@@ -67,7 +67,6 @@ int GpuTopo::ReadBenchmarkFile()
 int GpuTopo::ParseBenchmarkData()
 {
     int ret = ReadBenchmarkFile();
-    std::cout << "ReadBenchmarkFile" << std::endl;
     if(ret != 0)
         return ret;
 
@@ -75,74 +74,101 @@ int GpuTopo::ParseBenchmarkData()
         cerr << "parseGpuTopo: Could not find GPU_INFORMATION in file " << dataSourcePath << endl;
         return 1;
     } else {
-        parseGPU_INFORMATION();
+        if((ret=parseGPU_INFORMATION()) != 0){
+            cerr << "parseGpuTopo: parseGPU_INFORMATION failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "GPU_INFORMATION" << std::endl;
 
     if(benchmarkData.find("COMPUTE_RESOURCE_INFORMATION") == benchmarkData.end()){
         cerr << "parseGpuTopo: Could not find COMPUTE_RESOURCE_INFORMATION in file " << dataSourcePath << endl;
         return 1;
     } else {
-        parseCOMPUTE_RESOURCE_INFORMATION();
+        if((ret=parseCOMPUTE_RESOURCE_INFORMATION()) != 0){
+            cerr << "parseGpuTopo: parseCOMPUTE_RESOURCE_INFORMATION failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "COMPUTE_RESOURCE_INFORMATION" << std::endl;
 
     if(benchmarkData.find("REGISTER_INFORMATION") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find REGISTER_INFORMATION in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseREGISTER_INFORMATION();
+        if((ret=parseREGISTER_INFORMATION()) != 0){
+            cerr << "parseGpuTopo: parseREGISTER_INFORMATION failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "REGISTER_INFORMATION" << std::endl;
 
     if(benchmarkData.find("MAIN_MEMORY") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find MAIN_MEMORY in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseMAIN_MEMORY();
+        if((ret=parseMAIN_MEMORY()) != 0){
+            cerr << "parseGpuTopo: parseMAIN_MEMORY failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "MAIN_MEMORY" << std::endl;
 
     if(benchmarkData.find("L2_DATA_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find L2_DATA_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("L2_DATA_CACHE", "L2");
+        if((ret=parseCaches("L2_DATA_CACHE", "L2")) != 0){
+            cerr << "parseGpuTopo: parseCaches on L2_DATA_CACHE failed when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "L2_DATA_CACHE" << std::endl;
 
     if(benchmarkData.find("L1_DATA_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find L1_DATA_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("L1_DATA_CACHE", "L1");
+        if((ret=parseCaches("L1_DATA_CACHE", "L1")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on L1_DATA_CACHE when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
-    std::cout << "L1_DATA_CACHE" << std::endl;
 
     if(benchmarkData.find("SHARED_MEMORY") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find SHARED_MEMORY in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("SHARED_MEMORY", "Shared_Memory");
+        if((ret=parseCaches("SHARED_MEMORY", "Shared_Memory")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on SHARED_MEMORY when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
 
     if(benchmarkData.find("TEXTURE_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find TEXTURE_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("TEXTURE_CACHE", "Texture");
+        if((ret=parseCaches("TEXTURE_CACHE", "Texture")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on TEXTURE_CACHE when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
 
     if(benchmarkData.find("READ-ONLY_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find READ-ONLY_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("READ-ONLY_CACHE", "ReadOnly");
+        if((ret=parseCaches("READ-ONLY_CACHE", "ReadOnly")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on READ-ONLY_CACHE when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
 
     if(benchmarkData.find("CONST_L1_5_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find CONST_L1_5_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("CONST_L1_5_CACHE", "Constant_L1.5");
+        if((ret=parseCaches("CONST_L1_5_CACHE", "Constant_L1.5")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on CONST_L1_5_CACHE when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
 
     if(benchmarkData.find("CONSTANT_L1_CACHE") == benchmarkData.end()){
         cerr << "WARNING: parseGpuTopo: Could not find CONSTANT_L1_CACHE in file " << dataSourcePath <<". Will skip."<< endl;
     } else {
-        parseCaches("CONSTANT_L1_CACHE", "Constant_L1");
+        if((ret=parseCaches("CONSTANT_L1_CACHE", "Constant_L1")) != 0){
+            cerr << "parseGpuTopo: parseCaches failed on CONSTANT_L1_CACHE when parsing " << dataSourcePath << endl;
+            return ret;
+        }
     }
     return 0;
 }
@@ -156,15 +182,19 @@ int GpuTopo::parseGPU_INFORMATION()
     {
         if(data[i] == "GPU_vendor")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseGPU_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             root->SetVendor(data[i+1]);
             i++;
         }
         else if(data[i] == "GPU_name")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseGPU_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             root->SetModel(data[i+1]);
             i++;
         }
@@ -177,14 +207,15 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
     vector<string> data = benchmarkData["COMPUTE_RESOURCE_INFORMATION"];
     data.erase(data.begin());
 
-    cout << "csv line size " << data.size() << std::endl;
     for(int i = 0; i<data.size(); i++)
     {
-        cout << i << " " << data[i] << std::endl;
+        //cout << i << " " << data[i] << std::endl;
         if(data[i]== "CUDA_compute_capability")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCOMPUTE_RESOURCE_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             string * val = new string(data[i+1]);
             root->attrib.insert({data[i], (void*)val});
             i++;
@@ -193,12 +224,12 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
             data[i]== "Number_of_cores_in_GPU" ||
             data[i]== "Number_of_cores_per_SM")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCOMPUTE_RESOURCE_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             int * val = new int(std::stoi(data[i+1]));
             root->attrib.insert({data[i], (void*)val});
-            cout << data[i] << " = " << *val << std::endl;
-            cout << "      = " << (*(int*)root->attrib[data[i]]) << std::endl;
 
             i++;
         }
@@ -206,12 +237,12 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
 
     for(int i = 0; i < (*(int*)root->attrib["Number_of_streaming_multiprocessors"]); i++)
     {
-        cout << "adding SM " << i << std::endl;
+        //cout << "adding SM " << i << std::endl;
         Subdivision * sm = new Subdivision(root, i, "SM (Streaming Multiprocessor)");
         sm->SetSubdivisionType(SYS_SAGE_SUBDIVISION_TYPE_GPU_SM);
         for(int j = 0; j<(*(int*)root->attrib["Number_of_cores_per_SM"]); j++)
         {
-            Thread * t = new Thread(sm, j, "GPU Core");
+            new Thread(sm, j, "GPU Core");
         }
     }
     return 0;
@@ -228,8 +259,10 @@ int GpuTopo::parseREGISTER_INFORMATION()
             data[i]== "Memory_Bus_Width" ||
             data[i]== "GPU_Clock_Rate")
         {
-            if(i>=data.size()-2)
+            if(i>=data.size()-2){
+                cerr << "parseREGISTER_INFORMATION: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
                 return -1;
+            }
             std::tuple<double, std::string>* val = new std::tuple<double, std::string>(stod(data[i+1]), data[i+2]);
             root->attrib.insert({data[i], (void*)val});
             i+=2;
@@ -250,8 +283,10 @@ int GpuTopo::parseMAIN_MEMORY()
     {
         if(data[i]== "Size")
         {
-            if(i>=data.size()-3)
+            if(i>=data.size()-3){
+                cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 3 additional values." << endl;
                 return -1;
+            }
             size = stod(data[i+1]);
             string unit = data[i+2];
             if(unit == "KiB")
@@ -264,8 +299,10 @@ int GpuTopo::parseMAIN_MEMORY()
         }
         else if(data[i]== "Load_Latency")
         {
-            if(i>=data.size()-2)
+            if(i>=data.size()-2){
+                cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 2 additional values." << endl;
                 return -1;
+            }
             if(data[i+2] == "cycles")
             {
                 latency = stod(data[i+1]);
@@ -274,14 +311,19 @@ int GpuTopo::parseMAIN_MEMORY()
         }
         else if(data[i]== "Shared_On")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             if(data[i+1] == "GPU-level")
                 shared_on = 0;
             else if(data[i+1] == "SM-level")
                 shared_on = 1;
             else
+            {
+                cerr << "parseMAIN_MEMORY: \"" << data[i] << "\" is supposed to be GPU-level or SM-level." << endl;
                 return -1;
+            }
             i+=1;
         }
     }
@@ -327,7 +369,7 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
 
     //parse_args
     int shared_on = -1; //0=GPU, 1=SM
-    int caches_per_sm = -1;
+    int caches_per_sm = 1;
     double size = -1;
     int cache_line_size = -1;
     double latency = -1;
@@ -336,8 +378,10 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
     {
         if(data[i]== "Size")
         {
-            if(i>=data.size()-3)
+            if(i>=data.size()-3){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             size = stod(data[i+1]);
             string unit = data[i+2];
             if(unit == "KiB")
@@ -350,8 +394,10 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         }
         else if(data[i]== "Cache_Line_Size")
         {
-            if(i>=data.size()-2)
+            if(i>=data.size()-2){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             cache_line_size = stoi(data[i+1]);
             string unit = data[i+2];
             if(unit == "KiB")
@@ -364,8 +410,10 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         }
         else if(data[i]== "Load_Latency")
         {
-            if(i>=data.size()-2)
+            if(i>=data.size()-2){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             if(data[i+2] == "cycles")
             {
                 latency = stod(data[i+1]);
@@ -374,44 +422,59 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
         }
         else if(data[i]== "Shared_On")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             if(data[i+1] == "GPU-level")
                 shared_on = 0;
             else if(data[i+1] == "SM-level")
                 shared_on = 1;
             else
+            {
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be GPU-level or SM-level." << endl;
                 return -1;
+            }
             i+=1;
         }
         else if(data[i]== "Caches_Per_SM")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             caches_per_sm = stoi(data[i+1]);
         }
         else if(data[i]== "Share_Cache_With_L1_Data")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             share_l1 = stoi(data[i+1]);
         }
         else if(data[i]== "Share_Cache_With_Texture")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             share_texture = stoi(data[i+1]);
         }
         else if(data[i]== "Share_Cache_With_Read-Only")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             share_ro = stoi(data[i+1]);
         }
         else if(data[i]== "Share_Cache_With_ConstantL1")
         {
-            if(i>=data.size()-1)
+            if(i>=data.size()-1){
+                cerr << "parseCaches: \"" << data[i] << "\" is supposed to be followed by 1 additional value." << endl;
                 return -1;
+            }
             share_constant = stoi(data[i+1]);
         }
     }
@@ -470,7 +533,6 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
                     parent = l2;
             }
         }
-        std::cout << "Cache_name" << cache_name << std::endl;
         Cache * cache = new Cache(parent, 0, cache_name);
         if(size != -1)
             cache->SetCacheSize(size);
@@ -524,32 +586,42 @@ int GpuTopo::parseCaches(string header_name, string cache_name)
                     }
                 }
             }
-            std::cout << "Cache_name " << cache_name << std::endl;
-            Cache * cache = new Cache(parent, 0, cache_name);
-            if(size != -1)
-                cache->SetCacheSize(size);
-            if(cache_line_size != -1)
-                cache->SetCacheLineSize(cache_line_size);
 
-            //insert DP with latency
-            vector<Component*> children_copy;
-            for(Component* child : *(parent->GetChildren())){
-                children_copy.push_back(child);
-            }
-            for(Component * child : children_copy)
+            for(int i=0; i<caches_per_sm; i++)
             {
-                if(child->GetComponentType() == SYS_SAGE_COMPONENT_THREAD)
-                {
-                    //for L1 and L2, move cores as children
-                    if(cache_name.find("L1") != std::string::npos || cache_name == "L2")
-                    {
-                        parent->RemoveChild(child);
-                        cache->InsertChild(child);
-                        child->SetParent(cache);
-                    }
+                Cache * cache = new Cache(parent, i, cache_name);
+                if(size != -1)
+                    cache->SetCacheSize(size);
+                if(cache_line_size != -1)
+                    cache->SetCacheLineSize(cache_line_size);
 
-                    if(latency != -1)
-                        DataPath * d = new DataPath(cache, child, SYS_SAGE_DATAPATH_ORIENTED, SYS_SAGE_DATAPATH_TYPE_LOGICAL, 0, latency);
+                int cores_per_cache = (*(int*)root->attrib["Number_of_cores_per_SM"])/caches_per_sm;
+
+                //insert DP with latency
+                vector<Component*> children_copy;
+                for(Component* child : *(parent->GetChildren())){
+                    children_copy.push_back(child);
+                }
+                for(Component * child : children_copy)
+                {
+                    if(child->GetComponentType() == SYS_SAGE_COMPONENT_THREAD)
+                    {
+                        //if multiple caches per SM, move 1/n-th of threads (by their ID) under each cache
+                        int core_id = child->GetId();
+                        if(core_id >= cores_per_cache*(i) && core_id < cores_per_cache*(i+1))
+                        {
+                            //for L1 and L2, move cores as children
+                            if(cache_name.find("L1") != std::string::npos || cache_name == "L2")
+                            {
+                                parent->RemoveChild(child);
+                                cache->InsertChild(child);
+                                child->SetParent(cache);
+                            }
+
+                            if(latency != -1)
+                                DataPath * d = new DataPath(cache, child, SYS_SAGE_DATAPATH_ORIENTED, SYS_SAGE_DATAPATH_TYPE_LOGICAL, 0, latency);
+                        }
+                    }
                 }
             }
         }
