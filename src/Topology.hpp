@@ -22,7 +22,8 @@
 #define SYS_SAGE_COMPONENT_NODE 512
 #define SYS_SAGE_COMPONENT_TOPOLOGY 1024
 
-#define SYS_SAGE_SUBDIVISION_TYPE_NUMA 2048
+#define SYS_SAGE_SUBDIVISION_TYPE_UNKNOWN 1
+#define SYS_SAGE_SUBDIVISION_TYPE_GPU_SM 2
 
 
 using namespace std;
@@ -42,6 +43,7 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_NONE
     */
     Component();
+    Component(Component * parent);
     /**
     Generic Component constructor. Usually should not be called. Sets:
     @param _id = id
@@ -49,6 +51,7 @@ public:
     @param _componentType = componentType
     */
     Component(int _id, string _name, int _componentType);
+    Component(Component * parent, int _id, string _name, int _componentType);
 
     /**
     Inserts a Child component to this component (in the Component Tree).
@@ -146,6 +149,8 @@ public:
     \n Should there be more children with the same id, the first match will be retrieved (i.e. the one with lower index in the children array.)
     */
     Component* GetChild(int _id);
+    Component* GetChildByType(int _componentType);
+    vector<Component*> GetAllChildrenByType(int _componentType);
 
     /**
     Searches the subtree to find a component with a matching id and componentType, i.e. looks for a certain component with a matching ID. The search is a DFS. The search starts with the calling component.
@@ -155,6 +160,7 @@ public:
     @return Component * matching the criteria. NULL if no match found
     */
     Component* FindSubcomponentById(int _id, int _componentType);
+    void FindAllSubcomponentsByType(vector<Component*>* outArray, int _componentType);
     /**
     Moves up the tree until a parent of given type.
     @param _componentType - the desired component type
@@ -233,7 +239,7 @@ public:
         \n The method pushes back the found data paths -- i.e. the data paths(pointers) can be found in this array after the method returns. (If no found, the vector is not changed.)
     */
     void GetAllDpByType(vector<DataPath*>* outDpArr, int dp_type, int orientation);
-
+    int CheckComponentTreeConsistency();
     /**
     Calculates approximate memory footprint of the subtree of this element (including the relevant data paths).
     @param out_component_size - output parameter (contains the footprint of the component tree elements); an already allocated unsigned * is the input, the value is expected to be 0 (the result is accumulated here)
@@ -321,6 +327,7 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_NODE
     */
     Node();
+    Node(Component* parent);
     /**
     Node constructor. Sets:
     \n id=>_id
@@ -328,6 +335,7 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_NODE
     */
     Node(int _id);
+    Node(Component* parent, int _id);
 
 #ifdef CAT_AWARE //defined in CAT_aware.cpp
     /**
@@ -354,6 +362,11 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_MEMORY
     */
     Memory();
+    Memory(Component * parent);
+    Memory(Component * parent, string _name);
+    Memory(Component * parent, string _name, long long _size);
+    long long GetSize();
+    void SetSize(long long _size);
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
     @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
@@ -377,6 +390,7 @@ public:
     \n componentType=>SYS_SAGE_COMPONENT_STORAGE
     */
     Storage();
+    Storage(Component * parent);
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
     @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
@@ -407,6 +421,10 @@ public:
     */
     Chip(int _id);
     Chip(int _id, string _name);
+    Chip(Component * parent);
+    Chip(Component * parent, int _id);
+    Chip(Component * parent, int _id, string _name);
+
     void SetVendor(string _vendor);
     string GetVendor();
     void SetModel(string _model);
@@ -444,14 +462,23 @@ public:
     */
     Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
     Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(int _id, string  _cache_name, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(Component * parent);
+    Cache(Component * parent, int _id, string _cache_name);
+    Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
+    Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(Component * parent, int _id, string _cache_name, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+
     /**
     @returns cache level of this cache
     */
     int GetCacheLevel();
+    string GetCacheName();
     /**
     @returns cache size of this cache
     */
     long long GetCacheSize();
+    void SetCacheSize(long long _cache_size);
     /**
     @returns the number of the cache associativity ways of this cache
     */
@@ -460,14 +487,15 @@ public:
     @returns the size of a cache line of this cache
     */
     int GetCacheLineSize();
-
+    void SetCacheLineSize(int _cache_line_size);
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
     @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
     */
     xmlNodePtr CreateXmlSubtree();
 private:
-    int cache_level;  /**< (int) cache level */
+    string cache_name;
+    //int cache_level;  /**<OBSOLETE (int) cache level */
     long long cache_size;  /**< size/capacity of the cache */
     int cache_associativity_ways; /**< number of cache associativity ways */
     int cache_line_size; /**< size of a cache line */
@@ -493,6 +521,8 @@ public:
     @param _id - id of the component
     */
     Subdivision(int _id);
+    Subdivision(int _id, string _name);
+    Subdivision(int _id, int _componentType);
     /**
     Helper constructor for inherited classes of Subdivision. Usually, this constructor will not be called. If called, the _componentType must be SYS_SAGE_COMPONENT_SUBDIVISION.
     @param _id - id of the component
@@ -500,7 +530,14 @@ public:
     @param _componentType - always use SYS_SAGE_COMPONENT_SUBDIVISION
     */
     Subdivision(int _id, string _name, int _componentType);
+    Subdivision(Component * parent);
+    Subdivision(Component * parent, int _id);
+    Subdivision(Component * parent, int _id, string _name);
+    Subdivision(Component * parent, int _id, int _componentType);
+    Subdivision(Component * parent, int _id, string _name, int _componentType);
 
+    void SetSubdivisionType(int subdivisionType);
+    int GetSubdivisionType();
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
     @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
@@ -538,11 +575,14 @@ public:
     @param _size - size of the numa region of the memory (in case the memory segment is not represented by class Memory)
     */
     Numa(int _id, int _size);
+    Numa(Component * parent);
+    Numa(Component * parent, int _id);
+    Numa(Component * parent, int _id, long long _size);
     /**
     Get size of the Numa memory segment.
     @returns size of the Numa memory segment.
     */
-    int GetSize();
+    long long GetSize();
 
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
@@ -574,6 +614,9 @@ public:
     */
     Core(int _id);
     Core(int _id, string _name);
+    Core(Component * parent);
+    Core(Component * parent, int _id);
+    Core(Component * parent, int _id, string _name);
 private:
 };
 
@@ -598,6 +641,9 @@ public:
     */
     Thread(int _id);
     Thread(int _id, string _name);
+    Thread(Component * parent);
+    Thread(Component * parent, int _id);
+    Thread(Component * parent, int _id, string _name);
     #ifdef CAT_AWARE //defined in CAT_aware.cpp
         /**
         !!! Only if compiled with CAT_AWARE functionality, only for Intel CPUs !!!
