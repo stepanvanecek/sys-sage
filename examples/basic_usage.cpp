@@ -33,9 +33,7 @@ int main(int argc, char *argv[])
 
     //create root Topology and one node
     Topology* topo = new Topology();
-    Node* n = new Node(1);
-    n->SetParent((Component*)topo);
-    topo->InsertChild((Component*)n);
+    Node* n = new Node(topo, 1);
 
     cout << "-- Parsing Hwloc output from file " << topoPath << endl;
     if(parseHwlocOutput(n, topoPath) != 0) { //adds topo to a next node

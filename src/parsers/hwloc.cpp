@@ -206,6 +206,7 @@ int removeUnknownCompoents(Component* c){
                 int removed = c->RemoveChild(child);
                 for(Component * grandchild : *grandchildren){
                     c->InsertChild(grandchild);
+                    grandchild->SetParent(c);
                 }
                 delete child;
                 ret += num_grandchildren - 1;
@@ -245,6 +246,6 @@ int parseHwlocOutput(Node* n, string topoPath)
     }
 
     xmlFreeDoc(document);
-    //return err;
-    return 0;
+    err = n->CheckComponentTreeConsistency();
+    return err;
 }

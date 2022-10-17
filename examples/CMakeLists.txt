@@ -11,10 +11,11 @@ endif()
 
 add_executable(basic_usage basic_usage.cpp)
 add_executable(custom_attributes custom_attributes.cpp)
+add_executable(gpu-topo-parser gpu-topo-parser.cpp)
 add_executable(larger_topo larger_topo.cpp)
 add_executable(sys-sage-benchmarking sys-sage-benchmarking.cpp)
 
-install(TARGETS basic_usage custom_attributes larger_topo sys-sage-benchmarking DESTINATION bin)
+install(TARGETS basic_usage gpu-topo-parser custom_attributes larger_topo sys-sage-benchmarking DESTINATION bin)
 install(DIRECTORY example_data DESTINATION bin)
 
 if(CAT_AWARE)

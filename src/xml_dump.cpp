@@ -41,7 +41,7 @@ int print_attrib(map<string,void*> attrib, xmlNodePtr n)
 xmlNodePtr Cache::CreateXmlSubtree()
 {
     xmlNodePtr n = Component::CreateXmlSubtree();
-    xmlNewProp(n, (const unsigned char *)"cache_level", (const unsigned char *)(std::to_string(cache_level)).c_str());
+    xmlNewProp(n, (const unsigned char *)"cache_level", (const unsigned char *)cache_name.c_str());
     xmlNewProp(n, (const unsigned char *)"cache_size", (const unsigned char *)(std::to_string(cache_size)).c_str());
     xmlNewProp(n, (const unsigned char *)"cache_associativity_ways", (const unsigned char *)(std::to_string(cache_associativity_ways)).c_str());
     xmlNewProp(n, (const unsigned char *)"cache_line_size", (const unsigned char *)(std::to_string(cache_line_size)).c_str());
