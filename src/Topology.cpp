@@ -375,8 +375,8 @@ long long Numa::GetSize(){return size;}
 long long Memory::GetSize() {return size;}
 void Memory::SetSize(long long _size) {size = _size;}
 
-string Cache::GetCacheName(){return cache_name;}
-int Cache::GetCacheLevel(){return stoi(cache_name.empty()?"0":cache_name);}
+string Cache::GetCacheName(){return cache_type;}
+int Cache::GetCacheLevel(){return stoi(cache_type.empty()?"0":cache_type);}
 long long Cache::GetCacheSize(){return cache_size;}
 void Cache::SetCacheSize(long long _cache_size){cache_size = _cache_size;}
 int Cache::GetCacheLineSize(){return cache_line_size;}
@@ -419,13 +419,13 @@ Chip::Chip(Component * parent, int _id, string _name):Component(parent, _id, _na
 Chip::Chip(Component * parent, int _id):Chip(parent, _id, "Chip"){}
 Chip::Chip(Component * parent):Chip(parent, 0){}
 
-Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size): Component(_id, "Cache", SYS_SAGE_COMPONENT_CACHE), cache_name(to_string(_cache_level)), cache_size(_cache_size), cache_associativity_ways(_associativity), cache_line_size(_cache_line_size){}
+Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size): Component(_id, "Cache", SYS_SAGE_COMPONENT_CACHE), cache_type(to_string(_cache_level)), cache_size(_cache_size), cache_associativity_ways(_associativity), cache_line_size(_cache_line_size){}
 Cache::Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity): Cache(_id, _cache_level, _cache_size, _associativity, -1){}
 Cache::Cache():Cache(0,0,-1,-1){}
-Cache::Cache(Component * parent, int _id, string _cache_name, unsigned long long _cache_size, int _associativity, int _cache_line_size): Component(parent, _id, "Cache", SYS_SAGE_COMPONENT_CACHE), cache_name(_cache_name), cache_size(_cache_size), cache_associativity_ways(_associativity), cache_line_size(_cache_line_size){}
+Cache::Cache(Component * parent, int _id, string _cache_type, unsigned long long _cache_size, int _associativity, int _cache_line_size): Component(parent, _id, "Cache", SYS_SAGE_COMPONENT_CACHE), cache_type(_cache_type), cache_size(_cache_size), cache_associativity_ways(_associativity), cache_line_size(_cache_line_size){}
 Cache::Cache(Component * parent, int _id, int _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size): Cache(parent, _id, to_string(_cache_level), _cache_size, _associativity, -1){}
 Cache::Cache(Component * parent, int _id, int _cache_level, unsigned long long _cache_size, int _associativity): Cache(parent, _id, _cache_level, _cache_size, _associativity, -1){}
-Cache::Cache(Component * parent, int _id, string _cache_name):Cache(parent, _id, _cache_name, 0, -1, -1){}
+Cache::Cache(Component * parent, int _id, string _cache_type):Cache(parent, _id, _cache_type, 0, -1, -1){}
 Cache::Cache(Component * parent):Cache(parent,0,0,-1,-1){}
 
 Subdivision::Subdivision(Component * parent, int _id, string _name, int _componentType): Component(parent, _id, _name, _componentType){}

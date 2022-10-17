@@ -391,6 +391,8 @@ public:
     */
     Storage();
     Storage(Component * parent);
+    long long GetSize();
+    void SetSize(long long _size);
     /**
     !!Should normally not be used!! Helper function of XML dump generation.
     @see exportToXml(Component* root, string path = "", std::function<int(string,void*,string*)> custom_search_attrib_key_fcn = NULL);
@@ -462,12 +464,12 @@ public:
     */
     Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
     Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
-    Cache(int _id, string  _cache_name, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(int _id, string  _cache_type, unsigned long long _cache_size, int _associativity, int _cache_line_size);
     Cache(Component * parent);
-    Cache(Component * parent, int _id, string _cache_name);
+    Cache(Component * parent, int _id, string _cache_type);
     Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
     Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
-    Cache(Component * parent, int _id, string _cache_name, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(Component * parent, int _id, string _cache_type, unsigned long long _cache_size, int _associativity, int _cache_line_size);
 
     /**
     @returns cache level of this cache
@@ -494,8 +496,7 @@ public:
     */
     xmlNodePtr CreateXmlSubtree();
 private:
-    string cache_name;
-    //int cache_level;  /**<OBSOLETE (int) cache level */
+    string cache_type; /**< cache level or cache type */
     long long cache_size;  /**< size/capacity of the cache */
     int cache_associativity_ways; /**< number of cache associativity ways */
     int cache_line_size; /**< size of a cache line */
