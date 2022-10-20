@@ -198,8 +198,11 @@ int removeUnknownCompoents(Component* c){
     }
 
     int ret = 0;
-    for(Component* child : children_copy){
-        if(child->GetComponentType() == SYS_SAGE_COMPONENT_NONE){
+    for(Component* child : children_copy)
+    {
+        ret += removeUnknownCompoents(child);
+        if(child->GetComponentType() == SYS_SAGE_COMPONENT_NONE)
+        {
             vector<Component*>* grandchildren = child->GetChildren();
             int num_grandchildren = grandchildren->size();
             if(num_grandchildren >= 1) {
@@ -216,7 +219,6 @@ int removeUnknownCompoents(Component* c){
                 delete child;
             }
         }
-        ret += removeUnknownCompoents(child);
     }
     return ret;
 }
@@ -232,19 +234,16 @@ int parseHwlocOutput(Node* n, string topoPath)
     }
 
     xmlNode *root= xmlDocGetRootElement(document);
-
     int err = xmlProcessChildren(n, root, 0);
     if(err != 0){
         std::cerr << "parseHwlocOutput on file " << topoPath << " failed on xmlProcessChildren" << std::endl;
         return err;
     }
-
     err = removeUnknownCompoents(n);
     if(err != 0){
         std::cerr << "parseHwlocOutput on file " << topoPath << " failed on removeUnknownCompoents BUT WILL CONTINUE" << std::endl;
         //return ret;
     }
-
     xmlFreeDoc(document);
     err = n->CheckComponentTreeConsistency();
     return err;
