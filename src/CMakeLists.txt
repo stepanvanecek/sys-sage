@@ -5,6 +5,7 @@ set(SOURCES
     Topology.cpp
     DataPath.cpp
     CAT_aware.cpp
+    cpuinfo.cpp
     xml_dump.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp
