@@ -25,7 +25,11 @@ mkdir build && cd build
 cmake ..
 # build options:
 # -DCAT_AWARE=ON            - builds with Intel CAT functionality. For that, Intel-specific pqos header/library are necessary.
-# -DBUILD_DATA_SOURCES=ON   - builds data sources from folder 'data-sources'. If turned on, includes Linux-specific libraries and hwloc. Data sources are used to collecting HW-related information, so it only makes sense to compile that on the system where the topology information is queried.
+# -DDATA_SOURCES=ON         - builds all data sources from folder 'data-sources' listed below. Data sources are used to collecting HW-related information, so it only makes sense to compile that on the system where the topology information is queried.
+# -DDS_HWLOC=ON             - builds the hwloc data source for retrieving the CPU topology
+# -DDS_MT4g=ON              - builds the mt4g data source for retrieving GPU compute and memory topology. If turned on, includes hwloc.
+# -DDS_NUMA=ON              - builds the caps-numa-benchmark. If turned on, includes Linux-specific libraries.
+
 # -DCMAKE_INSTALL_PREFIX=../inst-dir    - to install locally into the git repo folder
 make all install
 ```
