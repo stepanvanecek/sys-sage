@@ -29,7 +29,6 @@ cmake ..
 # -DDS_HWLOC=ON             - builds the hwloc data source for retrieving the CPU topology
 # -DDS_MT4g=ON              - builds the mt4g data source for retrieving GPU compute and memory topology. If turned on, includes hwloc.
 # -DDS_NUMA=ON              - builds the caps-numa-benchmark. If turned on, includes Linux-specific libraries.
-
 # -DCMAKE_INSTALL_PREFIX=../inst-dir    - to install locally into the git repo folder
 make all install
 ```
