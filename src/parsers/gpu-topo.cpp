@@ -190,7 +190,7 @@ int GpuTopo::parseGPU_INFORMATION()
     vector<string> data = benchmarkData["GPU_INFORMATION"];
     data.erase(data.begin());
 
-    for(int i = 0; i<data.size(); i++)
+    for(unsigned int i = 0; i<data.size(); i++)
     {
         if(data[i] == "GPU_vendor")
         {
@@ -219,7 +219,7 @@ int GpuTopo::parseCOMPUTE_RESOURCE_INFORMATION()
     vector<string> data = benchmarkData["COMPUTE_RESOURCE_INFORMATION"];
     data.erase(data.begin());
 
-    for(int i = 0; i<data.size(); i++)
+    for(unsigned int i = 0; i<data.size(); i++)
     {
         //cout << i << " " << data[i] << std::endl;
         if(data[i]== "CUDA_compute_capability")
@@ -270,7 +270,7 @@ int GpuTopo::parseADDITIONAL_INFORMATION()
     vector<string> data = benchmarkData["ADDITIONAL_INFORMATION"];
     data.erase(data.begin());
 
-    for(int i = 0; i<data.size(); i++)
+    for(unsigned int i = 0; i<data.size(); i++)
     {
         if(data[i]== "Memory_Clock_Frequency")
         {
@@ -326,7 +326,7 @@ int GpuTopo::parseMAIN_MEMORY()
     double size = -1;
     double latency = -1;
     //parse_args
-    for(int i = 0; i<data.size(); i++)
+    for(unsigned int i = 0; i<data.size(); i++)
     {
         if(data[i]== "Size")
         {
@@ -430,7 +430,7 @@ int GpuTopo::parseCaches(string header_name, string cache_type)
     int cache_line_size = -1;
     double latency = -1;
     int share_l1 = 0, share_texture = 0, share_ro = 0, share_constant = 0;
-    for(int i = 0; i<data.size(); i++)
+    for(unsigned int i = 0; i<data.size(); i++)
     {
         if(data[i]== "Size")
         {
