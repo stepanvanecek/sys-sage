@@ -42,11 +42,6 @@ int main(int argc, char *argv[])
     }
     cout << "-- End parseHwlocOutput" << endl;
 
-    n->RefreshCpuCoreFrequency();
-    Core * c = (Core*)n->FindSubcomponentById(0, SYS_SAGE_COMPONENT_CORE);
-    if(c==NULL)
-        return 1;
-    c->RefreshFreq();
     cout << "Total num HW threads: " << topo->GetNumThreads() << endl;
 
     cout << "---------------- Printing whole tree ----------------" << endl;

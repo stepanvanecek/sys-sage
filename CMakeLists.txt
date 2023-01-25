@@ -6,6 +6,8 @@ set (CMAKE_CXX_STANDARD 20)
 set (CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_FLAGS " -Wall -O0")
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+
 find_package(LibXml2 REQUIRED) # Use pkg-config via the LibXml2 find-module
 
 execute_process(COMMAND xml2-config --cflags OUTPUT_VARIABLE LIBXML_F OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -35,6 +37,7 @@ install(FILES ${sys-sage_BINARY_DIR}/pkg/sys-sage-config.cmake
 
 ###Options:
 option(CAT_AWARE "Build and install functionality regarding Intel L3 CAT" OFF)
+option(CPUINFO "Build and install functionality regarding Linux cpuinfo" ON)
 option(DATA_SOURCES "Build and install all data sources" OFF)
 option(DS_HWLOC "Build and install data source hwloc (Retrieves hwloc topology information)" OFF)
 option(DS_MT4G "Build and install data source mt4g (Compute and memory topology of NVidia GPUs)" OFF)
@@ -42,6 +45,11 @@ option(DS_NUMA "Build and install data source caps-numa-benchmark" OFF)
 
 if(CAT_AWARE)
     add_definitions(-DCAT_AWARE )
+endif()
+
+if(CPUINFO)
+    add_definitions(-DCPUINFO )
+    find_package(PAPI REQUIRED) # Use pkg-config via the LibXml2 find-module
 endif()
 
 if(DATA_SOURCES)

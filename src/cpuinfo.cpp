@@ -1,5 +1,4 @@
 
-#define CPUINFO
 #ifdef CPUINFO
 
 #include "Topology.hpp"
@@ -10,9 +9,10 @@
 #include <string.h>
 #include <sstream>
 
-int Node::RefreshCpuCoreFrequency()
+//retrieve frequency in MHz from /proc/cpuinfo for each thread in vector<Thread*> threads
+//helper function is called by RefreshCpuCoreFrequency/RefreshFreq methods
+int readCpuinfoFreq(std::vector<Thread*> threads)
 {
-    //retrieve from /proc/cpuinfo
     int fd = open("/proc/cpuinfo", O_RDONLY);
     if(fd == -1)
         return -1;
@@ -20,28 +20,27 @@ int Node::RefreshCpuCoreFrequency()
     /* Advise the kernel of our access pattern.  */
     posix_fadvise(fd, 0, 0, 1);  // FDADVICE_SEQUENTIAL
 
-    vector<Component*> sockets = this->GetAllChildrenByType(SYS_SAGE_COMPONENT_CHIP);
-    vector<Component*> cpu_hw_threads;
-    for(Component * socket : sockets)
-    {
-        if(((Chip*)socket)->GetChipType() == SYS_SAGE_CHIP_TYPE_CPU_SOCKET || ((Chip*)socket)->GetChipType() == SYS_SAGE_CHIP_TYPE_CPU)
-            socket->FindAllSubcomponentsByType(&cpu_hw_threads, SYS_SAGE_COMPONENT_THREAD);
-    }
-
     static const auto BUFFER_SIZE = 1024*16;
     char buf[BUFFER_SIZE + 1];
     buf[BUFFER_SIZE] = '\0';
     std::stringstream file;
-    string file_contents;
     while(size_t bytes_read = read(fd, buf, BUFFER_SIZE))
     {
         if (!bytes_read)
             break;
+        buf[bytes_read] = '\0';
         file << buf;
     }
 
+    int num_threads = threads.size();
+    std::vector<int> threadIds(num_threads);
+    for(int i = 0; i<num_threads; i++)
+        threadIds[i] = threads[i]->GetId();
+
+    ptrdiff_t current_thread_pos = -1;
+    int threads_processed = 0;
+
     string line;
-    int current_thread = -1;
     size_t pos = 0;
     while (std::getline(file, line))
     {
@@ -49,99 +48,87 @@ int Node::RefreshCpuCoreFrequency()
         {
             if((pos = line.find(":")) != std::string::npos)
             {
-                current_thread = stoi(line.substr(pos + 1));
+                int current_thread = stoi(line.substr(pos + 1));
+                //cout << "------------Found thread " << current_thread << endl;
+                current_thread_pos = find(threadIds.begin(), threadIds.end(), current_thread) - threadIds.begin();
+                if((long unsigned int)current_thread_pos >= threadIds.size()) {
+                    current_thread_pos = -1;
+                }
             }
+
         }
-        else if (line.rfind("cpu MHz", 0) == 0)
+        else if (current_thread_pos != -1 && line.rfind("cpu MHz", 0) == 0)
         {
             if((pos = line.find(":")) != std::string::npos)
             {
-                bool hw_thread_found = false;
-                for(Component * thread : cpu_hw_threads)
+                double freq = stod(line.substr(pos + 1));
+                //find a core as a parent of this thread ID
+                Core* c = (Core*)threads[current_thread_pos]->FindParentByType(SYS_SAGE_COMPONENT_CORE);
+                if(c != NULL)
                 {
-                    if(thread->GetId() == current_thread)
+                    ((Core*)c)->SetFreq(freq);
+                    //cout << "----------------Core " << c->GetId() << " (HW thread " << threads[current_thread_pos]->GetId() << ") frequency: " << freq << endl;
+                    threads_processed++;
+                    if(threads_processed == num_threads)
                     {
-                        Core* c = (Core*)thread->FindParentByType(SYS_SAGE_COMPONENT_CORE);
-                        if(c != NULL)
-                        {
-                            ((Core*)c)->SetFreq(stod(line.substr(pos + 1)));
-                            //cout << "setting hw thread " << current_thread << " to " << c->GetFreq() << endl;
-                            hw_thread_found = true;
-                            break;
-                        }
+                        close(fd);
+                        return 0;
                     }
-                }
-                if(!hw_thread_found)
-                {
-                    cout << "HW thread " << current_thread << " not found for refreshing the current frequency" << std::endl;
-                    close(fd);
-                    return 1;
+                    current_thread_pos = -1;
                 }
             }
         }
     }
+    cout << "Not all cores updated their Frequency: " << threads_processed << " of total " << num_threads << " processed." << endl;
     close(fd);
-    return 0;
+    return 1;
+}
+
+int Node::RefreshCpuCoreFrequency()
+{
+    vector<Component*> sockets = this->GetAllChildrenByType(SYS_SAGE_COMPONENT_CHIP);
+    vector<Thread*> cpu_hw_threads, hw_threads_to_refresh;
+    for(Component * socket : sockets)
+    {
+        if(((Chip*)socket)->GetChipType() == SYS_SAGE_CHIP_TYPE_CPU_SOCKET || ((Chip*)socket)->GetChipType() == SYS_SAGE_CHIP_TYPE_CPU)
+            socket->FindAllSubcomponentsByType((vector<Component*>*)&cpu_hw_threads, SYS_SAGE_COMPONENT_THREAD);
+    }
+
+    //remove duplicate threads of the same core (hyperthreading -- 2 threads on the same core have the same freq)
+    std::set<Core*> included_cores;
+    //cout << "Will check threads (cores): ";
+    for(Thread* t : cpu_hw_threads){
+        Core* c = (Core*)t->FindParentByType(SYS_SAGE_COMPONENT_CORE);
+        if(included_cores.find(c) == included_cores.end())
+        {
+            included_cores.insert(c);
+            hw_threads_to_refresh.push_back(t);
+            //cout << t->GetId() << "(" << c->GetId() << "), ";
+        }
+    }
+    //cout << endl;
+
+    return readCpuinfoFreq(hw_threads_to_refresh);
 }
 
 int Core::RefreshFreq()
 {
-    //retrieve from /proc/cpuinfo
-    int fd = open("/proc/cpuinfo", O_RDONLY);
-    if(fd == -1)
-        return 1;
-
-    /* Advise the kernel of our access pattern.  */
-    posix_fadvise(fd, 0, 0, 1);  // FDADVICE_SEQUENTIAL
-
-    static const auto BUFFER_SIZE = 1024*16;
-    char buf[BUFFER_SIZE + 1];
-    buf[BUFFER_SIZE] = '\0';
-    std::stringstream file;
-    string file_contents;
-    while(size_t bytes_read = read(fd, buf, BUFFER_SIZE))
-    {
-        if (!bytes_read)
-            break;
-        file << buf;
-    }
-
-    string line;
-    int current_thread = -1;
-    size_t pos = 0;
-    while (std::getline(file, line))
-    {
-        if (line.rfind("processor", 0) == 0)
-        {
-            if((pos = line.find(":")) != std::string::npos)
-            {
-                current_thread = stoi(line.substr(pos + 1));
-            }
-        }
-        else if (current_thread == id && line.rfind("cpu MHz", 0) == 0)
-        {
-            if((pos = line.find(":")) != std::string::npos)
-            {
-                freq = stod(line.substr(pos + 1));
-                //std::cout << "--   "<<  current_thread << " - freq " << stod(line.substr(pos + 1)) << std::endl;
-                close(fd);
-                return 0;
-            }
-        }
-    }
-    close(fd);
-    std::cout << "Frequency for Processor id " << this->id << " (HW_thread) not found " << std::endl;
-    return 1;
+    vector<Thread*> cpu_hw_threads;
+    Thread* hw_thread = (Thread*)this->GetChildByType(SYS_SAGE_COMPONENT_THREAD);
+    if(hw_thread != NULL)
+        cpu_hw_threads.push_back(hw_thread);
+    return readCpuinfoFreq(cpu_hw_threads);
 }
-double Core::GetFreq() {return freq;}
-void Core::SetFreq(double _freq) {freq = _freq;}
+
 int Thread::RefreshFreq()
 {
-    Core * c = (Core*)this->FindParentByType(SYS_SAGE_COMPONENT_CORE);
-    if(c == NULL)
-        return 1;
-    return c->RefreshFreq();
+    vector<Thread*> cpu_hw_threads;
+    cpu_hw_threads.push_back(this);
+    return readCpuinfoFreq(cpu_hw_threads);
 }
+
+double Core::GetFreq() {return freq;}
+void Core::SetFreq(double _freq) {freq = _freq;}
 double Thread::GetFreq()
 {
     Core * c = (Core*)this->FindParentByType(SYS_SAGE_COMPONENT_CORE);

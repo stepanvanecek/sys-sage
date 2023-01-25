@@ -341,7 +341,6 @@ public:
     */
     Node(int _id);
     Node(Component* parent, int _id);
-#define CPUINFO
 #ifdef CPUINFO
 public:
     int RefreshCpuCoreFrequency();
@@ -635,7 +634,6 @@ public:
     Core(Component * parent, int _id, string _name);
 private:
 
-#define CPUINFO
 #ifdef CPUINFO
 public:
     int RefreshFreq();
@@ -670,7 +668,7 @@ public:
     Thread(Component * parent);
     Thread(Component * parent, int _id);
     Thread(Component * parent, int _id, string _name);
-#define CPUINFO
+
 #ifdef CPUINFO //defined in cpuinfo.cpp
 public:
     int RefreshFreq();
