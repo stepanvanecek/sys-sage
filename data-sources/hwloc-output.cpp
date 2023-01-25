@@ -2,8 +2,6 @@
 #include <iostream>
 #include <hwloc.h>
 
-#include "sys-sage.hpp"
-
 /*! \file */
 /// @private
 int hwloc_dump_xml(const char *filename);
