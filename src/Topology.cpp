@@ -1,5 +1,7 @@
 #include "Topology.hpp"
 
+#include <algorithm>
+
 void Component::PrintSubtree() { PrintSubtree(0); }
 void Component::PrintSubtree(int level)
 {
@@ -45,7 +47,10 @@ void Component::InsertChild(Component * child)
 }
 int Component::RemoveChild(Component * child)
 {
-    return std::erase(children, child);
+    int orig_size = children.size();
+    children.erase(std::remove(children.begin(), children.end(), child), children.end());
+    return orig_size - children.size();
+    //return std::erase(children, child); -- not supported in some compilers
 }
 Component* Component::GetChild(int _id)
 {
@@ -463,3 +468,4 @@ Thread::Thread():Thread(0){}
 Thread::Thread(Component * parent, int _id, string _name):Component(parent, _id, _name, SYS_SAGE_COMPONENT_THREAD){}
 Thread::Thread(Component * parent, int _id):Thread(parent, _id, "Thread"){}
 Thread::Thread(Component * parent):Thread(parent, 0){}
+
