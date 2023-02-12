@@ -55,7 +55,6 @@ endif()
 
 if(CPUINFO)
     add_definitions(-DCPUINFO )
-#    find_package(PAPI REQUIRED) # Use pkg-config via the LibXml2 find-module
 endif()
 
 if(DATA_SOURCES)
