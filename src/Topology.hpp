@@ -343,7 +343,7 @@ public:
     Node(Component* parent, int _id);
 #ifdef CPUINFO
 public:
-    int RefreshCpuCoreFrequency();
+    int RefreshCpuCoreFrequency(bool keep_history = false);
 #endif
 #ifdef CAT_AWARE //defined in CAT_aware.cpp
 public:
@@ -636,7 +636,7 @@ private:
 
 #ifdef CPUINFO
 public:
-    int RefreshFreq();
+    int RefreshFreq(bool keep_history = false);
     void SetFreq(double _freq);
     double GetFreq();
 private:
@@ -671,7 +671,7 @@ public:
 
 #ifdef CPUINFO //defined in cpuinfo.cpp
 public:
-    int RefreshFreq();
+    int RefreshFreq(bool keep_history = false);
     double GetFreq();
 #endif
 

@@ -1,15 +1,21 @@
 cmake_policy(SET CMP0048 NEW)
-project(sys-sage VERSION 0.3.0 LANGUAGES C CXX )
-
 cmake_minimum_required(VERSION 3.22)
+
 set (CMAKE_CXX_STANDARD 20)
 set (CXX_STANDARD_REQUIRED ON)
-set (CMAKE_CXX_FLAGS " -Wall -O0")
+set (CMAKE_CXX_FLAGS " -Wall")
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
+    message(FATAL_ERROR "Insufficient gcc version (at least 8.0.0) set for example with CXX=/path/to/compiler cmake ....")
+  endif()
+endif()
+
+project(sys-sage VERSION 0.3.1 LANGUAGES C CXX )
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
+####
 find_package(LibXml2 REQUIRED) # Use pkg-config via the LibXml2 find-module
-
 execute_process(COMMAND xml2-config --cflags OUTPUT_VARIABLE LIBXML_F OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND xml2-config --libs OUTPUT_VARIABLE LIBXML_L OUTPUT_STRIP_TRAILING_WHITESPACE)
 include_directories(${LIBXML_F})
@@ -49,7 +55,7 @@ endif()
 
 if(CPUINFO)
     add_definitions(-DCPUINFO )
-    find_package(PAPI REQUIRED) # Use pkg-config via the LibXml2 find-module
+#    find_package(PAPI REQUIRED) # Use pkg-config via the LibXml2 find-module
 endif()
 
 if(DATA_SOURCES)

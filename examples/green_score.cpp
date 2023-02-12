@@ -13,6 +13,7 @@
 #include <string>
 #include <array>
 #include <limits>
+#include <sstream>
 
 
 #include <papi.h>
@@ -21,7 +22,8 @@
 using namespace std;
 using namespace std::chrono;
 
-#define PAPI_NUM_EVENTS 4
+#define NUM_MY_PAPI_EVENTS 4
+#define MEASURE_CHILD_THREADS 1
 
 void usage(char* argv0)
 {
@@ -36,7 +38,7 @@ public:
         time = _time;
         threadId = _threadId;
         frequency = _freq;
-        memcpy(papi_counters, _papi_counters, PAPI_NUM_EVENTS*sizeof(long long));
+        memcpy(papi_counters, _papi_counters, NUM_MY_PAPI_EVENTS*sizeof(long long));
     };
     void PrintHeader()
     {
@@ -44,13 +46,9 @@ public:
     }
     void Print()
     {
+        printf("-- %lld, %d, %f, %lld, %lld, %lld, %lld \n", time, threadId, frequency, papi_counters[0], papi_counters[1], papi_counters[2], papi_counters[3]);
         cout << time << ", " << threadId << ", " << frequency;
         cout << ", " << papi_counters[0] << ", " << papi_counters[1] << ", " << papi_counters[2] << ", " << papi_counters[3] << endl;
-    };
-    void PrintDifference(GreenEntry* old_ge)
-    {
-        cout << time << ", " << threadId << ", " << frequency;
-        cout << ", " << old_ge->papi_counters[0] - papi_counters[0] << ", " << old_ge->papi_counters[1] - papi_counters[1] << ", " << old_ge->papi_counters[2] - papi_counters[2] << ", " << old_ge->papi_counters[3] - papi_counters[3] << endl;
     };
     uint64_t time;
     int threadId;
@@ -69,6 +67,33 @@ std::string exec(const char* cmd) {
         result += buffer.data();
     }
     return result;
+}
+
+void get_child_threads(int pid, int * tids, int * cores)
+{
+    string cmd_get_threadId = "ps -o tid,psr -p " + std::to_string(pid) + " -T | tail -n +2";
+    string str_coreId = exec(cmd_get_threadId.c_str());
+
+    for(int i = 0; i< MEASURE_CHILD_THREADS; i++)
+    {
+        cores[i] = -1;
+        tids[i] = -1;
+    }
+
+    int index = 0;
+    std::stringstream ss(str_coreId);
+    std::string line;
+    while (std::getline(ss, line)) {
+        std::stringstream ss_line(line);
+        ss_line >> tids[index];
+        ss_line >> cores[index];
+
+        std::cout << "tid " << tids[index] <<" on core " << cores[index] << std::endl;
+        index++;
+        if(index == MEASURE_CHILD_THREADS)
+            return;
+    }
+    return;
 }
 
 int main(int argc, char *argv[])
@@ -116,28 +141,20 @@ int main(int argc, char *argv[])
         //initialize a vector with GreenEntry results
         vector<GreenEntry>* greenEntries = new vector<GreenEntry>();
         //c->attrib["GreenEntries"] = (void*)greenEntries;
-        string cmd_get_threadId = "ps -o psr -p " + std::to_string(child) + " | tail -n +2";
 
         //set up papi
-        long long * papi_counters = new long long[PAPI_NUM_EVENTS]();
-        //long long papi_counters[PAPI_NUM_EVENTS];
+        long long * papi_counters = new long long[MEASURE_CHILD_THREADS*NUM_MY_PAPI_EVENTS]();
+        //for(int i = 0; i< NUM_MY_PAPI_EVENTS; i++) {papi_counters[i] = 0;}
         PAPI_library_init(PAPI_VER_CURRENT);
-        int eventset=PAPI_NULL;
-        int retval=PAPI_create_eventset(&eventset);
-        if (retval!=PAPI_OK) fprintf(stderr,"Error creating eventset! %s\n",PAPI_strerror(retval));
-        retval+=PAPI_add_event(eventset,PAPI_TOT_INS); // PAPI_TOT_INS 0x80000032  Yes   No   Instructions completed
-        retval+=PAPI_add_event(eventset,PAPI_L2_TCA); // PAPI_L2_DCA  0x80000041  Yes   No   Level 2 data cache accesses
-        retval+=PAPI_add_event(eventset,PAPI_L3_LDM); // PAPI_L3_LDM  0x8000000e  Yes   No   Level 3 load misses
-        retval+=PAPI_add_event(eventset,PAPI_L3_TCM); // PAPI_L3_TCM  0x80000008  Yes   No   Level 3 cache misses
-        //retval+=PAPI_reset(eventset);
-        if (retval!=PAPI_OK) fprintf(stderr,"Error eventset! %s\n",PAPI_strerror(retval));
-        //retval+=PAPI_start(eventset);
+        int* eventset = new int [MEASURE_CHILD_THREADS]();
+        int* measured_cores = new int [MEASURE_CHILD_THREADS]();
+        int* measured_tids = new int [MEASURE_CHILD_THREADS]();
+        PAPI_option_t* opts = new PAPI_option_t [MEASURE_CHILD_THREADS]();;
+        int retval;
+        for(int i = 0; i< MEASURE_CHILD_THREADS; i++)
+        {
+        }
 
-
-        if (PAPI_attach(eventset, child) != PAPI_OK)
-           exit(1);
-        //retval+=PAPI_start(eventset);
-        if (retval!=PAPI_OK) fprintf(stderr,"Error starting papi: %s\n", PAPI_strerror(retval));
 
         //start other process
         ptrace(PTRACE_CONT,child,0,0);
@@ -146,37 +163,70 @@ int main(int argc, char *argv[])
         high_resolution_clock::time_point ts, ts_start = high_resolution_clock::now();
         // Wait until process exits
         do {
-            //start new PAPI measurements
-            PAPI_reset(eventset);
-            retval+=PAPI_start(eventset);
-            ts = high_resolution_clock::now();
-
             n->RefreshCpuCoreFrequency();
+            get_child_threads(child, measured_tids, measured_cores);
 
-            string str_coreId = exec(cmd_get_threadId.c_str());
-            int thread_num = stoi(str_coreId);
+            for(int i = 0; i< MEASURE_CHILD_THREADS; i++)
+            {
+                if(measured_tids[i] != -1)
+                {
+                    eventset[i] = PAPI_NULL;
+                    retval=PAPI_create_eventset(&(eventset[i]));
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error creating eventset! %s\n",PAPI_strerror(retval));
+                    retval = PAPI_assign_eventset_component(eventset[i], 0 );
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error creating eventset! %s\n",PAPI_strerror(retval));
 
-            Thread * t = (Thread*)n->FindSubcomponentById(thread_num, SYS_SAGE_COMPONENT_THREAD);
-            if(t==NULL)
-                return 1;
+                    // Attach this event set to cpu 1
+                    opts[i].cpu.eventset = eventset[i];
+                    opts[i].cpu.cpu_num = measured_cores[i];
+                    retval = PAPI_set_opt( PAPI_CPU_ATTACH, &(opts[i]) );
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error PAPI_set_opt! %s\n",PAPI_strerror(retval));
 
-            usleep(100000);
+                    retval+=PAPI_add_event(eventset[i],PAPI_TOT_INS); // PAPI_TOT_INS 0x80000032  Yes   No   Instructions completed
+                    retval+=PAPI_add_event(eventset[i],PAPI_L2_TCA); // PAPI_L2_DCA  0x80000041  Yes   No   Level 2 data cache accesses
+                    retval+=PAPI_add_event(eventset[i],PAPI_L3_LDM); // PAPI_L3_LDM  0x8000000e  Yes   No   Level 3 load misses
+                    retval+=PAPI_add_event(eventset[i],PAPI_L3_TCM); // PAPI_L3_TCM  0x80000008  Yes   No   Level 3 cache misses
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error eventset! %s\n",PAPI_strerror(retval));
+
+                    // retval=PAPI_attach(eventset[i], measured_tids[i]);
+                    // if (retval!=PAPI_OK) fprintf(stderr,"Error attaching papi: %s\n", PAPI_strerror(retval));
+                    retval=PAPI_start(eventset[i]);
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error starting papi: %s\n", PAPI_strerror(retval));
+                }
+            }
+
+            usleep(2000000);
+
+            for(int i = 0; i< MEASURE_CHILD_THREADS; i++)
+            {
+                if(measured_tids[i] != -1)
+                {
+                    retval=PAPI_stop(eventset[i],&papi_counters[NUM_MY_PAPI_EVENTS*i]);
+                    if (retval!=PAPI_OK) fprintf(stderr,"Error stopping:  %s\n", PAPI_strerror(retval));
+                    // retval=PAPI_detach(eventset[i]);
+                    // if (retval!=PAPI_OK) fprintf(stderr,"Error detaching:  %s\n", PAPI_strerror(retval));
+                }
+            }
+
+
+            ts = high_resolution_clock::now();
+            long long time = (ts.time_since_epoch().count()-ts_start.time_since_epoch().count())/1000000;
 
             //read PAPI measurements
-            retval=PAPI_read(eventset,papi_counters);
-            //retval=PAPI_stop(eventset,papi_counters);
-            if (retval!=PAPI_OK) fprintf(stderr,"Error stopping:  %s\n", PAPI_strerror(retval));
-            long long time = (ts.time_since_epoch().count()-ts_start.time_since_epoch().count())/1000000;
-            usleep(100000);
-            cout << "LIVE: Thread: " << thread_num << " Time : " << time << ", Frequency: " << t->GetFreq() << " ---- "<< (unsigned long long)papi_counters[0] << " " << papi_counters[1] << " " << papi_counters[2] << " " << papi_counters[3]<< endl;
-            //vector<GreenEntry>* ge = (vector<GreenEntry>*)c->attrib["GreenEntries"];
-            //ge->push_back(GreenEntry(time, t->GetId(), t->GetFreq(), papi_counters));
-            greenEntries->push_back(GreenEntry(time, t->GetId(), t->GetFreq(), papi_counters));
-
+            for(int i = 0; i< MEASURE_CHILD_THREADS; i++)
+            {
+                if(measured_cores[i] != -1)
+                {
+                    Thread * t = (Thread*)n->FindSubcomponentById(measured_cores[i], SYS_SAGE_COMPONENT_THREAD);
+                    if(t==NULL)
+                        return 1;
+                    cout << "LIVE: Thread " << measured_cores[i] << ", tid " << measured_tids[i] << " Time : " << time << ", Frequency: " << t->GetFreq() << " ---- "<< papi_counters[NUM_MY_PAPI_EVENTS*i+0] << " " << papi_counters[NUM_MY_PAPI_EVENTS*i+1] << " " << papi_counters[NUM_MY_PAPI_EVENTS*i+2] << " " << papi_counters[NUM_MY_PAPI_EVENTS*i+3]<< endl;
+                    greenEntries->push_back(GreenEntry(time, t->GetId(), t->GetFreq(), &papi_counters[NUM_MY_PAPI_EVENTS*i]));
+                }
+            }
             finished_pid = waitpid(child, &process_status, WNOHANG);
         } while(finished_pid <= 0);
         // while(!WIFEXITED(status));
-        retval=PAPI_stop(eventset,papi_counters);
 
         cout << "=========PRINT===============" << endl;
         (*greenEntries)[0].PrintHeader();
