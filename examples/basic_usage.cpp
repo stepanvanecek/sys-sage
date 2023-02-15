@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     cout << "Total num HW threads: " << topo->GetNumThreads() << endl;
 
-    cout << "---------------- Printing whole tree ----------------" << endl;
+    cout << "---------------- Printing the whole tree ----------------" << endl;
     topo->PrintSubtree(2);
     cout << "----------------                     ----------------" << endl;
 

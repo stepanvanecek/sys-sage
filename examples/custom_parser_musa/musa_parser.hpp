@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MUSA_PARSER
+#define MUSA_PARSER
 
 #include <iostream>
 #include <fstream>
@@ -6,24 +7,26 @@
 #include <vector>
 #include <map>
 #include <sstream>
+
+
 #include "sys-sage.hpp"
 
 
+int parseMusa(Chip* _socket, std::string datapath);
 
-void parseMusa(); 
-
-class Musaparser {
+class MusaParser {
 public:
-	int parseData(); 
-	Musaparser(std::string datapath);
+	int ParseData();
+	MusaParser(Chip* _socket, std::string _datapath);
 
 private:
-	int readData(std::vector<std::string>);
-	Memory* parseMemory();
-	Cache* parseCache(std::string, Component* parent);
+	int ReadData(std::vector<std::string>);
+	Memory* ParseMemory();
+	Cache* ParseCache(std::string, Component* parent);
+
 	std::map<std::string, std::map<std::string, std::string>> mapping;
 	std::string datapath;
-	//int parseGlobal_information();
-	Chip* topo = new Chip(); 
-	
+	Chip* socket;
 };
+
+#endif
