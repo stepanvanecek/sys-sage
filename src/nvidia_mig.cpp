@@ -35,13 +35,14 @@ std::string get_Ith_word(int index, std::string s)
     return "";
 }
 
-int Chip::UpdateMIGSettings(std::string uuid)
+int Chip::UpdateMIGSettings(string uuid)
 {
     std::string cmd = "nvidia-smi -L | grep " + uuid;
     //string exec_result = exec(cmd.c_str());
     std::string exec_result = "  MIG 2c.4g.20gb  Device  0: (UUID: MIG-d99e3a01-becd-5d26-82e0-35ace55b590c)";
 
-    std::string s = get_Ith_word(int index, std::string s);
+    std::string s = get_Ith_word(2, exec_result);
+    std::cout << "2nd: " << s << std::endl;
     return 0;
 }
 int Chip::GetMIGNumSMs(){return 0;}

@@ -6,6 +6,7 @@ set(SOURCES
     DataPath.cpp
     CAT_aware.cpp
     cpuinfo.cpp
+    nvidia_mig.cpp
     xml_dump.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp

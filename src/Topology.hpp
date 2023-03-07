@@ -459,6 +459,7 @@ private:
     string model;
     int type;
 
+#define NVIDIA_MIG
 #ifdef NVIDIA_MIG
 public:
     int UpdateMIGSettings(string uuid);
