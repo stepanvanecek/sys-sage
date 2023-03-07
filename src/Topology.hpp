@@ -384,6 +384,11 @@ public:
 private:
     long long size; /**< size/capacity of the memory element*/
     bool is_volatile; /**< is volatile? */
+
+#ifdef NVIDIA_MIG
+public:
+    int GetMIGSize();
+#endif
 };
 
 /**
@@ -453,6 +458,13 @@ private:
     string vendor;
     string model;
     int type;
+
+#ifdef NVIDIA_MIG
+public:
+    int UpdateMIGSettings(string uuid);
+    int GetMIGNumSMs();
+    int GetMIGNumCores();
+#endif
 };
 
 /**
@@ -514,6 +526,11 @@ private:
     long long cache_size;  /**< size/capacity of the cache */
     int cache_associativity_ways; /**< number of cache associativity ways */
     int cache_line_size; /**< size of a cache line */
+
+#ifdef NVIDIA_MIG
+public:
+    int GetMIGSize();
+#endif
 };
 
 /**

@@ -43,7 +43,8 @@ install(FILES ${sys-sage_BINARY_DIR}/pkg/sys-sage-config.cmake
 
 ###Options:
 option(CAT_AWARE "Build and install functionality regarding Intel L3 CAT" OFF)
-option(CPUINFO "Build and install functionality regarding Linux cpuinfo" ON)
+option(NVIDIA_MIG "Build and install functionality regarding NVidia MIG(multi-instance GPU, ampere or newer)" OFF)
+option(CPUINFO "Build and install functionality regarding Linux cpuinfo" OFF)
 option(DATA_SOURCES "Build and install all data sources" OFF)
 option(DS_HWLOC "Build and install data source hwloc (Retrieves hwloc topology information)" OFF)
 option(DS_MT4G "Build and install data source mt4g (Compute and memory topology of NVidia GPUs)" OFF)
@@ -51,6 +52,10 @@ option(DS_NUMA "Build and install data source caps-numa-benchmark" OFF)
 
 if(CAT_AWARE)
     add_definitions(-DCAT_AWARE )
+endif()
+
+if(NVIDIA_MIG)
+    add_definitions(-DNVIDIA_MIG )
 endif()
 
 if(CPUINFO)
