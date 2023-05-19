@@ -26,6 +26,13 @@ include_directories(${LIBXML2_INCLUDE_DIRS})
 link_libraries(${LIBXML2_LIBRARY})
 link_libraries(${LIBXML2_LIBRARIES})
 
+if(NVIDIA_MIG)
+  find_package(CUDAToolkit 10.0 REQUIRED)
+  include_directories(CUDA::nvml)
+  link_libraries(CUDA::nvml)
+endif()
+
+
 # Create and install package configuration and version files.
 configure_file(${sys-sage_SOURCE_DIR}/pkg/sys-sage-config.cmake.in
                 ${sys-sage_BINARY_DIR}/pkg/sys-sage-config.cmake @ONLY)

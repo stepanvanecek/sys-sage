@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
         std::string path_prefix(argv[0]);
         std::size_t found = path_prefix.find_last_of("/\\");
         path_prefix=path_prefix.substr(0,found) + "/";
-        gpuTopoPath = path_prefix + "example_data/pascal_gpu_topo.csv";
+        gpuTopoPath = path_prefix + "example_data/ampere_gpu_topo.csv";
     }
     else if(argc == 2){
         gpuTopoPath = argv[1];
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     }
     cout << "-- End parseGpuTopo" << endl;
     Chip * gpu = (Chip*)n->GetChild(0);
-    gpu->UpdateMIGSettings("");
+    gpu->UpdateMIGSettings("MIG-d99e3a01-becd-5d26-82e0-35ace55b590c");
 
     return 0;
 }
