@@ -1,0 +1,16 @@
+#ifndef SYS_SAGE
+#define SYS_SAGE
+
+//add cmake-style define, so that when headers are included as an external library, the options/defines used during compilation will be reflected also in the headers
+#cmakedefine CPUINFO        //in cmake, add -DCPUINFO=OFF to turn off (default on)
+#cmakedefine CAT_AWARE      //in cmake, add -DCAT_AWARE=ON to turn on
+
+//includes all other headers
+#include "Topology.hpp"
+#include "DataPath.hpp"
+#include "xml_dump.hpp"
+#include "parsers/hwloc.hpp"
+#include "parsers/caps-numa-benchmark.hpp"
+#include "parsers/gpu-topo.hpp"
+
+#endif //SYS_SAGE

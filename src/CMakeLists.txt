@@ -9,7 +9,8 @@ set(SOURCES
     xml_dump.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp
-    parsers/gpu-topo.cpp)
+    parsers/gpu-topo.cpp
+    )
 
 set(HEADERS
     sys-sage.hpp
@@ -18,9 +19,16 @@ set(HEADERS
     xml_dump.hpp
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp
-    parsers/gpu-topo.hpp)
+    parsers/gpu-topo.hpp
+    )
+
+#sys-sage.hpp header with #cmakedefine and all other headers
+configure_file(${PROJECT_SOURCE_DIR}/src/sys-sage.hpp.in ${PROJECT_SOURCE_DIR}/src/sys-sage.hpp)
+#configure_file(${PROJECT_SOURCE_DIR}/src/sys-sage.hpp.in ${PROJECT_BINARY_DIR}/inc/sys-sage.hpp)
+#configure_file(${PROJECT_SOURCE_DIR}/src/sys-sage.hpp.in ${PROJECT_BINARY_DIR}/lib/cmake/inc/sys-sage.hpp)
 
 add_library(sys-sage SHARED ${SOURCES} ${HEADERS})
+
 
 set_target_properties(sys-sage PROPERTIES
 #    PUBLIC_HEADER "sys-sage.hpp;Topology.hpp;DataPath.hpp;xml_dump.hpp;parsers/hwloc.hpp;parsers/caps-numa-benchmark.hpp;parsers/gpu-topo.hpp"
