@@ -1,8 +1,10 @@
 #ifndef DATAPATH
 #define DATAPATH
 
-#include "Topology.hpp"
 #include <map>
+
+#include "defines.hpp"
+#include "Topology.hpp"
 
 //void AddDataPath(DataPath* p, int orientation);
 #define SYS_SAGE_DATAPATH_NONE 1

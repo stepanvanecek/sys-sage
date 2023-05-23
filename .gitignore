@@ -5,4 +5,4 @@ main
 *.so
 build/*
 install/*
-src/sys-sage.hpp
+src/defines.hpp
