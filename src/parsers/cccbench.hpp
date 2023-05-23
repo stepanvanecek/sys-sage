@@ -5,6 +5,8 @@
 #include "Topology.hpp"
 #include "DataPath.hpp"
 
+int parseCccbenchOutput(Node* , std::string );
+
 template <typename T>class Vec2DArray
 {
     Vec2DArray(){}

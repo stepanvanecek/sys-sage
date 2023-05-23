@@ -112,21 +112,14 @@ void CccbenchParser::applyDataPaths(Component *root)
         }
     }
 }
-/*
-int main(int argc, char *argv[])
+
+int parseCccbenchOutput(Node* n, std::string cccPath)
 {
-    CccbenchParser *cp = (CccbenchParser *)0;
-    try
-    {
-        cp = new CccbenchParser(argv[1]);
-    }
-    catch(const char *err)
-    {
-        std::cout << err << std::endl;
-        return -1;
-    }
-    cp->applyDataPaths((Topology *) 0);
+    const char *cstr_path = cccPath.c_str();
+    auto cccparser = new CccbenchParser(cstr_path);
+    cccparser->applyDataPaths(n);
+    delete cccparser;
     return 0;
 }
-*/
+
 
