@@ -15,8 +15,9 @@ add_executable(gpu-topo-parser gpu-topo-parser.cpp)
 add_executable(larger_topo larger_topo.cpp)
 add_executable(sys-sage-benchmarking sys-sage-benchmarking.cpp)
 add_executable(use_custom_parser custom_parser_musa/use_custom_parser.cpp custom_parser_musa/musa_parser.cpp custom_parser_musa/musa_parser.hpp)
+add_executable(cccbenchplushwloc cccbenchplushwloc.cpp)
 
-install(TARGETS basic_usage gpu-topo-parser custom_attributes larger_topo sys-sage-benchmarking use_custom_parser DESTINATION bin/examples)
+install(TARGETS basic_usage gpu-topo-parser custom_attributes larger_topo sys-sage-benchmarking use_custom_parser cccbenchplushwloc DESTINATION bin/examples)
 install(DIRECTORY example_data DESTINATION bin/examples)
 
 if(CAT_AWARE)
