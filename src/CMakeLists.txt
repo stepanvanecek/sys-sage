@@ -13,6 +13,7 @@ set(SOURCES
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp
     parsers/gpu-topo.cpp
+    parsers/cccbench.cpp
     )
 
 set(HEADERS
@@ -24,6 +25,7 @@ set(HEADERS
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp
     parsers/gpu-topo.hpp
+    parsers/cccbench.cpp
     )
 
 add_library(sys-sage SHARED ${SOURCES} ${HEADERS})
