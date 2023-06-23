@@ -88,7 +88,7 @@ int Chip::UpdateMIGSettings(string uuid)
             DataPath * d = new DataPath(this, c, SYS_SAGE_DATAPATH_ORIENTED, SYS_SAGE_DATAPATH_TYPE_MIG);
             string* mig_uuid = new string(uuid);
             mig_size = new long long();
-            *mig_size = c->GetCacheSize() * (num_caches/L2_fraction-cache_id/num_caches);
+            *mig_size = c->GetCacheSize() * ( (float)num_caches/(float)L2_fraction-(float)cache_id/(float)num_caches);
             if(*mig_size <0)
                 *mig_size=0;
             d->attrib.insert({"mig_uuid",(void*)mig_uuid});
@@ -101,7 +101,8 @@ int Chip::UpdateMIGSettings(string uuid)
     }
 
     //sm  attributes.multiprocessorCount
-    vector<Component*> subdivisions = GetAllChildrenByType(SYS_SAGE_COMPONENT_SUBDIVISION);
+    vector<Component*> subdivisions;
+    FindAllSubcomponentsByType(&subdivisions,SYS_SAGE_COMPONENT_SUBDIVISION);
     vector<Subdivision*> sms;
     for(Component* sm : subdivisions){
         if(((Subdivision*)sm)->GetSubdivisionType() == SYS_SAGE_SUBDIVISION_TYPE_GPU_SM)
@@ -216,8 +217,8 @@ long long Memory::GetMIGSize(string uuid)
             }
         }
     }
-    std::cerr << "Memory::GetMIGSize: no information found about specified UUID " << uuid << " - returning 0." << std::endl;
-    return 0; //when uuid is provided but no dataPath found, return 0
+    std::cerr << "Memory::GetMIGSize: no information found about specified UUID " << uuid << " - returning full memory size." << std::endl;
+    return size; 
 }
 
 long long Cache::GetMIGSize(string uuid)
@@ -244,9 +245,9 @@ long long Cache::GetMIGSize(string uuid)
             }
         }
     }
-    std::cerr << "Cache::GetMIGSize: no information found about specified UUID " << uuid << " - returning 0." << std::endl;
-    return 0;//when uuid is provided but no dataPath found, return 0
+    std::cerr << "Cache::GetMIGSize: no information found about specified UUID " << uuid << " - returning full cache size." << std::endl;
+    return cache_size;
 }
 
 #endif
-#endif
+#end
