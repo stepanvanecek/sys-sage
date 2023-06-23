@@ -10,19 +10,20 @@ std::function<int(string,void*,xmlNodePtr)> search_custom_complex_attrib_key_fcn
 //for a specific key, return the value as a string to be printed in the xml
 int search_default_attrib_key(string key, void* value, string* ret_value_str)
 {
+    //value: uint64_t 
     if(!key.compare("CATcos") || 
-    !key.compare("CATL3mask") ||
-    !key.compare("mig_size") )
+    !key.compare("CATL3mask") )
     {
         *ret_value_str=std::to_string(*(uint64_t*)value);
         return 1;
     }
-    else if(!key.compare("CUDA_compute_capability") || 
-    !key.compare("mig_uuid") )
+    //value: long long
+    else if(!key.compare("mig_size") )
     {
-        *ret_value_str=*(string*)value;
+        *ret_value_str=std::to_string(*(long long*)value);
         return 1;
     }
+    //value: int
     else if(!key.compare("Number_of_streaming_multiprocessors") || 
     !key.compare("Number_of_cores_in_GPU") || 
     !key.compare("Number_of_cores_per_SM")  || 
@@ -31,9 +32,25 @@ int search_default_attrib_key(string key, void* value, string* ret_value_str)
         *ret_value_str=std::to_string(*(int*)value);
         return 1;
     }
+    //value: double
     else if(!key.compare("Clock_Frequency") )
     {
         *ret_value_str=std::to_string(*(double*)value);
+        return 1;
+    }
+    //value: float
+    else if(!key.compare("latency") ||
+    !key.compare("latency_min") ||
+    !key.compare("latency_max") )
+    {
+        *ret_value_str=std::to_string(*(float*)value);
+        return 1;
+    }   
+    //value: string
+    else if(!key.compare("CUDA_compute_capability") || 
+    !key.compare("mig_uuid") )
+    {
+        *ret_value_str=*(string*)value;
         return 1;
     }
 

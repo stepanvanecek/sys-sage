@@ -1,4 +1,8 @@
-//#ifdef NVIDIA_MIG
+#ifndef NVIDIA_MIG_CPP
+#define NVIDIA_MIG_CPP
+
+#include "defines.hpp"
+#ifdef NVIDIA_MIG
 
 #include <iostream>
 #include <sstream>
@@ -244,4 +248,5 @@ long long Cache::GetMIGSize(string uuid)
     return 0;//when uuid is provided but no dataPath found, return 0
 }
 
-//#endif
+#endif
+#endif
