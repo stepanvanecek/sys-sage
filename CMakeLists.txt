@@ -11,7 +11,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
-project(sys-sage VERSION 0.3.1 LANGUAGES C CXX )
+project(sys-sage VERSION 0.4.0 LANGUAGES C CXX )
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 ####
@@ -56,18 +56,6 @@ option(DATA_SOURCES "Build and install all data sources" OFF)
 option(DS_HWLOC "Build and install data source hwloc (Retrieves hwloc topology information)" OFF)
 option(DS_MT4G "Build and install data source mt4g (Compute and memory topology of NVidia GPUs)" OFF)
 option(DS_NUMA "Build and install data source caps-numa-benchmark" OFF)
-
-if(CAT_AWARE)
-    add_definitions(-DCAT_AWARE )
-endif()
-
-if(NVIDIA_MIG)
-    add_definitions(-DNVIDIA_MIG )
-endif()
-
-if(CPUINFO)
-    add_definitions(-DCPUINFO )
-endif()
 
 if(DATA_SOURCES)
     set(DS_HWLOC ON)

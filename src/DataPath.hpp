@@ -1,8 +1,10 @@
 #ifndef DATAPATH
 #define DATAPATH
 
-#include "Topology.hpp"
 #include <map>
+
+#include "defines.hpp"
+#include "Topology.hpp"
 
 //void AddDataPath(DataPath* p, int orientation);
 #define SYS_SAGE_DATAPATH_NONE 1
@@ -19,6 +21,7 @@
 #define SYS_SAGE_DATAPATH_TYPE_PHYSICAL 128
 #define SYS_SAGE_DATAPATH_TYPE_L3CAT 256
 #define SYS_SAGE_DATAPATH_TYPE_MIG 512
+#define SYS_SAGE_DATAPATH_TYPE_DATATRANSFER 1024
 
 using namespace std;
 class Component;
