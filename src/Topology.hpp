@@ -387,7 +387,7 @@ private:
 
 #ifdef NVIDIA_MIG
 public:
-    int GetMIGSize();
+    long long GetMIGSize(string uuid = "");
 #endif
 };
 
@@ -460,9 +460,9 @@ private:
     int type;
 #ifdef NVIDIA_MIG
 public:
-    int UpdateMIGSettings(string uuid);
-    int GetMIGNumSMs();
-    int GetMIGNumCores();
+    int UpdateMIGSettings(string uuid = "");
+    int GetMIGNumSMs(string uuid = "");
+    int GetMIGNumCores(string uuid = "");
 #endif
 };
 
@@ -528,7 +528,7 @@ private:
 
 #ifdef NVIDIA_MIG
 public:
-    int GetMIGSize();
+    long long GetMIGSize(string uuid = "");
 #endif
 };
 

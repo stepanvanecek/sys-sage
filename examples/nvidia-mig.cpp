@@ -38,7 +38,23 @@ int main(int argc, char *argv[])
     }
     cout << "-- End parseGpuTopo" << endl;
     Chip * gpu = (Chip*)n->GetChild(0);
-    gpu->UpdateMIGSettings("MIG-d99e3a01-becd-5d26-82e0-35ace55b590c");
+    gpu->UpdateMIGSettings();
+
+    cout << "-- Current MIG settings reflected." << endl;
+    string output_name = "sys-sage_sample_output.xml";
+    cout << "-------- Exporting as XML to " << output_name << " --------" << endl;
+    exportToXml(topo, output_name);
+
+    vector<Component*> memories;
+    gpu->FindAllSubcomponentsByType(&memories, SYS_SAGE_COMPONENT_MEMORY);
+    for(Component* m: memories){
+        cout << "Memory with id " << ((Memory*)m)->GetId() << ": MIG size " << ((Memory*)m)->GetMIGSize() << " (total size " << ((Memory*)m)->GetSize() << ")" << endl;
+    }
+    if(memories.size() == 0){
+        cout << "NO MEMORIES FOUND ON THE GPU" << endl;
+    }
+    cout << "Number of MIG available SMs: " << gpu->GetMIGNumSMs() << endl;
+    cout << "Number of MIG available GPU cores: " << gpu->GetMIGNumCores() << endl;
 
     return 0;
 }
