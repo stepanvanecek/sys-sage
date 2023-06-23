@@ -31,3 +31,8 @@ if(CPUINFO)
     add_executable(cpu-frequency cpu-frequency.cpp)
     install(TARGETS cpu-frequency DESTINATION bin/examples)
 endif()
+
+if(NVIDIA_MIG)
+    add_executable(nvidia-mig nvidia-mig.cpp)
+    install(TARGETS nvidia-mig DESTINATION bin/examples)
+endif()

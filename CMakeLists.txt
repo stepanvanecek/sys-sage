@@ -11,7 +11,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
-project(sys-sage VERSION 0.3.1 LANGUAGES C CXX )
+project(sys-sage VERSION 0.4.0 LANGUAGES C CXX )
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 ####
@@ -25,6 +25,13 @@ include_directories(${LIBXML2_INCLUDE_DIR})
 include_directories(${LIBXML2_INCLUDE_DIRS})
 link_libraries(${LIBXML2_LIBRARY})
 link_libraries(${LIBXML2_LIBRARIES})
+
+if(NVIDIA_MIG)
+  find_package(CUDAToolkit 10.0 REQUIRED)
+  include_directories(CUDA::nvml)
+  link_libraries(CUDA::nvml)
+endif()
+
 
 # Create and install package configuration and version files.
 configure_file(${sys-sage_SOURCE_DIR}/pkg/sys-sage-config.cmake.in
@@ -43,19 +50,12 @@ install(FILES ${sys-sage_BINARY_DIR}/pkg/sys-sage-config.cmake
 
 ###Options:
 option(CAT_AWARE "Build and install functionality regarding Intel L3 CAT" OFF)
-option(CPUINFO "Build and install functionality regarding Linux cpuinfo" ON)
+option(NVIDIA_MIG "Build and install functionality regarding NVidia MIG(multi-instance GPU, ampere or newer)" OFF)
+option(CPUINFO "Build and install functionality regarding Linux cpuinfo" OFF)
 option(DATA_SOURCES "Build and install all data sources" OFF)
 option(DS_HWLOC "Build and install data source hwloc (Retrieves hwloc topology information)" OFF)
 option(DS_MT4G "Build and install data source mt4g (Compute and memory topology of NVidia GPUs)" OFF)
 option(DS_NUMA "Build and install data source caps-numa-benchmark" OFF)
-
-if(CAT_AWARE)
-    add_definitions(-DCAT_AWARE )
-endif()
-
-if(CPUINFO)
-    add_definitions(-DCPUINFO )
-endif()
 
 if(DATA_SOURCES)
     set(DS_HWLOC ON)

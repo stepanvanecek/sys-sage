@@ -1,26 +1,32 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+#defines.hpp header with #cmakedefine 
+configure_file(${PROJECT_SOURCE_DIR}/src/defines.hpp.in ${PROJECT_SOURCE_DIR}/src/defines.hpp)
 
 set(SOURCES
     Topology.cpp
     DataPath.cpp
     CAT_aware.cpp
     cpuinfo.cpp
+    nvidia_mig.cpp
     xml_dump.cpp
     parsers/hwloc.cpp
     parsers/caps-numa-benchmark.cpp
     parsers/gpu-topo.cpp
-    parsers/cccbench.cpp)
+    parsers/cccbench.cpp
+    )
 
 set(HEADERS
     sys-sage.hpp
+    defines.hpp
     Topology.hpp
     DataPath.hpp
     xml_dump.hpp
     parsers/hwloc.hpp
     parsers/caps-numa-benchmark.hpp
     parsers/gpu-topo.hpp
-    parsers/cccbench.cpp)
+    parsers/cccbench.cpp
+    )
 
 add_library(sys-sage SHARED ${SOURCES} ${HEADERS})
 

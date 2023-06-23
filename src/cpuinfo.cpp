@@ -1,7 +1,9 @@
+#ifndef CPUINFO_CPP
+#define CPUINFO_CPP
 
+#include "defines.hpp"
 #ifdef CPUINFO
 
-#include "Topology.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -12,6 +14,7 @@
 #include <tuple>
 #include <chrono>
 
+#include "Topology.hpp"
 
 //retrieve frequency in MHz from /proc/cpuinfo for each thread in vector<Thread*> threads
 //helper function is called by RefreshCpuCoreFrequency/RefreshFreq methods
@@ -149,4 +152,6 @@ double Thread::GetFreq()
         return -1;
     return c->GetFreq();
 }
-#endif
+
+#endif //CPUINFO
+#endif //CPUINFO_CPP

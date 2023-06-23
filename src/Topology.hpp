@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 
+#include "defines.hpp"
 #include "DataPath.hpp"
 #include <libxml/parser.h>
 
@@ -40,24 +41,21 @@ Generic class Component - all components inherit from this class, i.e. this clas
 */
 class Component {
 public:
-
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"unknown"
-    \n componentType=>SYS_SAGE_COMPONENT_NONE
+    Generic Component constructor (no automatic insertion in the Component Tree). Usually one of the derived subclasses for different Component Types will be created. Sets:
+    @param _id = id, default 0
+    @param _name = name, default "unknown"
+    @param _componentType = componentType, default SYS_SAGE_COMPONENT_NONE
     */
-    Component();
-    Component(Component * parent);
+    Component(int _id = 0, string _name = "unknown", int _componentType = SYS_SAGE_COMPONENT_NONE);
     /**
-    Generic Component constructor. Usually should not be called. Sets:
-    @param _id = id
-    @param _name = name
-    @param _componentType = componentType
+    Generic Component constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Usually one of the derived subclasses for different Component Types will be created. Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "unknown"
+    @param _componentType = componentType, default SYS_SAGE_COMPONENT_NONE
     */
-    Component(int _id, string _name, int _componentType);
-    Component(Component * parent, int _id, string _name, int _componentType);
-
+    Component(Component * parent, int _id = 0, string _name = "unknown", int _componentType = SYS_SAGE_COMPONENT_NONE);
     /**
     Inserts a Child component to this component (in the Component Tree).
     The child pointer will be inserted at the end of std::vector of children (retrievable through GetChildren(), GetChild(int _id) etc.)
@@ -93,7 +91,6 @@ public:
     \n For each component, all outgoing and incoming DataPaths are printed, i.e. a DataPath may be printed twice.
     */
     void PrintAllDataPathsInSubtree();
-
     /**
     Returns name of the component.
     @return name
@@ -310,9 +307,9 @@ Class Topology - the root of the topology.
 class Topology : public Component {
 public:
     /**
-    Generic constructor. Sets:
+    Topology constructor (no automatic insertion in the Component Tree). Sets:
     \n id=>0
-    \n name=>"topology"
+    \n name=>"sys-sage Topology"
     \n componentType=>SYS_SAGE_COMPONENT_TOPOLOGY
     */
     Topology();
@@ -326,21 +323,21 @@ Class Node - represents a compute node.
 class Node : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"sys-sage node"
-    \n componentType=>SYS_SAGE_COMPONENT_NODE
+    Node constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Node"
+    @param componentType=>SYS_SAGE_COMPONENT_NODE
     */
-    Node();
-    Node(Component* parent);
+    Node(int _id = 0, string _name = "Node");
     /**
-    Node constructor. Sets:
-    \n id=>_id
-    \n name=>"sys-sage node"
-    \n componentType=>SYS_SAGE_COMPONENT_NODE
+    Node constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Node"
+    @param componentType=>SYS_SAGE_COMPONENT_NODE
     */
-    Node(int _id);
-    Node(Component* parent, int _id);
+    Node(Component * parent, int _id = 0, string _name = "Node");
+
 #ifdef CPUINFO
 public:
     int RefreshCpuCoreFrequency(bool keep_history = false);
@@ -365,15 +362,20 @@ Class Memory - represents a memory element. (Could be main memory of different t
 class Memory : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Memory"
-    \n componentType=>SYS_SAGE_COMPONENT_MEMORY
+    Memory constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = 0
+    @param _name = "Memory"
+    @param componentType=>SYS_SAGE_COMPONENT_MEMORY
     */
     Memory();
-    Memory(Component * parent);
-    Memory(Component * parent, string _name);
-    Memory(Component * parent, string _name, long long _size);
+    /**
+    Memory constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = 0
+    @param _name = name, default "Memory"
+    @param componentType=>SYS_SAGE_COMPONENT_MEMORY
+    */
+    Memory(Component * parent, string _name = "Memory", long long _size = -1);
     long long GetSize();
     void SetSize(long long _size);
     /**
@@ -384,6 +386,11 @@ public:
 private:
     long long size; /**< size/capacity of the memory element*/
     bool is_volatile; /**< is volatile? */
+
+#ifdef NVIDIA_MIG
+public:
+    long long GetMIGSize(string uuid = "");
+#endif
 };
 
 /**
@@ -393,13 +400,21 @@ Class Storage - represents a persistent storage device. (Of any kind.)
 class Storage : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Storage"
-    \n componentType=>SYS_SAGE_COMPONENT_STORAGE
+    Storage constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = 0
+    @param _name = "Storage"
+    @param componentType=>SYS_SAGE_COMPONENT_STORAGE
     */
     Storage();
+    /**
+    Storage constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = 0
+    @param _name = "Storage"
+    @param componentType=>SYS_SAGE_COMPONENT_STORAGE
+    */
     Storage(Component * parent);
+
     long long GetSize();
     void SetSize(long long _size);
     /**
@@ -418,25 +433,22 @@ Class Chip - represents a building block of a node. It may be a CPU socket, a GP
 class Chip : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Chip"
-    \n componentType=>SYS_SAGE_COMPONENT_CHIP
+    Chip constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Chip"
+    @param _type = chip type, default SYS_SAGE_CHIP_TYPE_NONE. Defines which chip we are describing. The options are: SYS_SAGE_CHIP_TYPE_NONE (default/generic), SYS_SAGE_CHIP_TYPE_CPU, SYS_SAGE_CHIP_TYPE_CPU_SOCKET, SYS_SAGE_CHIP_TYPE_GPU.
+    @param componentType=>SYS_SAGE_COMPONENT_CHIP
     */
-    Chip();
+    Chip(int _id = 0, string _name = "Chip", int _type = SYS_SAGE_CHIP_TYPE_NONE);
     /**
-    Generic constructor. Sets:
-    \n id=>_id
-    \n name=>"Chip"
-    \n componentType=>SYS_SAGE_COMPONENT_CHIP
+    Chip constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Chip"
+    @param _type = chip type, default SYS_SAGE_CHIP_TYPE_NONE. Defines which chip we are describing. The options are: SYS_SAGE_CHIP_TYPE_NONE (default/generic), SYS_SAGE_CHIP_TYPE_CPU, SYS_SAGE_CHIP_TYPE_CPU_SOCKET, SYS_SAGE_CHIP_TYPE_GPU.
+    @param componentType=>SYS_SAGE_COMPONENT_CHIP
     */
-    Chip(int _id);
-    Chip(int _id, string _name);
-    Chip(int _id, string _name, int _type);
-    Chip(Component * parent);
-    Chip(Component * parent, int _id);
-    Chip(Component * parent, int _id, string _name);
-    Chip(Component * parent, int _id, string _name, int _type);
+    Chip(Component * parent, int _id = 0, string _name = "Chip", int _type = SYS_SAGE_CHIP_TYPE_NONE);
 
     void SetVendor(string _vendor);
     string GetVendor();
@@ -453,6 +465,12 @@ private:
     string vendor;
     string model;
     int type;
+#ifdef NVIDIA_MIG
+public:
+    int UpdateMIGSettings(string uuid = "");
+    int GetMIGNumSMs(string uuid = "");
+    int GetMIGNumCores(string uuid = "");
+#endif
 };
 
 /**
@@ -462,28 +480,37 @@ Class Cache - represents a data cache memories in the system (of different level
 class Cache : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"cache"
-    \n componentType=>SYS_SAGE_COMPONENT_CACHE
+    Cache constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _cache_level - (int) cache level (1=L1, 2=L2, ...), default 0. This value is represented as a cahce_type, i.e. either one of int cache_level or string cache_type can be used.
+    @param _cache_size - size of the cache (Bytes), default 0
+    @param _associativity - number of cache associativity ways, default -1
+    @param _cache_line_size - size of a cache line (Bytes), default -1
+    @param componentType=>SYS_SAGE_COMPONENT_CACHE
     */
-    Cache();
+    Cache(int _id = 0, int  _cache_level = 0, long long _cache_size = -1, int _associativity = -1, int _cache_line_size = -1);
     /**
-    Cache component constructor. The name and componentType are set as in Cache() constructor
-    @param _id - id of the Cache
-    @param _cache_level - (int) cache level (1=L1, 2=L2, ...)
-    @param _cache_size - size of the cache (Bytes?)
-    @param _associativity - number of cache associativity ways
-    @see Cache()
+    Cache constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _cache_type - (string) name/type of the cache (constant, textture, L1, ...). Only one of (int) cache_level or (string) cache_type can be used.
+    @param _cache_size - size of the cache (Bytes), default 0
+    @param _associativity - number of cache associativity ways, default -1
+    @param _cache_line_size - size of a cache line (Bytes), default -1
+    @param componentType=>SYS_SAGE_COMPONENT_CACHE
     */
-    Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
-    Cache(int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
-    Cache(int _id, string  _cache_type, unsigned long long _cache_size, int _associativity, int _cache_line_size);
-    Cache(Component * parent);
-    Cache(Component * parent, int _id, string _cache_type);
-    Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity);
-    Cache(Component * parent, int _id, int  _cache_level, unsigned long long _cache_size, int _associativity, int _cache_line_size);
-    Cache(Component * parent, int _id, string _cache_type, unsigned long long _cache_size, int _associativity, int _cache_line_size);
+    Cache(Component * parent, int _id, string _cache_type, long long _cache_size = 0, int _associativity = -1, int _cache_line_size = -1);
+    /**
+    Cache constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _cache_level - (int) cache level (1=L1, 2=L2, ...), default 0. This value is represented as a cahce_type, i.e. either one of int cache_level or string cache_type can be used.
+    @param _cache_size - size of the cache (Bytes), default 0
+    @param _associativity - number of cache associativity ways, default -1
+    @param _cache_line_size - size of a cache line (Bytes), default -1
+    @param componentType=>SYS_SAGE_COMPONENT_CACHE
+    */
+    Cache(Component * parent, int _id = 0, int _cache_level = 0, long long _cache_size = -1, int _associativity = -1, int _cache_line_size = -1);
 
     /**
     @returns cache level of this cache
@@ -514,6 +541,11 @@ private:
     long long cache_size;  /**< size/capacity of the cache */
     int cache_associativity_ways; /**< number of cache associativity ways */
     int cache_line_size; /**< size of a cache line */
+
+#ifdef NVIDIA_MIG
+public:
+    long long GetMIGSize(string uuid = "");
+#endif
 };
 
 /**
@@ -523,33 +555,20 @@ Class Subdivision - represents a data cache memories in the system (of different
 class Subdivision : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Subdivision"
-    \n componentType=>SYS_SAGE_COMPONENT_SUBDIVISION
+    Subdivision constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Subdivision"
+    @param _componentType, componentType, default SYS_SAGE_COMPONENT_SUBDIVISION. If componentType is not SYS_SAGE_COMPONENT_SUBDIVISION or SYS_SAGE_COMPONENT_NUMA, it is set to SYS_SAGE_COMPONENT_SUBDIVISION as default option.
     */
-    Subdivision();
+    Subdivision(int _id = 0, string _name = "Subdivision", int _componentType = SYS_SAGE_COMPONENT_SUBDIVISION);
     /**
-    Subdivision constructor. Sets
-    \n name=>"Subdivision"
-    \n componentType=>SYS_SAGE_COMPONENT_SUBDIVISION
-    @param _id - id of the component
+    Subdivision constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Subdivision"
+    @param _componentType, componentType, default SYS_SAGE_COMPONENT_SUBDIVISION. If componentType is not SYS_SAGE_COMPONENT_SUBDIVISION or SYS_SAGE_COMPONENT_NUMA, it is set to SYS_SAGE_COMPONENT_SUBDIVISION as default option.
     */
-    Subdivision(int _id);
-    Subdivision(int _id, string _name);
-    Subdivision(int _id, int _componentType);
-    /**
-    Helper constructor for inherited classes of Subdivision. Usually, this constructor will not be called. If called, the _componentType must be SYS_SAGE_COMPONENT_SUBDIVISION.
-    @param _id - id of the component
-    @param _name - name
-    @param _componentType - always use SYS_SAGE_COMPONENT_SUBDIVISION
-    */
-    Subdivision(int _id, string _name, int _componentType);
-    Subdivision(Component * parent);
-    Subdivision(Component * parent, int _id);
-    Subdivision(Component * parent, int _id, string _name);
-    Subdivision(Component * parent, int _id, int _componentType);
-    Subdivision(Component * parent, int _id, string _name, int _componentType);
+    Subdivision(Component * parent, int _id = 0, string _name = "Subdivision", int _componentType = SYS_SAGE_COMPONENT_SUBDIVISION);
 
     void SetSubdivisionType(int subdivisionType);
     int GetSubdivisionType();
@@ -569,30 +588,22 @@ Class Numa - represents a NUMA region on a chip.
 class Numa : public Subdivision {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Numa"
-    \n componentType=>SYS_SAGE_COMPONENT_NUMA
+    Numa constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Numa"
+    @param _size = size or capacity of the NUMA region, default -1, i.e. no value.
+    @param componentType=>SYS_SAGE_COMPONENT_NUMA
     */
-    Numa();
+    Numa(int _id = 0, long long _size = -1);
     /**
-    Numa constructor. Sets
-    \n name=>"Numa"
-    \n componentType=>SYS_SAGE_COMPONENT_NUMA
-    @param _id - id of the component
+    Numa constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Numa"
+    @param _size = size or capacity of the NUMA region, default -1, i.e. no value.
+    @param componentType=>SYS_SAGE_COMPONENT_NUMA
     */
-    Numa(int _id);
-    /**
-    Numa constructor. Sets
-    \n name=>"Numa"
-    \n componentType=>SYS_SAGE_COMPONENT_NUMA
-    @param _id - id of the component
-    @param _size - size of the numa region of the memory (in case the memory segment is not represented by class Memory)
-    */
-    Numa(int _id, int _size);
-    Numa(Component * parent);
-    Numa(Component * parent, int _id);
-    Numa(Component * parent, int _id, long long _size);
+    Numa(Component * parent, int _id = 0, long long _size = -1);
     /**
     Get size of the Numa memory segment.
     @returns size of the Numa memory segment.
@@ -615,23 +626,21 @@ Class Core - represents a CPU core, or a GPU streaming multiprocessor.
 class Core : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Core"
-    \n componentType=>SYS_SAGE_COMPONENT_CORE
+    Core constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Core"
+    @param componentType=>SYS_SAGE_COMPONENT_CORE
     */
-    Core();
+    Core(int _id = 0, string _name = "Core");
     /**
-    Core constructor. Sets
-    \n name=>"Core"
-    \n componentType=>SYS_SAGE_COMPONENT_CORE
-    @param _id - id of the component
+    Core constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Core"
+    @param componentType=>SYS_SAGE_COMPONENT_CORE
     */
-    Core(int _id);
-    Core(int _id, string _name);
-    Core(Component * parent);
-    Core(Component * parent, int _id);
-    Core(Component * parent, int _id, string _name);
+    Core(Component * parent, int _id = 0, string _name = "Core");
+
 private:
 
 #ifdef CPUINFO
@@ -651,23 +660,20 @@ Class Thread - represents HW thread on CPUs, or a thread on a GPU.
 class Thread : public Component {
 public:
     /**
-    Generic constructor. Sets:
-    \n id=>0
-    \n name=>"Thread"
-    \n componentType=>SYS_SAGE_COMPONENT_THREAD
+    Thread constructor (no automatic insertion in the Component Tree). Sets:
+    @param _id = id, default 0
+    @param _name = name, default "Thread"
+    @param componentType=>SYS_SAGE_COMPONENT_THREAD
     */
-    Thread();
+    Thread(int _id = 0, string _name = "Thread");
     /**
-    Thread constructor. Sets
-    \n name=>"Thread"
-    \n componentType=>SYS_SAGE_COMPONENT_THREAD
-    @param _id - id of the component
-    */
-    Thread(int _id);
-    Thread(int _id, string _name);
-    Thread(Component * parent);
-    Thread(Component * parent, int _id);
-    Thread(Component * parent, int _id, string _name);
+    Thread constructor with insertion into the Component Tree as the parent 's child (as long as parent is an existing Component). Sets:
+    @param parent = the parent 
+    @param _id = id, default 0
+    @param _name = name, default "Thread"
+    @param componentType=>SYS_SAGE_COMPONENT_THREAD
+    */    
+    Thread(Component * parent, int _id = 0, string _name = "Thread");
 
 #ifdef CPUINFO //defined in cpuinfo.cpp
 public:

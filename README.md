@@ -25,6 +25,8 @@ mkdir build && cd build
 cmake ..
 # build options:
 # -DCAT_AWARE=ON            - builds with Intel CAT functionality. For that, Intel-specific pqos header/library are necessary.
+# -DNVIDIA_MIG=ON            - Build and install functionality regarding NVidia MIG(multi-instance GPU, ampere or newer).
+# -DCPUINFO=ON            - Build and install functionality regarding Linux cpuinfo (only x86).
 # -DDATA_SOURCES=ON         - builds all data sources from folder 'data-sources' listed below. Data sources are used to collecting HW-related information, so it only makes sense to compile that on the system where the topology information is queried.
 # -DDS_HWLOC=ON             - builds the hwloc data source for retrieving the CPU topology
 # -DDS_MT4g=ON              - builds the mt4g data source for retrieving GPU compute and memory topology. If turned on, includes hwloc.
