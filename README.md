@@ -1,3 +1,9 @@
+## \!\!\! Active sys-sage repository: [https://github.com/caps-tum/sys-sage](https://github.com/caps-tum/sys-sage) \!\!\!
+### This repository is no longer actively developed; it will only be synchronized once in a while with [https://github.com/caps-tum/sys-sage](https://github.com/caps-tum/sys-sage) -- use/clone this reposiroty instead.
+
+------------------------
+------------------------
+
 # sys-sage
 
 sys-sage is a library for capturing and manipulating hardware topology of compute systems.
