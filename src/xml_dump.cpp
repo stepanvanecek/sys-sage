@@ -127,8 +127,6 @@ int exportToXml(Component* root, string path, std::function<int(string,void*,str
                 target_addr << dpPtr->GetTarget();
                 xmlNewProp(dp_n, (const unsigned char *)"source", (const unsigned char *)(src_addr.str().c_str()));
                 xmlNewProp(dp_n, (const unsigned char *)"target", (const unsigned char *)(target_addr.str().c_str()));
-                xmlNewProp(dp_n, (const unsigned char *)"oriented", (const unsigned char *)(std::to_string(dpPtr->GetOriented())).c_str());
-                xmlNewProp(dp_n, (const unsigned char *)"dp_type", (const unsigned char *)(std::to_string(dpPtr->GetDpType())).c_str());
                 xmlNewProp(dp_n, (const unsigned char *)"bw", (const unsigned char *)(std::to_string(dpPtr->GetBw())).c_str());
                 xmlNewProp(dp_n, (const unsigned char *)"latency", (const unsigned char *)(std::to_string(dpPtr->GetLatency())).c_str());
                 xmlAddChild(data_paths_root, dp_n);
