@@ -1,7 +1,7 @@
 #include "DataPath.hpp"
 
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int _type){
-    return NewDataPath(_source,_target,_oriented,_type,(double)0,(double)0);
+    return NewDataPath(_source,_target,_oriented,_type,(double)-1,(double)-1);
 }
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency){
     return NewDataPath(_source,_target,_oriented,SYS_SAGE_DATAPATH_TYPE_NONE,_bw,_latency);
@@ -9,6 +9,7 @@ DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, dou
 DataPath* NewDataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency)
 {
     DataPath* p = new DataPath(_source, _target, _oriented, _type, _bw, _latency);
+    return p;
 }
 
 Component * DataPath::GetSource() {return source;}
@@ -18,7 +19,9 @@ double DataPath::GetLatency() {return latency;}
 int DataPath::GetDpType() {return dp_type;}
 int DataPath::GetOriented() {return oriented;}
 
-DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type): source(_source), target(_target), oriented(_oriented), dp_type(_type)
+DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type): DataPath(_source, _target, _oriented, _type, -1, -1) {}
+DataPath::DataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency): DataPath(_source, _target, _oriented, SYS_SAGE_DATAPATH_TYPE_NONE, _bw, _latency) {}
+DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency): source(_source), target(_target), oriented(_oriented), dp_type(_type), bw(_bw), latency(_latency)
 {
     if(_oriented == SYS_SAGE_DATAPATH_BIDIRECTIONAL)
     {
@@ -38,8 +41,6 @@ DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _t
         return;//error
     }
 }
-DataPath::DataPath(Component* _source, Component* _target, int _oriented, double _bw, double _latency): DataPath(_source, _target, _oriented, SYS_SAGE_DATAPATH_TYPE_NONE), bw(_bw), latency(_latency) {}
-DataPath::DataPath(Component* _source, Component* _target, int _oriented, int _type, double _bw, double _latency): DataPath(_source, _target, _oriented, _type), bw(_bw), latency(_latency) {}
 
 void DataPath::Print()
 {
